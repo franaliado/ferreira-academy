@@ -1,0 +1,132 @@
+'use client';
+
+import React from 'react';
+import { Language, translations } from '@/lib/translations';
+import { Instagram, Facebook, Youtube, ShieldCheck } from 'lucide-react';
+
+interface FooterProps {
+  currentLang: Language;
+}
+
+export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
+  const t = translations[currentLang].footer;
+
+  const hrefs = ['#hero', '#benefits', '#seminar', '#testimonials', '#faq'];
+
+  return (
+    <footer id="footer" className="bg-black text-white relative overflow-hidden pt-16 pb-12 border-t border-[#D4AF37]/30">
+      {/* Subtle background glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-amber-900/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-800">
+          
+          {/* Column 1: Logo & Description */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center space-x-3">
+              <img
+                src="/Logo_Barra_Superior.png"
+                alt="Ferreira Academy"
+                className="h-10 w-auto object-contain"
+              />
+            </div>
+            <p className="text-gray-200 text-xs sm:text-sm leading-relaxed max-w-sm font-medium">
+              {t.disclaimer}
+            </p>
+          </div>
+
+          {/* Column 2: Quick Links */}
+          <div className="space-y-4">
+            <h3 className="text-[#D4AF37] font-extrabold text-xs uppercase tracking-[0.2em]">
+              {t.quickLinks}
+            </h3>
+            <ul className="space-y-2.5">
+              {t.navLinks.map((label, idx) => (
+                <li key={idx}>
+                  <a
+                    href={hrefs[idx]}
+                    className="text-gray-200 hover:text-[#D4AF37] text-xs sm:text-sm font-medium transition-colors"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 3: Socials */}
+          <div className="space-y-4">
+            <h3 className="text-[#D4AF37] font-extrabold text-xs uppercase tracking-[0.2em]">
+              {t.followUs}
+            </h3>
+            <div className="flex items-center space-x-3">
+              {[
+                { icon: <Instagram className="w-4 h-4 text-[#D4AF37]" />, href: '#' },
+                { icon: <Facebook className="w-4 h-4 text-[#D4AF37]" />, href: '#' },
+                { icon: <Youtube className="w-4 h-4 text-[#D4AF37]" />, href: '#' },
+                { 
+                  icon: (
+                    <svg className="w-4 h-4 text-[#D4AF37]" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+                    </svg>
+                  ), 
+                  href: '#' 
+                },
+              ].map((social, idx) => (
+                <a
+                  key={idx}
+                  href={social.href}
+                  className="w-9 h-9 rounded-lg border border-[#D4AF37]/40 bg-[#121212] flex items-center justify-center hover:border-[#D4AF37] hover:bg-[#D4AF37]/10 transition-all duration-300"
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Column 4: Secure Platform & Payments */}
+          <div className="space-y-4">
+            <h3 className="text-[#D4AF37] font-extrabold text-xs uppercase tracking-[0.2em]">
+              {t.securePlatform}
+            </h3>
+            <p className="text-gray-200 text-xs font-medium">
+              {t.paySafely}
+            </p>
+            <div className="flex items-center space-x-3 pt-1">
+              {/* Stripe */}
+              <span className="font-extrabold text-sm sm:text-base text-[#8792FF] tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
+                stripe
+              </span>
+              {/* PayPal */}
+              <span className="font-black text-sm sm:text-base tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
+                <span className="text-[#0079C1]">Pay</span>
+                <span className="text-white">Pal</span>
+              </span>
+            </div>
+            <div className="flex items-center space-x-2 pt-1 text-gray-200">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-100">
+                {t.globalPlatform}
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom copyright & legal links */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-200 font-medium">
+          <p>{t.rights}</p>
+          <div className="flex space-x-6 mt-4 sm:mt-0">
+            <a href="#" className="hover:text-[#D4AF37] transition-colors">
+              {t.privacy}
+            </a>
+            <a href="#" className="hover:text-[#D4AF37] transition-colors">
+              {t.terms}
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  );
+};
