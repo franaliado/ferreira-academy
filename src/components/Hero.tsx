@@ -74,20 +74,23 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               </p>
             </div>
 
-            {/* Main Headline — Mobile First sizing */}
+            {/* Main Headline — Container Query independent sizing */}
             <h1 className="font-black uppercase leading-tight tracking-tight text-4xl sm:text-5xl lg:text-[2.8rem] xl:text-[3.4rem]">
-              <span className="block text-white w-full overflow-hidden">
+              {/* Contenedor 1 con propiedad de contenedor CSS */}
+              <span className="block text-white w-full overflow-hidden [@supports(container-type:inline-size)]:[container-type:inline-size]">
                 <span 
                   className="block w-full tracking-tight whitespace-nowrap sm:text-[2.8rem] xl:text-[3.4rem]"
-                  style={{ fontSize: 'clamp(1rem, 11vw, 2.8rem)' }}
+                  style={{ fontSize: 'clamp(1rem, 14cqw, 2.8rem)' }}
                 >
                   {t.headline1}
                 </span>
               </span>
-              <span className="block gold-gradient-text mt-1 drop-shadow-lg w-full overflow-hidden">
+
+              {/* Contenedor 2 con propiedad de contenedor CSS */}
+              <span className="block gold-gradient-text mt-1 drop-shadow-lg w-full overflow-hidden [@supports(container-type:inline-size)]:[container-type:inline-size]">
                 <span 
                   className="block w-full tracking-tight whitespace-nowrap sm:text-[2.8rem] xl:text-[3.4rem]"
-                  style={{ fontSize: 'clamp(1rem, 6.2vw, 2.8rem)' }}
+                  style={{ fontSize: 'clamp(1rem, 7.8cqw, 2.8rem)' }}
                   dangerouslySetInnerHTML={{ __html: t.headline2 }} 
                 />
               </span>
