@@ -23,6 +23,18 @@ export interface TranslationSchema {
     };
     instructorTag: string;
     instructorSub: string;
+    academyLine1: string;
+    academyLine2: string;
+    headline1: string;
+    headline2: string;
+    subtitleText: string;
+    securePayments: string;
+    stats: [
+      { line1: string; line2: string },
+      { line1: string; line2: string },
+      { line1: string; line2: string },
+      { line1: string; line2: string }
+    ];
   };
   instructor: {
     badge: string;
@@ -46,6 +58,8 @@ export interface TranslationSchema {
       title: string;
       description: string;
     }>;
+    sectionHeading: string;
+    shortTitles: [string, string, string, string, string, string];
   };
   seminar: {
     badge: string;
@@ -67,6 +81,10 @@ export interface TranslationSchema {
       title: string;
       desc: string;
     }>;
+    liveBadge: string;
+    courseTitleLine1: string;
+    courseTitleLine2: string;
+    checklist: [string, string, string, string, string, string];
   };
   certificate: {
     badge: string;
@@ -91,6 +109,8 @@ export interface TranslationSchema {
       comment: string;
       rating: number;
     }>;
+    sectionHeading: string;
+    countries: [string, string, string];
   };
   faq: {
     badge: string;
@@ -143,82 +163,6 @@ export interface TranslationSchema {
     paySafely: string;
     globalPlatform: string;
     navLinks: [string, string, string, string, string];
-  };
-  hero: {
-    badge: string;
-    titleLine1: string;
-    titleLine2: string;
-    subtitle: string;
-    ctaButton: string;
-    quickStats: {
-      countries: string;
-      zoomLive: string;
-      certification: string;
-    };
-    instructorTag: string;
-    instructorSub: string;
-    academyLine1: string;
-    academyLine2: string;
-    headline1: string;
-    headline2: string;
-    subtitleText: string;
-    securePayments: string;
-    stats: [
-      { line1: string; line2: string },
-      { line1: string; line2: string },
-      { line1: string; line2: string },
-      { line1: string; line2: string }
-    ];
-  };
-  benefits: {
-    badge: string;
-    title: string;
-    subtitle: string;
-    items: Array<{
-      title: string;
-      description: string;
-    }>;
-    sectionHeading: string;
-    shortTitles: [string, string, string, string, string, string];
-  };
-  seminar: {
-    badge: string;
-    title: string;
-    subtitle: string;
-    dateLabel: string;
-    dateValue: string;
-    modalityLabel: string;
-    modalityValue: string;
-    durationLabel: string;
-    durationValue: string;
-    priceTag: string;
-    originalPrice: string;
-    currentPrice: string;
-    ctaButton: string;
-    modulesTitle: string;
-    modules: Array<{
-      number: string;
-      title: string;
-      desc: string;
-    }>;
-    liveBadge: string;
-    courseTitleLine1: string;
-    courseTitleLine2: string;
-    checklist: [string, string, string, string, string, string];
-  };
-  testimonials: {
-    badge: string;
-    title: string;
-    subtitle: string;
-    items: Array<{
-      name: string;
-      role: string;
-      location: string;
-      comment: string;
-      rating: number;
-    }>;
-    sectionHeading: string;
-    countries: [string, string, string];
   };
   cta: {
     bannerTitlePart1: string;
@@ -819,7 +763,7 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine1: 'ACADEMIA INTERNACIONAL',
       academyLine2: 'DE CORTE MASCULINO E BARBEARIA PROFISSIONAL',
       headline1: 'DOMINE A ARTE',
-      headline2: 'TRANSFORMA TEU FUTURO',
+      headline2: 'TRANSFORME SEU FUTURO',
       subtitleText: 'Aprenda técnicas modernas de corte masculino e barbearia profissional com Antonio Ferreira, de qualquer lugar do mundo.',
       securePayments: 'PAGAMENTOS 100% SEGUROS',
       stats: [
@@ -853,7 +797,7 @@ export const translations: Record<Language, TranslationSchema> = {
         {
           title: 'Técnicas Modernas de Corte',
           description:
-            'Domínio de faders limpos, tesoura avançada, texturização dinâmica e visagismo personalizado para cada cliente.',
+            'Domínio de fades limpos, tesoura avançada, texturização dinâmica e visagismo personalizado para cada cliente.',
         },
         {
           title: 'Experiência Real e Casos Práticos',
