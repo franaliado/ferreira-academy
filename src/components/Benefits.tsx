@@ -33,7 +33,7 @@ export const Benefits: React.FC<BenefitsProps> = ({ currentLang }) => {
 
         {/* Section Header */}
         <h2 className="text-center text-white text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide mb-14">
-          {t.sectionHeading}
+          {t.title}
         </h2>
 
         {/* 6 Benefits grid */}
