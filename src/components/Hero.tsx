@@ -75,7 +75,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-black uppercase leading-tight tracking-tight text-2xl sm:text-4xl lg:text-[2.5rem] xl:text-[3.1rem]">
+            <h1 className="font-black uppercase leading-tight tracking-tight text-xl xs:text-2xl sm:text-4xl lg:text-[2.5rem] xl:text-[3.1rem]">
               <span className="block text-white">
                 {t.headline1}
               </span>
