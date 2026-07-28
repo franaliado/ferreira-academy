@@ -50,7 +50,7 @@ export const Benefits: React.FC<BenefitsProps> = ({ currentLang }) => {
 
               {/* Short bold title */}
               <h3 className="text-white text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider leading-tight whitespace-pre-line group-hover:text-[#D4AF37] transition-colors">
-                {t.shortTitles[index]}
+                {item.title}
               </h3>
 
               {/* Description */}
