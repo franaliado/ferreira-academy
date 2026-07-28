@@ -80,7 +80,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
                 {t.headline1}
               </span>
               <span
-                className="block gold-gradient-text mt-1 drop-shadow-lg"
+                className="block gold-gradient-text mt-1 drop-shadow-lg text-[0.85em] tracking-tighter"
                 dangerouslySetInnerHTML={{ __html: t.headline2 }}
               />
             </h1>
