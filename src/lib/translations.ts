@@ -483,7 +483,7 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine1: 'INTERNATIONAL ACADEMY',
       academyLine2: 'OF MALE CUTTING & PROFESSIONAL BARBERING',
       headline1: 'MASTER THE ART',
-      headline2: 'TRANSFORM YOUR <br class="sm:hidden" /> FUTURE',
+      headline2: 'TRANSFORM YOUR FUTURE',
       subtitleText: 'Learn modern male cutting and professional barbering techniques with Antonio Ferreira, from anywhere in the world.',
       securePayments: '100% SECURE PAYMENTS',
       stats: [
@@ -763,7 +763,7 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine1: 'ACADEMIA INTERNACIONAL',
       academyLine2: 'DE CORTE MASCULINO E BARBEARIA PROFISSIONAL',
       headline1: 'DOMINE O ARTE',
-      headline2: 'TRANSFORME SEU <br class="sm:hidden" /> FUTURO',
+      headline2: 'TRANSFORME SEU FUTURO',
       subtitleText: 'Aprenda técnicas modernas de corte masculino e barbearia profissional com Antonio Ferreira, de qualquer lugar do mundo.',
       securePayments: 'PAGAMENTOS 100% SEGUROS',
       stats: [
@@ -1045,7 +1045,7 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine1: 'ACCADEMIA INTERNAZIONALE',
       academyLine2: 'DI TAGLIO MASCHILE E BARBERIA PROFESSIONALE',
       headline1: 'DOMINA L\'ARTE',
-      headline2: 'TRASFORMA IL TUO <br class="sm:hidden" /> FUTURO',
+      headline2: 'TRASFORMA IL TUO FUTURO',
       subtitleText: 'Impara le tecniche moderne di taglio maschile e barberia professionale con Antonio Ferreira, da qualsiasi parte del mondo.',
       securePayments: 'PAGAMENTI 100% SICURI',
       stats: [
@@ -1327,7 +1327,7 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine1: 'ACADÉMIE INTERNATIONALE',
       academyLine2: 'DE COUPE MASCULINE ET BARBERIE PROFESSIONNELLE',
       headline1: 'MAÎTRISEZ L\'ART',
-      headline2: 'TRANSFORMEZ VOTRE <br class="sm:hidden" /> AVENIR',
+      headline2: 'TRANSFORMEZ VOTRE AVENIR',
       subtitleText: 'Apprenez les techniques modernes de coupe masculine et de barberie professionnelle avec Antonio Ferreira, depuis n\'importe où dans le monde.',
       securePayments: 'PAIEMENTS 100% SÉCURISÉS',
       stats: [
@@ -1609,7 +1609,7 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine1: 'INTERNATIONALE AKADEMIE',
       academyLine2: 'FÜR HERRENHAARSCHNITT & PROFESSIONELLES BARBERING',
       headline1: 'MEISTERE DIE KUNST',
-      headline2: 'TRANSFORMIERE DEINE <br class="sm:hidden" /> ZUKUNFT',
+      headline2: 'TRANSFORMIERE DEINE ZUKUNFT',
       subtitleText: 'Lerne moderne Herrenhaarschnitt- und professionelle Barbering-Techniken mit Antonio Ferreira, von überall auf der Welt.',
       securePayments: '100% SICHERE ZAHLUNGEN',
       stats: [
