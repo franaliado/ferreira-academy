@@ -76,13 +76,18 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
 
             {/* Main Headline — Mobile First sizing */}
             <h1 className="font-black uppercase leading-tight tracking-tight text-4xl sm:text-5xl lg:text-[2.8rem] xl:text-[3.4rem]">
-              <span className="block text-white">
-                {t.headline1}
+              <span className="block text-white w-full overflow-hidden">
+                <span 
+                  className="block w-full tracking-tight whitespace-nowrap sm:text-[2.8rem] xl:text-[3.4rem]"
+                  style={{ fontSize: 'clamp(1rem, 7.8vw, 2.8rem)' }}
+                >
+                  {t.headline1}
+                </span>
               </span>
               <span className="block gold-gradient-text mt-1 drop-shadow-lg w-full overflow-hidden">
                 <span 
                   className="block w-full tracking-tight whitespace-nowrap sm:text-[2.8rem] xl:text-[3.4rem]"
-                  style={{ fontSize: 'clamp(1.1rem, 4.2vw, 2.8rem)' }}
+                  style={{ fontSize: 'clamp(1rem, 7.8vw, 2.8rem)' }}
                   dangerouslySetInnerHTML={{ __html: t.headline2 }} 
                 />
               </span>
