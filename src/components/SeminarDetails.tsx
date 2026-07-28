@@ -13,27 +13,28 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
   const t = translations[currentLang].seminar;
 
   return (
-    <section id="seminar" className="py-0 bg-black relative overflow-hidden">
+    <section id="seminar" className="bg-black relative overflow-hidden">
       {/* Top gold separator */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[520px]">
+        {/* On mobile: stacks vertically. On lg+: 3-column grid side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[auto] lg:min-h-[520px]">
 
-          {/* Column 1: Course Photo */}
-          <div className="relative overflow-hidden lg:rounded-none" style={{ minHeight: '420px' }}>
+          {/* Column 1: Course Photo — full height on desktop, fixed height on mobile */}
+          <div className="relative overflow-hidden" style={{ minHeight: '260px' }}>
             <img
               src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1200"
               alt="Demostración de corte de cabello masculino profesional"
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover object-center absolute inset-0"
             />
-            {/* Subtle side shadow overlay */}
+            {/* Overlays */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/60 pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
           </div>
 
           {/* Column 2: Course Info */}
-          <div className="bg-black border-l border-r border-[#D4AF37]/20 px-8 sm:px-10 py-12 flex flex-col justify-center space-y-6">
+          <div className="bg-black border-[#D4AF37]/20 lg:border-l lg:border-r px-6 sm:px-8 lg:px-10 py-10 lg:py-12 flex flex-col justify-center space-y-6 border-t lg:border-t-0 border-[#D4AF37]/20">
             {/* Badge */}
             <div className="inline-flex items-center space-x-2">
               <div className="w-8 h-px bg-[#D4AF37]" />
@@ -61,7 +62,7 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
           </div>
 
           {/* Column 3: Specs + CTA */}
-          <div className="bg-[#0a0a0a] px-8 sm:px-10 py-12 flex flex-col justify-center space-y-6">
+          <div className="bg-[#0a0a0a] px-6 sm:px-8 lg:px-10 py-10 lg:py-12 flex flex-col justify-center space-y-6 border-t lg:border-t-0 border-[#D4AF37]/20">
 
             {/* Date */}
             <div className="flex items-start space-x-4">
@@ -102,7 +103,7 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
               </div>
             </div>
 
-            {/* CTA Button */}
+            {/* CTA Button — full width */}
             <button
               onClick={onOpenCheckout}
               id="cta-seminar-secondary"

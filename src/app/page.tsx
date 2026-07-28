@@ -76,29 +76,31 @@ export default function Home() {
         <Testimonials currentLang={currentLang} />
 
         {/* 5. Final CTA Banner */}
-        <section className="relative py-20 bg-black overflow-hidden">
+        <section className="relative py-16 sm:py-20 bg-black overflow-hidden">
           {/* Decorative golden glow */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[300px] bg-amber-800/10 rounded-full blur-3xl" />
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
           </div>
 
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6 relative z-10">
-            <h2 className="text-white text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-wide leading-tight">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5 sm:space-y-6 relative z-10">
+            <h2 className="text-white text-2xl sm:text-3xl lg:text-5xl font-black uppercase tracking-wide leading-tight">
               {t.cta.bannerTitlePart1}{' '}
               <span className="text-[#D4AF37]">{t.cta.bannerTitlePart2}</span>
             </h2>
-            <p className="text-gray-200 text-sm sm:text-base font-medium max-w-2xl mx-auto leading-relaxed">
+            <p className="text-gray-300 text-sm sm:text-base font-medium max-w-2xl mx-auto leading-relaxed">
               {t.cta.bannerSubtitle}
             </p>
-            <button
-              onClick={handleOpenCheckout}
-              id="cta-final-banner"
-              className="group inline-flex items-center space-x-3 btn-gold-primary px-10 py-4 rounded text-sm font-black uppercase tracking-[0.12em] cursor-pointer mt-4"
-            >
-              <span>{t.cta.button}</span>
-              <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
-            </button>
+            <div className="flex justify-center">
+              <button
+                onClick={handleOpenCheckout}
+                id="cta-final-banner"
+                className="group inline-flex items-center justify-center space-x-3 btn-gold-primary w-full sm:w-auto px-8 sm:px-10 py-4 rounded text-sm font-black uppercase tracking-[0.12em] cursor-pointer"
+              >
+                <span>{t.cta.button}</span>
+                <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
         </section>
       </main>

@@ -12,16 +12,16 @@ export const Benefits: React.FC<BenefitsProps> = ({ currentLang }) => {
   const t = translations[currentLang].benefits;
 
   const icons = [
-    <Scissors key="1" className="w-7 h-7 text-[#D4AF37]" />,
-    <Monitor key="2" className="w-7 h-7 text-[#D4AF37]" />,
-    <TrendingUp key="3" className="w-7 h-7 text-[#D4AF37]" />,
-    <Globe key="4" className="w-7 h-7 text-[#D4AF37]" />,
-    <Award key="5" className="w-7 h-7 text-[#D4AF37]" />,
-    <Headphones key="6" className="w-7 h-7 text-[#D4AF37]" />,
+    <Scissors key="1" className="w-6 h-6 sm:w-7 sm:h-7 text-[#D4AF37]" />,
+    <Monitor key="2" className="w-6 h-6 sm:w-7 sm:h-7 text-[#D4AF37]" />,
+    <TrendingUp key="3" className="w-6 h-6 sm:w-7 sm:h-7 text-[#D4AF37]" />,
+    <Globe key="4" className="w-6 h-6 sm:w-7 sm:h-7 text-[#D4AF37]" />,
+    <Award key="5" className="w-6 h-6 sm:w-7 sm:h-7 text-[#D4AF37]" />,
+    <Headphones key="6" className="w-6 h-6 sm:w-7 sm:h-7 text-[#D4AF37]" />,
   ];
 
   return (
-    <section id="benefits" className="py-20 bg-black relative overflow-hidden">
+    <section id="benefits" className="py-16 sm:py-20 bg-black relative overflow-hidden">
       {/* Top gold separator line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
       {/* Bottom gold separator */}
@@ -32,19 +32,19 @@ export const Benefits: React.FC<BenefitsProps> = ({ currentLang }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
-        <h2 className="text-center text-white text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide mb-14">
+        <h2 className="text-center text-white text-xl sm:text-2xl lg:text-3xl font-bold uppercase tracking-wide mb-10 sm:mb-14">
           {t.title}
         </h2>
 
-        {/* 6 Benefits grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        {/* 6 Benefits grid — 2 cols mobile, 3 on sm, 6 on lg */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {t.items.slice(0, 6).map((item, index) => (
             <div
               key={index}
-              className="group flex flex-col items-center text-center p-5 rounded-xl border border-[#D4AF37]/25 bg-[#0f0f0f] hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/5 transition-all duration-300 space-y-3"
+              className="group flex flex-col items-center text-center p-4 sm:p-5 rounded-xl border border-[#D4AF37]/25 bg-[#0f0f0f] hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/5 transition-all duration-300 space-y-3"
             >
               {/* Icon container */}
-              <div className="w-14 h-14 rounded-lg border border-[#D4AF37]/40 bg-black flex items-center justify-center group-hover:border-[#D4AF37] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.25)] transition-all duration-300">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg border border-[#D4AF37]/40 bg-black flex items-center justify-center group-hover:border-[#D4AF37] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.25)] transition-all duration-300 shrink-0">
                 {icons[index]}
               </div>
 
@@ -53,8 +53,12 @@ export const Benefits: React.FC<BenefitsProps> = ({ currentLang }) => {
                 {item.title}
               </h3>
 
-              {/* Description */}
-              <p className="text-gray-200 text-[10px] sm:text-xs leading-relaxed font-medium">
+              {/* Description — hidden on very small to prevent overflow, visible sm+ */}
+              <p className="text-gray-400 text-[10px] sm:text-xs leading-relaxed font-medium hidden sm:block">
+                {item.description}
+              </p>
+              {/* Short description always visible on mobile */}
+              <p className="text-gray-400 text-[10px] leading-tight font-medium sm:hidden line-clamp-3">
                 {item.description}
               </p>
             </div>

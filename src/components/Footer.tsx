@@ -14,23 +14,28 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
   const hrefs = ['#hero', '#benefits', '#seminar', '#testimonials', '#faq'];
 
   return (
-    <footer id="footer" className="bg-black text-white relative overflow-hidden pt-16 pb-12 border-t border-[#D4AF37]/30">
+    <footer id="footer" className="bg-black text-white relative overflow-hidden pt-14 sm:pt-16 pb-10 sm:pb-12 border-t border-[#D4AF37]/30">
       {/* Subtle background glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-amber-900/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-800">
-          
-          {/* Column 1: Logo & Description */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center space-x-3">
+        {/* 
+          Mobile: 1 column (full width each), each section stacked
+          sm: 2 columns (logo+desc takes full row, then 2-col for quick links / socials / payments)
+          lg: 4 columns (logo 2 spans, quick links, socials, payments)
+        */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-gray-800">
+
+          {/* Column 1: Logo & Description — takes 2 cols on lg */}
+          <div className="sm:col-span-2 lg:col-span-1 space-y-4">
+            <div className="flex items-center">
               <img
                 src="/Logo_Barra_Superior.png"
                 alt="Ferreira Academy"
-                className="h-10 w-auto object-contain"
+                className="h-9 sm:h-10 w-auto object-contain"
               />
             </div>
-            <p className="text-gray-200 text-xs sm:text-sm leading-relaxed max-w-sm font-medium">
+            <p className="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-xs font-medium">
               {t.disclaimer}
             </p>
           </div>
@@ -45,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
                 <li key={idx}>
                   <a
                     href={hrefs[idx]}
-                    className="text-gray-200 hover:text-[#D4AF37] text-xs sm:text-sm font-medium transition-colors"
+                    className="text-gray-400 hover:text-[#D4AF37] text-xs sm:text-sm font-medium transition-colors"
                   >
                     {label}
                   </a>
@@ -59,18 +64,18 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
             <h3 className="text-[#D4AF37] font-extrabold text-xs uppercase tracking-[0.2em]">
               {t.followUs}
             </h3>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center flex-wrap gap-2 sm:gap-3">
               {[
                 { icon: <Instagram className="w-4 h-4 text-[#D4AF37]" />, href: '#' },
                 { icon: <Facebook className="w-4 h-4 text-[#D4AF37]" />, href: '#' },
                 { icon: <Youtube className="w-4 h-4 text-[#D4AF37]" />, href: '#' },
-                { 
+                {
                   icon: (
                     <svg className="w-4 h-4 text-[#D4AF37]" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
                     </svg>
-                  ), 
-                  href: '#' 
+                  ),
+                  href: '#'
                 },
               ].map((social, idx) => (
                 <a
@@ -89,23 +94,23 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
             <h3 className="text-[#D4AF37] font-extrabold text-xs uppercase tracking-[0.2em]">
               {t.securePlatform}
             </h3>
-            <p className="text-gray-200 text-xs font-medium">
+            <p className="text-gray-400 text-xs font-medium">
               {t.paySafely}
             </p>
-            <div className="flex items-center space-x-3 pt-1">
+            <div className="flex items-center flex-wrap gap-2 sm:gap-3 pt-1">
               {/* Stripe */}
-              <span className="font-extrabold text-sm sm:text-base text-[#8792FF] tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
+              <span className="font-extrabold text-sm text-[#8792FF] tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
                 stripe
               </span>
               {/* PayPal */}
-              <span className="font-black text-sm sm:text-base tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
+              <span className="font-black text-sm tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
                 <span className="text-[#0079C1]">Pay</span>
                 <span className="text-white">Pal</span>
               </span>
             </div>
-            <div className="flex items-center space-x-2 pt-1 text-gray-200">
+            <div className="flex items-center space-x-2 pt-1 text-gray-400">
               <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-100">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-300">
                 {t.globalPlatform}
               </span>
             </div>
@@ -114,9 +119,9 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
         </div>
 
         {/* Bottom copyright & legal links */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-200 font-medium">
-          <p>{t.rights}</p>
-          <div className="flex space-x-6 mt-4 sm:mt-0">
+        <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 font-medium gap-4 sm:gap-0">
+          <p className="text-center sm:text-left">{t.rights}</p>
+          <div className="flex space-x-6">
             <a href="#" className="hover:text-[#D4AF37] transition-colors">
               {t.privacy}
             </a>

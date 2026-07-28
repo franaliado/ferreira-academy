@@ -762,7 +762,7 @@ export const translations: Record<Language, TranslationSchema> = {
       instructorSub: 'Master Educator & Barber Authority',
       academyLine1: 'ACADEMIA INTERNACIONAL',
       academyLine2: 'DE CORTE MASCULINO E BARBEARIA PROFISSIONAL',
-      headline1: 'DOMINE A ARTE',
+      headline1: 'DOMINE O ARTE',
       headline2: 'TRANSFORME SEU <br class="sm:hidden" /> FUTURO',
       subtitleText: 'Aprenda técnicas modernas de corte masculino e barbearia profissional com Antonio Ferreira, de qualquer lugar do mundo.',
       securePayments: 'PAGAMENTOS 100% SEGUROS',

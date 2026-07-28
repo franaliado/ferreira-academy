@@ -16,27 +16,27 @@ export const Testimonials: React.FC<TestimonialsProps> = ({ currentLang }) => {
   const shortNames = ['Carlos M.', 'Juan P.', 'Andrés L.'];
 
   return (
-    <section id="testimonials" className="py-20 bg-black relative overflow-hidden">
+    <section id="testimonials" className="py-16 sm:py-20 bg-black relative overflow-hidden">
       {/* Top gold separator */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section header */}
-        <div className="flex items-center justify-center space-x-4 mb-12">
-          <div className="flex-1 max-w-[100px] h-px bg-gradient-to-l from-[#D4AF37]/40 to-transparent" />
-          <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-bold uppercase tracking-[0.12em] text-center">
+        <div className="flex items-center justify-center space-x-4 mb-10 sm:mb-12">
+          <div className="flex-1 max-w-[80px] sm:max-w-[100px] h-px bg-gradient-to-l from-[#D4AF37]/40 to-transparent" />
+          <h2 className="text-white text-lg sm:text-xl lg:text-3xl font-bold uppercase tracking-[0.12em] text-center">
             {t.sectionHeading}
           </h2>
-          <div className="flex-1 max-w-[100px] h-px bg-gradient-to-r from-[#D4AF37]/40 to-transparent" />
+          <div className="flex-1 max-w-[80px] sm:max-w-[100px] h-px bg-gradient-to-r from-[#D4AF37]/40 to-transparent" />
         </div>
 
-        {/* 3 Testimonial cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* 3 Testimonial cards — single col on mobile, 3 on md+ */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
           {t.items.slice(0, 3).map((item, index) => (
             <div
               key={index}
-              className="border border-[#D4AF37]/25 bg-[#0d0d0d] rounded-xl p-6 space-y-4 hover:border-[#D4AF37]/50 transition-all duration-300 group"
+              className="border border-[#D4AF37]/25 bg-[#0d0d0d] rounded-xl p-5 sm:p-6 space-y-4 hover:border-[#D4AF37]/50 transition-all duration-300 group"
             >
               {/* Stars */}
               <div className="flex space-x-1">
