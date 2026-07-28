@@ -201,7 +201,7 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine1: 'ACADEMIA INTERNACIONAL',
       academyLine2: 'DE CORTE MASCULINO Y BARBERÍA PROFESIONAL',
       headline1: 'DOMINA EL ARTE',
-      headline2: 'TRANSFORMA TU <br class="sm:hidden" /> FUTURO',
+      headline2: 'TRANSFORMA TU FUTURO',
       subtitleText: 'Aprende técnicas modernas de corte masculino y barbería profesional con Antonio Ferreira, desde cualquier parte del mundo.',
       securePayments: 'PAGOS 100% SEGUROS',
       stats: [
