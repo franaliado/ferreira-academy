@@ -80,9 +80,11 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
                 {t.headline1}
               </span>
               <span className="block gold-gradient-text mt-1 drop-shadow-lg w-full">
-                <span className="block w-full text-[7.5vw] sm:text-[2.8rem] xl:text-[3.4rem] tracking-tighter whitespace-nowrap leading-none">
-                  {t.headline2}
-                </span>
+                <span 
+                  className="block w-full tracking-tighter whitespace-nowrap leading-none sm:text-[2.8rem] xl:text-[3.4rem]"
+                  style={{ fontSize: '3vw' }}
+                  dangerouslySetInnerHTML={{ __html: t.headline2 }} 
+                />
               </span>
             </h1>
 
