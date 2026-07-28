@@ -75,13 +75,14 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-black uppercase leading-tight tracking-tight text-3xl sm:text-4xl lg:text-[2.5rem] xl:text-[3.1rem]">
+            <h1 className="font-black uppercase leading-tight tracking-tight text-2xl sm:text-4xl lg:text-[2.5rem] xl:text-[3.1rem]">
               <span className="block text-white">
                 {t.headline1}
               </span>
-              <span className="block gold-gradient-text mt-1 whitespace-nowrap drop-shadow-lg">
-                {t.headline2}
-              </span>
+              <span
+                className="block gold-gradient-text mt-1 sm:whitespace-nowrap drop-shadow-lg"
+                dangerouslySetInnerHTML={{ __html: t.headline2 }}
+              />
             </h1>
 
             {/* Subtitle */}
