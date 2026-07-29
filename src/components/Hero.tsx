@@ -139,7 +139,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               {/* ========================================== */}
               {/* 1. VERSIÓN MÓVIL (Usa el script y escala exacta) */}
               {/* ========================================== */}
-              <div className="block sm:hidden space-y-0">
+              <div className="block sm:hidden space-y-0.5">
                 {/* Línea 1 Móvil */}
                 <div ref={line1ContainerRef} className="w-full overflow-hidden block">
                   <span 
@@ -152,7 +152,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
                 </div>
 
                 {/* Línea 2 Móvil */}
-                <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
+                <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-0.5">
                   <span 
                     ref={line2TextRef}
                     className="block whitespace-nowrap tracking-tight"
