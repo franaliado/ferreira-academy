@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { currentCourse } from '@/data/currentCourse';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { fullName, email, phone, country, paymentMethod, amount, currency } = body;
 
-    const orderId = `FA-USD-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const orderId = `FA-${currentCourse.currency}-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     if (isSupabaseConfigured()) {
       await supabase.from('registrations').insert([
@@ -17,8 +18,8 @@ export async function POST(request: Request) {
           phone,
           country,
           payment_method: paymentMethod,
-          amount: amount || 149,
-          currency: currency || 'USD',
+          amount: amount || currentCourse.priceAmount,
+          currency: currency || currentCourse.currency,
           status: 'completed',
           created_at: new Date().toISOString(),
         },

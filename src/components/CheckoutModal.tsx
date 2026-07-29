@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Language, translations } from '@/lib/translations';
+import { currentCourse } from '@/data/currentCourse';
 import {
   X,
   CreditCard,
@@ -66,8 +67,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         body: JSON.stringify({
           ...formData,
           paymentMethod,
-          amount: 149,
-          currency: 'USD',
+          amount: currentCourse.priceAmount,
+          currency: currentCourse.currency,
+          stripePriceId: currentCourse.stripePriceId,
+          paypalPlanId: currentCourse.paypalPlanId,
         }),
       });
       const data = await res.json();
@@ -213,7 +216,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 type="submit"
                 className="w-full btn-gold-primary py-4 rounded-full text-base font-bold flex items-center justify-center space-x-2"
               >
-                <span>{t.proceedToPayment}</span>
+              <span>{t.proceedToPayment} ({currentCourse.displayPrice})</span>
                 <ArrowRight className="w-4 h-4 text-black" />
               </button>
             </div>
@@ -299,7 +302,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   Serás procesado a través de la pasarela segura en dólares de PayPal.
                 </p>
                 <div className="inline-block bg-amber-500/20 text-[#D4AF37] px-3 py-1 rounded-full text-xs font-semibold">
-                  Monto a Pagar: $149.00 USD
+                  Monto a Pagar: {currentCourse.displayPrice}
                 </div>
               </div>
             )}
@@ -312,7 +315,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 className="w-full btn-gold-primary py-4 rounded-full text-base font-bold flex items-center justify-center space-x-2"
               >
                 <Lock className="w-4 h-4 text-black" />
-                <span>{isProcessing ? t.processing : t.completePayment}</span>
+                <span>{isProcessing ? t.processing : `${t.completePayment} (${currentCourse.displayPrice})`}</span>
               </button>
 
               <button

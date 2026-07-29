@@ -69,9 +69,6 @@ export interface TranslationSchema {
     dateValue: string;
     modalityLabel: string;
     modalityValue: string;
-    priceTag: string;
-    originalPrice: string;
-    currentPrice: string;
     ctaButton: string;
     modulesTitle: string;
     modules: Array<{
@@ -280,9 +277,6 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: 'Domingo 9/08/2026',
       modalityLabel: 'Modalidad',
       modalityValue: 'Atención presencial',
-      priceTag: 'Precio de Inscripción',
-      originalPrice: '$95 USD',
-      currentPrice: '$95 USD',
       ctaButton: 'INSCRÍBETE AHORA',
       modulesTitle: 'Programa del Seminario',
       modules: [
@@ -413,8 +407,8 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Número de Tarjeta',
       cardExpiry: 'Expiración (MM/AA)',
       cardCvc: 'Código CVC',
-      proceedToPayment: 'Continuar al Pago ($80 USD)',
-      completePayment: 'Completar Pago Seguro ($80 USD)',
+      proceedToPayment: 'Continuar al Pago',
+      completePayment: 'Completar Pago Seguro',
       processing: 'Procesando Inscripción Segura...',
       successTitle: '¡Inscripción Confirmada con Éxito!',
       successSubtitle: 'Bienvenido a Ferreira Academy. Tu cupo oficial ha sido reservado.',
@@ -558,9 +552,6 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: 'Sunday 9/08/2026',
       modalityLabel: 'Modality',
       modalityValue: 'In-person attendance',
-      priceTag: 'Enrollment Price',
-      originalPrice: '$95 USD',
-      currentPrice: '$95 USD',
       ctaButton: 'ENROLL NOW',
       modulesTitle: 'Seminar Curriculum',
       modules: [
@@ -689,8 +680,8 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Card Number',
       cardExpiry: 'Expiration (MM/YY)',
       cardCvc: 'CVC Code',
-      proceedToPayment: 'Proceed to Payment ($80 USD)',
-      completePayment: 'Complete Secure Payment ($80 USD)',
+      proceedToPayment: 'Proceed to Payment',
+      completePayment: 'Complete Secure Payment',
       processing: 'Processing Secure Enrollment...',
       successTitle: 'Enrollment Successfully Confirmed!',
       successSubtitle: 'Welcome to Ferreira Academy. Your seat has been reserved.',
@@ -834,9 +825,6 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: 'Domingo 9/08/2026',
       modalityLabel: 'Modalidade',
       modalityValue: 'Atendimento presencial',
-      priceTag: 'Preço de Inscrição',
-      originalPrice: '$95 USD',
-      currentPrice: '$95 USD',
       ctaButton: 'INSCREVA-SE AGORA',
       modulesTitle: 'Programa do Seminário',
       modules: [
@@ -967,8 +955,8 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Número do Cartão',
       cardExpiry: 'Validade (MM/AA)',
       cardCvc: 'Código CVC',
-      proceedToPayment: 'Continuar para Pagamento ($80 USD)',
-      completePayment: 'Concluir Pagamento Seguro ($80 USD)',
+      proceedToPayment: 'Continuar para Pagamento',
+      completePayment: 'Concluir Pagamento Seguro',
       processing: 'Processando Inscrição Segura...',
       successTitle: 'Inscrição Confimada com Sucesso!',
       successSubtitle: 'Bem-vindo à Ferreira Academy. Sua vaga oficial está garantida.',
@@ -1112,9 +1100,6 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: '15 Ottobre 2026',
       modalityLabel: 'Modalità',
       modalityValue: 'Dal Vivo via Zoom HD',
-      priceTag: 'Offerta di Lancio Internazionale',
-      originalPrice: '$95 USD',
-      currentPrice: '$95 USD',
       ctaButton: 'ISCRIVITI ORA',
       modulesTitle: 'Programma del Seminario',
       modules: [
@@ -1247,8 +1232,8 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Numero di Carta',
       cardExpiry: 'Scadenza (MM/AA)',
       cardCvc: 'Codice CVC',
-      proceedToPayment: 'Procedi al Pagamento ($149 USD)',
-      completePayment: 'Completa il Pagamento Sicuro ($149 USD)',
+      proceedToPayment: 'Procedi al Pagamento',
+      completePayment: 'Completa il Pagamento Sicuro',
       processing: 'Elaborazione Iscrizione Sicura...',
       successTitle: 'Iscrizione Confermata con Successo!',
       successSubtitle: 'Benvenuto a Ferreira Academy. Il tuo posto ufficiale è stato riservato.',
@@ -1392,9 +1377,6 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: '15 Octobre 2026',
       modalityLabel: 'Modalité',
       modalityValue: 'En Direct via Zoom HD',
-      priceTag: 'Offre de Lancement Internationale',
-      originalPrice: '$95 USD',
-      currentPrice: '$95 USD',
       ctaButton: 'S\'INSCRIRE MAINTENANT',
       modulesTitle: 'Programme du Séminaire',
       modules: [
@@ -1527,8 +1509,8 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Numéro de Carte',
       cardExpiry: 'Expiration (MM/AA)',
       cardCvc: 'Code CVC',
-      proceedToPayment: 'Procéder au Paiement ($149 USD)',
-      completePayment: 'Finaliser le Paiement Sécurisé ($149 USD)',
+      proceedToPayment: 'Procéder au Paiement',
+      completePayment: 'Finaliser le Paiement Sécurisé',
       processing: 'Traitement de l\'Inscription Sécurisée...',
       successTitle: 'Inscription Confirmée avec Succès !',
       successSubtitle: 'Bienvenue à Ferreira Academy. Votre place officielle a été réservée.',
@@ -1672,9 +1654,6 @@ export const translations: Record<Language, TranslationSchema> = {
         dateValue: 'Sonntag, 09.08.2026',
         modalityLabel: 'Format',
         modalityValue: 'Präsenzunterricht',
-        priceTag: 'Zertifizierung & Inklusion',
-      originalPrice: '$95 USD',
-      currentPrice: '$95 USD',
         ctaButton: 'JETZT ANMELDEN',
         modulesTitle: 'Seminarprogramm',
         modules: [
@@ -1805,8 +1784,8 @@ export const translations: Record<Language, TranslationSchema> = {
         cardNumber: 'Kartennummer',
         cardExpiry: 'Ablaufdatum (MM/JJ)',
         cardCvc: 'CVC-Code',
-        proceedToPayment: 'Weiter zur Zahlung ($80 USD)',
-        completePayment: 'Sichere Zahlung abschließen ($80 USD)',
+        proceedToPayment: 'Weiter zur Zahlung',
+        completePayment: 'Sichere Zahlung abschließen',
         processing: 'Sichere Anmeldung wird verarbeitet...',
         successTitle: 'Anmeldung erfolgreich bestätigt!',
         successSubtitle: 'Willkommen bei Ferreira Academy. Dein offizieller Platz wurde reserviert.',
