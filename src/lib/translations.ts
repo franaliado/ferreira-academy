@@ -1580,7 +1580,7 @@ export const translations: Record<Language, TranslationSchema> = {
         titleLine2: 'Faded Mastery Elite',
         subtitle:
           'Fortgeschrittene Schulung für Profis: Fade-Techniken und Zeitoptimierung basierend auf der Schädelstruktur.',
-        csaButton: 'JETZT ANMELDEN',
+        ctaButton: 'JETZT ANMELDEN',
         quickStats: {
           countries: '+25 Teilnehmende Länder',
           zoomLive: 'Präsenzunterricht',
