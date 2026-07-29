@@ -133,14 +133,14 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               </p>
             </div>
 
-            {/* Título Principal — Escalado móvil independiente por cada línea */}
-            <h1 className="font-black uppercase leading-tight tracking-tight text-4xl sm:text-5xl lg:text-[2.8rem] xl:text-[3.4rem]">
+            {/* Título Principal — Tratamiento independiente para Móvil y PC */}
+            <h1 className="font-black uppercase leading-tight tracking-tight">
               
               {/* Contenedor de la primera línea ("Domina el arte") */}
               <div ref={line1ContainerRef} className="w-full overflow-hidden block">
                 <span 
                   ref={line1TextRef}
-                  className="block text-white whitespace-nowrap tracking-tight sm:text-[2.8rem] xl:text-[3.4rem]"
+                  className="block text-white whitespace-nowrap tracking-tight lg:text-[2.8rem] xl:text-[3.4rem]"
                   style={{ fontSize: '2.25rem' }} 
                 >
                   {t.headline1}
@@ -151,7 +151,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
                 <span 
                   ref={line2TextRef}
-                  className="block whitespace-nowrap tracking-tight sm:text-[2.8rem] xl:text-[3.4rem]"
+                  className="block whitespace-nowrap tracking-tight lg:text-[2.8rem] xl:text-[3.4rem]"
                   style={{ fontSize: '2.25rem' }}
                 >
                   <span className="gold-gradient-text drop-shadow-lg inline-block">
