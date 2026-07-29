@@ -69,8 +69,6 @@ export interface TranslationSchema {
     dateValue: string;
     modalityLabel: string;
     modalityValue: string;
-    durationLabel: string;
-    durationValue: string;
     priceTag: string;
     originalPrice: string;
     currentPrice: string;
@@ -84,7 +82,7 @@ export interface TranslationSchema {
     liveBadge: string;
     courseTitleLine1: string;
     courseTitleLine2: string;
-    checklist: [string, string, string, string, string, string];
+    checklist: string[];
   };
   certificate: {
     badge: string;
@@ -170,7 +168,7 @@ export interface TranslationSchema {
     bannerSubtitle: string;
     button: string;
   };
-}
+};
 
 export const translations: Record<Language, TranslationSchema> = {
   // ─────────────────────────── ESPAÑOL ───────────────────────────
@@ -181,19 +179,19 @@ export const translations: Record<Language, TranslationSchema> = {
       benefits: 'Beneficios',
       seminar: 'El Seminario',
       certificate: 'Certificado',
-      faq: 'Preguntas Frecuentes',
-      selectLanguage: 'Idioma',
+      faq: 'FAQ',
+      selectLanguage: 'Lenguaje',
     },
     hero: {
-      badge: 'Masterclass Internacional 2026',
-      titleLine1: 'Seminario Internacional de Alta Barbería',
-      titleLine2: 'y Corte Masculino de Elite',
+      badge: 'Capacitación Presencial 2026',
+      titleLine1: 'Seminario de Alta Barbería',
+      titleLine2: 'Faded Mastery Elite',
       subtitle:
-        'Aprende las técnicas vanguardistas de corte, visagismo y barbería ejecutiva en vivo con Antonio Ferreira. Domina la industria y eleva tu carrera al nivel internacional.',
+        'Capacitación Avanzada para Profesionales. Técnicas de fade y optimización de tiempos en función del sistema craneal.',
       ctaButton: 'INSCRÍBETE AHORA',
       quickStats: {
         countries: '+25 Países Participantes',
-        zoomLive: 'Transmisión HD En Vivo',
+        zoomLive: 'Atención Presencial',
         certification: 'Firma Digital Exclusiva',
       },
       instructorTag: 'Antonio Ferreira',
@@ -202,13 +200,13 @@ export const translations: Record<Language, TranslationSchema> = {
       academyLine2: 'DE CORTE MASCULINO Y BARBERÍA PROFESIONAL',
       headline1: 'DOMINA EL ARTE',
       headline2: 'TRANSFORMA TU FUTURO',
-      subtitleText: 'Aprende técnicas modernas de corte masculino y barbería profesional con Antonio Ferreira, desde cualquier parte del mundo.',
+      subtitleText: 'Capacitación Avanzada para Profesionales. Técnicas de fade y optimización de tiempos en función del sistema craneal.',
       securePayments: 'PAGOS 100% SEGUROS',
       stats: [
-        { line1: 'CLASES EN VIVO', line2: 'POR ZOOM' },
-        { line1: 'ACCESO PERMANENTE', line2: 'A GRABACIONES' },
-        { line1: 'CERTIFICACIÓN', line2: 'DIGITAL' },
-        { line1: 'COMUNIDAD', line2: 'INTERNACIONAL' },
+        { line1: 'CLASES PRESENCIALES', line2: 'EN VIVO' },
+        { line1: 'CERTIFICADO DE', line2: 'PARTICIPACIÓN' },
+        { line1: 'COFFEE BREAK', line2: 'INCLUIDO' },
+        { line1: 'OPTIMIZACIÓN DE', line2: 'TIEMPOS' },
       ],
     },
     instructor: {
@@ -275,18 +273,16 @@ export const translations: Record<Language, TranslationSchema> = {
     },
     seminar: {
       badge: 'Detalles del Seminario',
-      title: 'Masterclass Internacional: High-End Barbering 2026',
+      title: 'FADED MASTERY ELITE',
       subtitle:
-        'Un día intensivo de inmersión total en técnicas ejecutivas y visión de negocio de alta barbería.',
+        'Capacitación Avanzada para Profesionales. Técnicas de fade y optimización de tiempos en función del sistema craneal.',
       dateLabel: 'Fecha Oficial',
-      dateValue: '15 de Octubre, 2026',
+      dateValue: 'Domingo 9/08/2026',
       modalityLabel: 'Modalidad',
-      modalityValue: 'En Vivo vía Zoom HD',
-      durationLabel: 'Duración Total',
-      durationValue: '8 HORAS',
-      priceTag: 'Oferta de Lanzamiento Internacional',
-      originalPrice: '$350 USD',
-      currentPrice: '$149 USD',
+      modalityValue: 'Atención presencial',
+      priceTag: 'Precio de Inscripción',
+      originalPrice: '$80 USD',
+      currentPrice: '$80 USD',
       ctaButton: 'INSCRÍBETE AHORA',
       modulesTitle: 'Programa del Seminario',
       modules: [
@@ -311,16 +307,14 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'Cómo cobrar tarifas de lujo, crear contenido de alto impacto y escalar tu barbería a nivel global.',
         },
       ],
-      liveBadge: 'CURSO EN VIVO',
-      courseTitleLine1: 'CORTE MASCULINO',
-      courseTitleLine2: 'Y BARBERÍA PROFESIONAL',
+      liveBadge: 'ATENCIÓN PRESENCIAL',
+      courseTitleLine1: 'FADED MASTERY',
+      courseTitleLine2: 'ELITE',
       checklist: [
-        'Fundamentos y técnicas avanzadas de corte masculino',
-        'Degradados, texturas y acabados profesionales',
-        'Arreglo de barba y perfilado',
-        'Estilizado y tendencias actuales',
-        'Sesiones en vivo + acceso a grabaciones ilimitadas',
-        'Certificado digital al finalizar',
+        'Capacitación avanzada',
+        'Técnicas de fade y optimización de tiempos en función del sistema craneal',
+        'Certificado de Participación',
+        'Coffee Break',
       ],
     },
     certificate: {
@@ -355,7 +349,7 @@ export const translations: Record<Language, TranslationSchema> = {
           role: 'Director de Barber Studio',
           location: 'Miami, EE. UU.',
           comment:
-            'La metodología de 8 horas de Antonio es pura práctica sin rodeos. La comunidad de WhatsApp post-evento sigue aportando un valor incalculable.',
+            'La metodología de Antonio es pura práctica sin rodeos. La comunidad de WhatsApp post-evento sigue aportando un valor incalculable.',
           rating: 5,
         },
         {
@@ -373,17 +367,17 @@ export const translations: Record<Language, TranslationSchema> = {
     faq: {
       badge: 'Resolución de Dudas',
       title: 'Preguntas Frecuentes',
-      subtitle: 'Todo lo que necesitas saber antes de asegurar tu cupo internacional.',
+      subtitle: 'Todo lo que necesitas saber antes de asegurar tu cupo presencial.',
       items: [
         {
-          question: '¿Cómo accedo a la transmisión en vivo de Zoom?',
+          question: '¿Cómo accedo al lugar de la capacitación?',
           answer:
-            'Inmediatamente después de completar tu pago en la plataforma, serás redirigido a tu portal de confirmación donde obtendrás el enlace directo de Zoom y la invitación exclusiva al grupo de WhatsApp.',
+            'Inmediatamente después de completar tu pago en la plataforma, recibirás una confirmación con la dirección exacta del evento presencial y la invitación exclusiva al grupo de WhatsApp.',
         },
         {
           question: '¿Cuándo y cómo recibo mi certificado oficial?',
           answer:
-            'Al finalizar el seminario en vivo, recibirás automáticamente en tu correo electrónico el Certificado Digital en formato PDF de alta resolución con tu nombre completo y la firma oficial de Antonio Ferreira.',
+            'Al finalizar el seminario presencial, recibirás automáticamente en tu correo electrónico el Certificado Digital en formato PDF de alta resolución con tu nombre completo y la firma oficial de Antonio Ferreira.',
         },
         {
           question: '¿Qué métodos de pago están disponibles?',
@@ -391,9 +385,9 @@ export const translations: Record<Language, TranslationSchema> = {
             'Aceptamos pagos internacionales seguros procesados en dólares americanos (USD) mediante Stripe (Tarjetas de Crédito y Débito Visa, Mastercard, AMEX) y PayPal.',
         },
         {
-          question: '¿Qué pasa si no puedo asistir en vivo a la hora programada?',
+          question: '¿Qué pasa si no puedo asistir en la fecha programada?',
           answer:
-            'Todos los participantes registrados tendrán acceso grabado en resolución HD durante 30 días posteriores al evento para repasar cada lección a su propio ritmo.',
+            'Te solicitamos comunicarte con soporte al menos 48 horas antes del evento para coordinar la reprogramación de tu cupo para la siguiente fecha disponible.',
         },
         {
           question: '¿Cómo me uniré a la Comunidad Privada de WhatsApp?',
@@ -403,8 +397,8 @@ export const translations: Record<Language, TranslationSchema> = {
       ],
     },
     checkout: {
-      title: 'Registro Oficial al Seminario Internacional',
-      subtitle: 'Asegura tu cupo en la Masterclass en Vivo de Antonio Ferreira',
+      title: 'Registro Oficial - Faded Mastery Elite',
+      subtitle: 'Asegura tu cupo en la Capacitación Avanzada para Profesionales de Antonio Ferreira',
       step1Title: '1. Datos del Asistente',
       step2Title: '2. Selección de Pago (USD)',
       step3Title: '3. Confirmación & Accesos',
@@ -419,19 +413,19 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Número de Tarjeta',
       cardExpiry: 'Expiración (MM/AA)',
       cardCvc: 'Código CVC',
-      proceedToPayment: 'Continuar al Pago ($149 USD)',
-      completePayment: 'Completar Pago Seguro ($149 USD)',
+      proceedToPayment: 'Continuar al Pago ($80 USD)',
+      completePayment: 'Completar Pago Seguro ($80 USD)',
       processing: 'Procesando Inscripción Segura...',
       successTitle: '¡Inscripción Confirmada con Éxito!',
       successSubtitle: 'Bienvenido a Ferreira Academy. Tu cupo oficial ha sido reservado.',
       orderId: 'ID de Transacción',
       joinWhatsapp: 'UNIRSE A LA COMUNIDAD EXCLUSIVA DE WHATSAPP',
       whatsappBadge: 'Acceso Permitido Exclusivamente Post-Pago',
-      zoomDetails: 'Credenciales de Acceso a Zoom',
-      zoomDate: '15 de Octubre, 2026 | 14:00 UTC',
-      zoomLink: 'Enlace de Sala Zoom HD',
+      zoomDetails: 'Detalles del Curso Presencial',
+      zoomDate: 'Domingo 9/08/2026',
+      zoomLink: 'Dirección / Sede Presencial',
       closeModal: 'Cerrar Portal',
-      modalBadge: 'Seminario Internacional En Vivo 2026',
+      modalBadge: 'Faded Mastery Elite - Presencial 2026',
     },
     footer: {
       rights: '© 2026 Ferreira Academy. Todos los derechos reservados.',
@@ -467,30 +461,30 @@ export const translations: Record<Language, TranslationSchema> = {
       selectLanguage: 'Language',
     },
     hero: {
-      badge: 'International Masterclass 2026',
-      titleLine1: 'International High-End Barbering',
-      titleLine2: '& Elite Male Hairdressing Seminar',
+      badge: 'In-person Training 2026',
+      titleLine1: 'High-End Barbering Seminar',
+      titleLine2: 'Faded Mastery Elite',
       subtitle:
-        'Learn cutting-edge techniques in hair cutting, visagism, and executive barbering live with Antonio Ferreira. Master the industry and elevate your career internationally.',
+        'Advanced Training for Professionals. Fade techniques and time optimization based on the cranial system.',
       ctaButton: 'ENROLL NOW',
       quickStats: {
         countries: '+25 Countries Participating',
-        zoomLive: 'HD Live Stream',
+        zoomLive: 'In-person Attendance',
         certification: 'Exclusive Digital Signature',
       },
       instructorTag: 'Antonio Ferreira',
       instructorSub: 'Master Educator & Barber Authority',
       academyLine1: 'INTERNATIONAL ACADEMY',
       academyLine2: 'OF MALE CUTTING & PROFESSIONAL BARBERING',
-      headline1: 'MASTER THE ART',
+      headline1: 'DOMINATE THE ART',
       headline2: 'TRANSFORM YOUR FUTURE',
-      subtitleText: 'Learn modern male cutting and professional barbering techniques with Antonio Ferreira, from anywhere in the world.',
+      subtitleText: 'Advanced Training for Professionals. Fade techniques and time optimization based on the cranial system.',
       securePayments: '100% SECURE PAYMENTS',
       stats: [
-        { line1: 'LIVE CLASSES', line2: 'VIA ZOOM' },
-        { line1: 'PERMANENT ACCESS', line2: 'TO RECORDINGS' },
-        { line1: 'DIGITAL', line2: 'CERTIFICATION' },
-        { line1: 'INTERNATIONAL', line2: 'COMMUNITY' },
+        { line1: 'IN-PERSON CLASSES', line2: 'LIVE' },
+        { line1: 'CERTIFICATE OF', line2: 'PARTICIPATION' },
+        { line1: 'COFFEE BREAK', line2: 'INCLUDED' },
+        { line1: 'TIME', line2: 'OPTIMIZATION' },
       ],
     },
     instructor: {
@@ -557,18 +551,16 @@ export const translations: Record<Language, TranslationSchema> = {
     },
     seminar: {
       badge: 'Seminar Details',
-      title: 'International Masterclass: High-End Barbering 2026',
+      title: 'FADED MASTERY ELITE',
       subtitle:
-        'An intensive full day dedicated to executive techniques and luxury barber business strategy.',
+        'Advanced Training for Professionals. Fade techniques and time optimization based on the cranial system.',
       dateLabel: 'Official Date',
-      dateValue: 'October 15, 2026',
+      dateValue: 'Sunday 9/08/2026',
       modalityLabel: 'Modality',
-      modalityValue: 'Live via Zoom HD',
-      durationLabel: 'Total Duration',
-      durationValue: '8 HOURS',
-      priceTag: 'International Launch Offer',
-      originalPrice: '$350 USD',
-      currentPrice: '$149 USD',
+      modalityValue: 'In-person attendance',
+      priceTag: 'Enrollment Price',
+      originalPrice: '$80 USD',
+      currentPrice: '$80 USD',
       ctaButton: 'ENROLL NOW',
       modulesTitle: 'Seminar Curriculum',
       modules: [
@@ -593,16 +585,14 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'How to charge luxury rates, produce high-impact content, and scale your brand globally.',
         },
       ],
-      liveBadge: 'LIVE COURSE',
-      courseTitleLine1: 'MALE CUTTING',
-      courseTitleLine2: '& PROFESSIONAL BARBERING',
+      liveBadge: 'IN-PERSON TRAINING',
+      courseTitleLine1: 'FADED MASTERY',
+      courseTitleLine2: 'ELITE',
       checklist: [
-        'Fundamentals and advanced male cutting techniques',
-        'Fades, textures and professional finishes',
-        'Beard grooming and profiling',
-        'Styling and current trends',
-        'Live sessions + unlimited recording access',
-        'Digital certificate upon completion',
+        'Advanced training',
+        'Fade techniques and time optimization based on the cranial system',
+        'Certificate of Participation',
+        'Coffee Break',
       ],
     },
     certificate: {
@@ -635,7 +625,7 @@ export const translations: Record<Language, TranslationSchema> = {
           role: 'Barber Studio Director',
           location: 'Miami, USA',
           comment:
-            'Antonio\'s 8-hour live masterclass is straight to the point. The post-event WhatsApp community continues to provide immense value.',
+            'Antonio\'s methodology is straight to the point. The post-event WhatsApp community continues to provide immense value.',
           rating: 5,
         },
         {
@@ -653,17 +643,17 @@ export const translations: Record<Language, TranslationSchema> = {
     faq: {
       badge: 'Q&A Help',
       title: 'Frequently Asked Questions',
-      subtitle: 'Everything you need to know before securing your international seat.',
+      subtitle: 'Everything you need to know before securing your in-person seat.',
       items: [
         {
-          question: 'How do I access the Zoom live stream?',
+          question: 'How do I access the venue?',
           answer:
-            'Immediately after completing payment, you will be redirected to your confirmation portal with your direct Zoom access link and private WhatsApp community invite.',
+            'Immediately after completing payment, you will receive a confirmation with the exact address of the in-person event and the exclusive invite to the WhatsApp group.',
         },
         {
           question: 'When and how do I receive my official certificate?',
           answer:
-            'Right after the live masterclass finishes, your high-resolution digital PDF certificate featuring your full name and Antonio Ferreira\'s signature will be delivered to your email.',
+            'Right after the in-person seminar finishes, your high-resolution digital PDF certificate featuring your full name and Antonio Ferreira\'s signature will be delivered to your email.',
         },
         {
           question: 'What payment methods are supported?',
@@ -671,9 +661,9 @@ export const translations: Record<Language, TranslationSchema> = {
             'We accept secure international payments in US Dollars (USD) via Stripe (Visa, Mastercard, AMEX Credit & Debit cards) and PayPal.',
         },
         {
-          question: 'What if I cannot attend the live session in real time?',
+          question: 'What if I cannot attend the event on the scheduled date?',
           answer:
-            'All registered participants receive 30 days of HD recording access post-event to review every technique at their own pace.',
+            'Please contact support at least 48 hours before the event to coordinate rescheduling your seat for the next available date.',
         },
         {
           question: 'How do I join the Private WhatsApp Community?',
@@ -683,8 +673,8 @@ export const translations: Record<Language, TranslationSchema> = {
       ],
     },
     checkout: {
-      title: 'Official International Seminar Enrollment',
-      subtitle: 'Secure your seat for Antonio Ferreira\'s Live Masterclass',
+      title: 'Official Registration - Faded Mastery Elite',
+      subtitle: 'Secure your seat for Antonio Ferreira\'s Advanced Training for Professionals',
       step1Title: '1. Attendee Information',
       step2Title: '2. Payment Selection (USD)',
       step3Title: '3. Confirmation & Access',
@@ -699,19 +689,19 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Card Number',
       cardExpiry: 'Expiration (MM/YY)',
       cardCvc: 'CVC Code',
-      proceedToPayment: 'Proceed to Payment ($149 USD)',
-      completePayment: 'Complete Secure Payment ($149 USD)',
+      proceedToPayment: 'Proceed to Payment ($80 USD)',
+      completePayment: 'Complete Secure Payment ($80 USD)',
       processing: 'Processing Secure Enrollment...',
       successTitle: 'Enrollment Successfully Confirmed!',
       successSubtitle: 'Welcome to Ferreira Academy. Your seat has been reserved.',
       orderId: 'Transaction ID',
       joinWhatsapp: 'JOIN EXCLUSIVE WHATSAPP COMMUNITY',
       whatsappBadge: 'Access Granted Exclusively Post-Payment',
-      zoomDetails: 'Zoom Access Credentials',
-      zoomDate: 'October 15, 2026 | 14:00 UTC',
-      zoomLink: 'Zoom Room HD Link',
+      zoomDetails: 'In-person Course Details',
+      zoomDate: 'Sunday 9/08/2026',
+      zoomLink: 'Location / In-person Venue',
       closeModal: 'Close Portal',
-      modalBadge: 'Live International Seminar 2026',
+      modalBadge: 'Faded Mastery Elite - In-person 2026',
     },
     footer: {
       rights: '© 2026 Ferreira Academy. All rights reserved.',
@@ -731,46 +721,45 @@ export const translations: Record<Language, TranslationSchema> = {
       bannerTitlePart2: 'STARTS HERE',
       bannerSubtitle:
         'Join hundreds of students who are already transforming their talent into a professional career.',
-      button: 'ENROLL NOW',
     },
   },
 
-  // ─────────────────────────── PORTUGUÊS ───────────────────────────
-  pt: {
+     // ─────────────────────────── PORTUGUEZ ───────────────────────────
+    pt: {
     nav: {
       home: 'Início',
       instructor: 'O Instrutor',
-      benefits: 'Benefícios',
+      benefits: 'Vantagens',
       seminar: 'O Seminário',
       certificate: 'Certificado',
       faq: 'FAQ',
       selectLanguage: 'Idioma',
     },
     hero: {
-      badge: 'Masterclass Internacional 2026',
-      titleLine1: 'Seminário Internacional de Alta Barbearia',
-      titleLine2: 'e Corte Masculino de Elite',
+      badge: 'Capacitação Presencial 2026',
+      titleLine1: 'Seminário de Alta Barbearia',
+      titleLine2: 'Faded Mastery Elite',
       subtitle:
-        'Aprenda as técnicas vanguardistas de corte, visagismo e barbearia executiva ao vivo com Antonio Ferreira. Domine a indústria e eleve sua carreira ao nível internacional.',
+        'Capacitação Avançada para Profissionais. Técnicas de fade e otimização de tempos com base no sistema cranial.',
       ctaButton: 'INSCREVA-SE AGORA',
       quickStats: {
         countries: '+25 Países Participantes',
-        zoomLive: 'Transmissão HD Ao Vivo',
+        zoomLive: 'Atendimento Presencial',
         certification: 'Assinatura Digital Exclusiva',
       },
       instructorTag: 'Antonio Ferreira',
       instructorSub: 'Master Educator & Barber Authority',
       academyLine1: 'ACADEMIA INTERNACIONAL',
       academyLine2: 'DE CORTE MASCULINO E BARBEARIA PROFISSIONAL',
-      headline1: 'DOMINE O ARTE',
+      headline1: 'DOMINE A ARTE',
       headline2: 'TRANSFORME SEU FUTURO',
-      subtitleText: 'Aprenda técnicas modernas de corte masculino e barbearia profissional com Antonio Ferreira, de qualquer lugar do mundo.',
+      subtitleText: 'Capacitação Avançada para Profissionais. Técnicas de fade e otimização de tempos com base no sistema cranial.',
       securePayments: 'PAGAMENTOS 100% SEGUROS',
       stats: [
-        { line1: 'AULAS AO VIVO', line2: 'POR ZOOM' },
-        { line1: 'ACESSO PERMANENTE', line2: 'ÀS GRAVAÇÕES' },
-        { line1: 'CERTIFICAÇÃO', line2: 'DIGITAL' },
-        { line1: 'COMUNIDADE', line2: 'INTERNACIONAL' },
+        { line1: 'CLASES PRESENCIAIS', line2: 'AO VIVO' },
+        { line1: 'CERTIFICADO DE', line2: 'PARTICIPAÇÃO' },
+        { line1: 'COFFEE BREAK', line2: 'INCLUÍDO' },
+        { line1: 'OTIMIZAÇÃO DE', line2: 'TEMPOS' },
       ],
     },
     instructor: {
@@ -779,7 +768,7 @@ export const translations: Record<Language, TranslationSchema> = {
       subtitle:
         'Referência global na evolução do estilismo masculino contemporâneo e alta barbearia.',
       bio1: 'Com mais de 15 anos de trajetória liderando palcos e plataformas educacionais na Europa e América, Antonio Ferreira revolucionou o corte masculino de luxo unindo geometria clássica e dinamismo moderno.',
-      bio2: 'Sua metodologia prática e visionária já capacitou milhares de barbeiros profissionais que hoje dirigem estúdios de alto prestígio mundialmente.',
+      bio2: 'Sua metodologia prática e visionaria já capacitou milhares de barbeiros profissionais que hoje dirigem estúdios de alto prestígio mundialmente.',
       stat1Label: 'Anos de Experiência',
       stat1Value: '15+',
       stat2Label: 'Profissionais Certificados',
@@ -805,7 +794,7 @@ export const translations: Record<Language, TranslationSchema> = {
             'Demonstração passo a passo em modelos reais com correção de ângulos e estruturas em tempo real.',
         },
         {
-          title: 'Crescimento Profissional Acelerado',
+          title: 'Crecimento Profissional Acelerado',
           description:
             'Estratégias de posicionamento de marca, precificação premium e fidelização de clientes de alto ticket.',
         },
@@ -837,18 +826,16 @@ export const translations: Record<Language, TranslationSchema> = {
     },
     seminar: {
       badge: 'Detalhes do Seminário',
-      title: 'Masterclass Internacional: High-End Barbering 2026',
+      title: 'FADED MASTERY ELITE',
       subtitle:
-        'Um dia intensivo de imersão total em técnicas executivas e visão de negócios de barbearia de luxo.',
+        'Capacitação Avançada para Profissionais. Técnicas de fade e otimização de tempos com base no sistema cranial.',
       dateLabel: 'Data Oficial',
-      dateValue: '15 de Outubro, 2026',
+      dateValue: 'Domingo 9/08/2026',
       modalityLabel: 'Modalidade',
-      modalityValue: 'Ao Vivo via Zoom HD',
-      durationLabel: 'Duração Total',
-      durationValue: '8 HORAS',
-      priceTag: 'Oferta de Lançamento Internacional',
-      originalPrice: '$350 USD',
-      currentPrice: '$149 USD',
+      modalityValue: 'Atendimento presencial',
+      priceTag: 'Preço de Inscrição',
+      originalPrice: '$80 USD',
+      currentPrice: '$80 USD',
       ctaButton: 'INSCREVA-SE AGORA',
       modulesTitle: 'Programa do Seminário',
       modules: [
@@ -873,16 +860,14 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'Como cobrar tarifas de luxo, gerar conteúdo de alto impacto e escalar sua barbearia mundialmente.',
         },
       ],
-      liveBadge: 'CURSO AO VIVO',
-      courseTitleLine1: 'CORTE MASCULINO',
-      courseTitleLine2: 'E BARBEARIA PROFISSIONAL',
+      liveBadge: 'ATENDIMENTO PRESENCIAL',
+      courseTitleLine1: 'FADED MASTERY',
+      courseTitleLine2: 'ELITE',
       checklist: [
-        'Fundamentos e técnicas avançadas de corte masculino',
-        'Degradês, texturas e acabamentos profissionais',
-        'Aparagem de barba e perfilado',
-        'Estilização e tendências atuais',
-        'Sessões ao vivo + acesso ilimitado às gravações',
-        'Certificado digital ao finalizar',
+        'Capacitação avançada',
+        'Técnicas de fade e otimização de tempos com base no sistema cranial',
+        'Certificado de Participação',
+        'Coffee Break',
       ],
     },
     certificate: {
@@ -917,7 +902,7 @@ export const translations: Record<Language, TranslationSchema> = {
           role: 'Diretor de Barber Studio',
           location: 'Miami, EUA',
           comment:
-            'A metodologia de 8 horas de Antonio é prática direta sem rodeios. A comunidade de WhatsApp pós-evento continua entregando um valor inestimável.',
+            'A metodologia de Antonio é prática direta sem rodeios. A comunidade de WhatsApp pós-evento continua entregando um valor inestimável.',
           rating: 5,
         },
         {
@@ -934,18 +919,18 @@ export const translations: Record<Language, TranslationSchema> = {
     },
     faq: {
       badge: 'Resolução de Dúvidas',
-      title: 'Perguntas Frequentes',
-      subtitle: 'Tudo o que você precisa saber antes de garantir sua vaga internacional.',
+      title: 'Perguntas Frecuentes',
+      subtitle: 'Tudo o que você precisa saber antes de garantir sua vaga presencial.',
       items: [
         {
-          question: 'Como me conecto à transmissão ao vivo no Zoom?',
+          question: 'Como chego ao local do evento?',
           answer:
-            'Imediatamente após concluir o pagamento, você será direcionado ao portal de confirmação com seu link direto de acesso ao Zoom e convite exclusivo para o grupo de WhatsApp.',
+            'Imediatamente após concluir o pagamento, você receberá a confirmação com o endereço exato do evento presencial e o convite exclusivo para o grupo de WhatsApp.',
         },
         {
           question: 'Quando e como recebo meu certificado oficial?',
           answer:
-            'Assim que o seminário ao vivo for concluído, você receberá automaticamente em seu e-mail o Certificado Digital PDF em alta resolução com seu nome completo e assinatura oficial de Antonio Ferreira.',
+            'Assim que o seminário presencial for concluído, você receberá automaticamente em seu e-mail o Certificado Digital PDF em alta resolução com seu nome completo e assinatura oficial de Antonio Ferreira.',
         },
         {
           question: 'Quais são os métodos de pagamento aceitos?',
@@ -953,9 +938,9 @@ export const translations: Record<Language, TranslationSchema> = {
             'Aceitamos pagamentos internacionais seguros em Dólares Americanos (USD) via Stripe (Cartões de Crédito e Débito Visa, Mastercard, AMEX) e PayPal.',
         },
         {
-          question: 'E se eu não puder assistir ao vivo no horário agendado?',
+          question: 'E se eu não puder assistir na data agendada?',
           answer:
-            'Todos os inscritos terão acesso à gravação em alta definição HD durante 30 dias após o evento para rever cada técnica no seu próprio ritmo.',
+            'Por favor entre em contato com o suporte com pelo menos 48 horas de antecedência para remarcar seu cupom para a próxima data disponível.',
         },
         {
           question: 'Como entro na Comunidade Privada de WhatsApp?',
@@ -965,8 +950,8 @@ export const translations: Record<Language, TranslationSchema> = {
       ],
     },
     checkout: {
-      title: 'Inscrição Oficial no Seminário Internacional',
-      subtitle: 'Garanta sua vaga na Masterclass Ao Vivo de Antonio Ferreira',
+      title: 'Inscrição Oficial - Faded Mastery Elite',
+      subtitle: 'Garanta sua vaga na Capacitação Avançada para Profissionais',
       step1Title: '1. Dados do Participante',
       step2Title: '2. Seleção de Pagamento (USD)',
       step3Title: '3. Confirmação & Acessos',
@@ -981,19 +966,19 @@ export const translations: Record<Language, TranslationSchema> = {
       cardNumber: 'Número do Cartão',
       cardExpiry: 'Validade (MM/AA)',
       cardCvc: 'Código CVC',
-      proceedToPayment: 'Continuar para Pagamento ($149 USD)',
-      completePayment: 'Concluir Pagamento Seguro ($149 USD)',
+      proceedToPayment: 'Continuar para Pagamento ($80 USD)',
+      completePayment: 'Concluir Pagamento Seguro ($80 USD)',
       processing: 'Processando Inscrição Segura...',
-      successTitle: 'Inscrição Confirmada com Sucesso!',
+      successTitle: 'Inscrição Confimada com Sucesso!',
       successSubtitle: 'Bem-vindo à Ferreira Academy. Sua vaga oficial está garantida.',
       orderId: 'ID de Transação',
       joinWhatsapp: 'ENTRAR NA COMUNIDADE EXCLUSIVA DO WHATSAPP',
       whatsappBadge: 'Acesso Permitido Exclusivamente Pós-Pagamento',
-      zoomDetails: 'Credenciais de Acesso ao Zoom',
-      zoomDate: '15 de Outubro, 2026 | 14:00 UTC',
-      zoomLink: 'Link da Sala Zoom HD',
+      zoomDetails: 'Detalhes do Atendimento Presencial',
+      zoomDate: 'Domingo, 9/08/2026',
+      zoomLink: 'Localização / Sede Presencial',
       closeModal: 'Fechar Portal',
-      modalBadge: 'Seminário Internacional Ao Vivo 2026',
+      modalBadge: 'Faded Mastery Elite - Presencial 2026',
     },
     footer: {
       rights: '© 2026 Ferreira Academy. Todos os direitos reservados.',
@@ -1581,285 +1566,281 @@ export const translations: Record<Language, TranslationSchema> = {
     },
   },
 
-  // ─────────────────────────── DEUTSCH ───────────────────────────
-  de: {
-    nav: {
-      home: 'Startseite',
-      instructor: 'Der Dozent',
-      benefits: 'Vorteile',
-      seminar: 'Das Seminar',
-      certificate: 'Zertifikat',
-      faq: 'Häufige Fragen',
-      selectLanguage: 'Sprache',
-    },
-    hero: {
-      badge: 'Internationale Masterclass 2026',
-      titleLine1: 'Internationales Seminar für Premium-Barbering',
-      titleLine2: 'und Elite-Herrenhaarschnitt',
-      subtitle:
-        'Erlerne modernste Schnitt-, Visagismus- und Executive-Barbering-Techniken live mit Antonio Ferreira. Meistere die Branche und bringe deine Karriere auf internationales Niveau.',
-      ctaButton: 'JETZT ANMELDEN',
-      quickStats: {
-        countries: '+25 Teilnehmende Länder',
-        zoomLive: 'HD-Livestream',
-        certification: 'Exklusive Digitale Signatur',
+// ─────────────────────────── DEUTSCH ───────────────────────────
+    de: {
+      nav: {
+        home: 'Startseite',
+        instructor: 'Der Dozent',
+        benefits: 'Vorteile',
+        seminar: 'Das Seminar',
+        certificate: 'Zertifikat',
+        faq: 'Häufige Fragen',
+        selectLanguage: 'Sprache',
       },
-      instructorTag: 'Antonio Ferreira',
-      instructorSub: 'Master Educator & Barber Authority',
-      academyLine1: 'INTERNATIONALE AKADEMIE',
-      academyLine2: 'FÜR HERRENHAARSCHNITT & PROFESSIONELLES BARBERING',
-      headline1: 'MEISTERE DIE KUNST',
-      headline2: 'TRANSFORMIERE DEINE ZUKUNFT',
-      subtitleText: 'Lerne moderne Herrenhaarschnitt- und professionelle Barbering-Techniken mit Antonio Ferreira, von überall auf der Welt.',
-      securePayments: '100% SICHERE ZAHLUNGEN',
-      stats: [
-        { line1: 'LIVE-KURSE', line2: 'VIA ZOOM' },
-        { line1: 'DAUERHAFTER ZUGANG', line2: 'ZU AUFZEICHNUNGEN' },
-        { line1: 'DIGITALE', line2: 'ZERTIFIZIERUNG' },
-        { line1: 'INTERNATIONALE', line2: 'COMMUNITY' },
-      ],
-    },
-    instructor: {
-      badge: 'Internationale Autorität',
-      title: 'Entdecke Antonio Ferreira',
-      subtitle:
-        'Globale Referenz in der Entwicklung des zeitgenössischen Männer-Stylings und des Premium-Barberings.',
-      bio1: 'Mit über 15 Jahren Erfahrung auf Bühnen und Bildungsplattformen in Europa und Amerika hat Antonio Ferreira das Konzept des luxuriösen Herrenhaarschnitts revolutioniert, indem er klassische Geometrie mit modernem Dynamismus verbindet.',
-      bio2: 'Seine praktische und visionäre Methodik hat Tausende von professionellen Barbieren ausgebildet, die heute die renommiertesten Studios auf internationalem Niveau leiten.',
-      stat1Label: 'Jahre Erfahrung',
-      stat1Value: '15+',
-      stat2Label: 'Zertifizierte Profis',
-      stat2Value: '+10.000',
-      stat3Label: 'Erreichte Länder',
-      stat3Value: '35+',
-      signatureLabel: 'Offizielle akademische Garantie-Signatur',
-    },
-    benefits: {
-      badge: 'Warum Teilnehmen',
-      title: '6 Säulen der professionellen Transformation',
-      subtitle:
-        'Konzipiert für Barbiere und Stylisten, die sich auf einem stark wettbewerbsorientierten globalen Markt abheben möchten.',
-      items: [
-        {
-          title: 'Moderne Schnitttechniken',
-          description:
-            'Beherrschung von sauberen Verläufen, fortgeschrittenem Scherenhandwerk, dynamischer Texturierung und individuellem Visagismus für jeden Kunden.',
+      hero: {
+        badge: 'Präsenz-Schulung 2026',
+        titleLine1: 'Seminar für High-End-Barbering',
+        titleLine2: 'Faded Mastery Elite',
+        subtitle:
+          'Fortgeschrittene Schulung für Profis: Fade-Techniken und Zeitoptimierung basierend auf der Schädelstruktur.',
+        csaButton: 'JETZT ANMELDEN',
+        quickStats: {
+          countries: '+25 Teilnehmende Länder',
+          zoomLive: 'Präsenzunterricht',
+          certification: 'Exklusive Digitale Signatur',
         },
-        {
-          title: 'Echte Praxis und Fallstudien',
-          description:
-            'Schritt-für-Schritt-Live-Demonstration an echten Modellen mit Echtzeit-Korrekturen von Winkeln und Strukturen.',
-        },
-        {
-          title: 'Beschleunigtes Karrierewachstum',
-          description:
-            'Personal-Branding-Strategien, Premium-Preismodelle und Kundenbindung im Hochpreissegment.',
-        },
-        {
-          title: 'Exklusives Internationales Netzwerk',
-          description:
-            'Tritt einem globalen Elite-Netzwerk von Barbieren bei, um internationale Chancen und Wissen auszutauschen.',
-        },
-        {
-          title: 'Offizielle Digitale Zertifizierung',
-          description:
-            'Belege deine Ausbildung mit einem international anerkannten Zertifikat mit der Originalsignatur von Antonio Ferreira.',
-        },
-        {
-          title: 'Personalisierte Nachbetreuung',
-          description:
-            'Exklusiver Zugang zur privaten Community für Fragen, detailliertes Feedback und fortlaufende Betreuung.',
-        },
-      ],
-      sectionHeading: 'WARUM AN DER FERREIRA ACADEMY STUDIEREN?',
-      shortTitles: [
-        'MODERNE\nSCHNITTTECHNIKEN',
-        'ECHTE\nPRAXIS',
-        'WACHSE\nPROFESSIONELL',
-        'VON ÜBERALL\nAUF DER WELT',
-        'DIGITALE\nZERTIFIZIERUNG',
-        'PERSONALISIERTE\nBETREUUNG',
-      ],
-    },
-    seminar: {
-      badge: 'Seminar-Details',
-      title: 'Internationale Masterclass: High-End Barbering 2026',
-      subtitle:
-        'Ein intensiver Ganztag mit vollständiger Immersion in Executive-Techniken und unternehmerischer Vision des Premium-Barberings.',
-      dateLabel: 'Offizielles Datum',
-      dateValue: '15. Oktober 2026',
-      modalityLabel: 'Format',
-      modalityValue: 'Live via Zoom HD',
-      durationLabel: 'Gesamtdauer',
-      durationValue: '8 STUNDEN',
-      priceTag: 'Internationales Einführungsangebot',
-      originalPrice: '$350 USD',
-      currentPrice: '$149 USD',
-      ctaButton: 'JETZT ANMELDEN',
-      modulesTitle: 'Seminarprogramm',
-      modules: [
-        {
-          number: '01',
-          title: 'Visagismus & Schädelstruktur',
-          desc: 'Morphopsychologische Gesichtsanalyse zur Gestaltung von Haarschnitten, die der Anatomie jedes Kunden entsprechen.',
-        },
-        {
-          number: '02',
-          title: 'Chirurgischer Fade & Texturierung',
-          desc: 'Techniken zur Linienauflösung, polierten Übergängen und absoluter Kontrolle von Schere vs. Maschine.',
-        },
-        {
-          number: '03',
-          title: 'Bartpflege-Therapie & Executive-Styling',
-          desc: 'Vollständiges Ritual zur Bartpflege mit heißen Handtüchern und Finish mit Produkten der Luxusklasse.',
-        },
-        {
-          number: '04',
-          title: 'Personal Branding & Monetarisierung',
-          desc: 'Wie man Luxustarife verlangt, wirkungsvolle Inhalte erstellt und seine Marke global skaliert.',
-        },
-      ],
-      liveBadge: 'LIVE-KURS',
-      courseTitleLine1: 'HERRENHAARSCHNITT',
-      courseTitleLine2: 'UND PROFESSIONELLES BARBERING',
-      checklist: [
-        'Grundlagen und fortgeschrittene Herrenhaarschnitt-Techniken',
-        'Verläufe, Texturen und professionelle Finishes',
-        'Bartpflege und Profilierung',
-        'Styling und aktuelle Trends',
-        'Live-Sessions + unbegrenzter Zugang zu Aufzeichnungen',
-        'Digitales Zertifikat nach Abschluss',
-      ],
-    },
-    certificate: {
-      badge: 'Internationale Gültigkeit',
-      title: 'Offizielles Digitales Zertifikat',
-      subtitle:
-        'Unterstützt durch das charakteristische Siegel und die offizielle handschriftliche Signatur von Antonio Ferreira.',
-      nameInputLabel: 'Vorschau deines Namens auf dem Zertifikat:',
-      placeholderName: 'Dein vollständiger Name',
-      downloadPdf: 'Muster-PDF-Zertifikat herunterladen',
-      officialBadge: 'Verifizierte Akkreditierung 2026',
-      verificationText: 'Einzigartiger QR-Authentifizierungscode',
-      signatory: 'Antonio Ferreira',
-      titleRole: 'Gründer & Master Director, Ferreira Academy',
-    },
-    testimonials: {
-      badge: 'Erfolgsgeschichten',
-      title: 'Was Profis Sagen',
-      subtitle:
-        'Barbiere aus aller Welt, die ihre Unternehmen und Fähigkeiten auf die nächste Stufe gehoben haben.',
-      items: [
-        {
-          name: 'Carlos Mendoza',
-          role: 'Inhaber & Master Barber',
-          location: 'Madrid, Spanien',
-          comment:
-            'Das Lernen mit Antonio Ferreira hat die Präzision meiner Schnitte drastisch verbessert. Meine Kunden bemerkten den Unterschied sofort und ich konnte meine Preise verdoppeln.',
-          rating: 5,
-        },
-        {
-          name: 'Alex Rivera',
-          role: 'Barber Studio Direktor',
-          location: 'Miami, USA',
-          comment:
-            'Antonios 8-stündige Live-Masterclass ist reine Praxis ohne Umschweife. Die WhatsApp-Community nach dem Event liefert weiterhin unschätzbaren Mehrwert.',
-          rating: 5,
-        },
-        {
-          name: 'Jean-Luc Moreau',
-          role: 'Senior Herren-Stylist',
-          location: 'Paris, Frankreich',
-          comment:
-            'Ein wahrlich luxuriöses internationales Seminar. Das von Antonio signierte Zertifikat ist ein Prestigesiegel, das ich stolz in meinem Salon ausstelle.',
-          rating: 5,
-        },
-      ],
-      sectionHeading: 'WAS UNSERE STUDIERENDEN SAGEN',
-      countries: ['Mexiko', 'Kolumbien', 'Chile'],
-    },
-    faq: {
-      badge: 'Fragen & Antworten',
-      title: 'Häufig Gestellte Fragen',
-      subtitle: 'Alles, was du wissen musst, bevor du deinen internationalen Platz sicherst.',
-      items: [
-        {
-          question: 'Wie nehme ich am Zoom-Livestream teil?',
-          answer:
-            'Unmittelbar nach Abschluss deiner Zahlung wirst du zu deinem Bestätigungsportal weitergeleitet, wo du den direkten Zoom-Link und die exklusive Einladung zur WhatsApp-Gruppe erhältst.',
-        },
-        {
-          question: 'Wann und wie erhalte ich mein offizielles Zertifikat?',
-          answer:
-            'Nach Ende der Live-Masterclass erhältst du automatisch per E-Mail dein hochauflösendes digitales PDF-Zertifikat mit deinem vollständigen Namen und der offiziellen Signatur von Antonio Ferreira.',
-        },
-        {
-          question: 'Welche Zahlungsmethoden werden akzeptiert?',
-          answer:
-            'Wir akzeptieren sichere internationale Zahlungen in US-Dollar (USD) über Stripe (Kreditkarten und Debitkarten Visa, Mastercard, AMEX) und PayPal.',
-        },
-        {
-          question: 'Was passiert, wenn ich nicht live zur geplanten Zeit teilnehmen kann?',
-          answer:
-            'Alle registrierten Teilnehmer erhalten 30 Tage lang Zugang zur HD-Aufzeichnung nach dem Event, um jede Technik in ihrem eigenen Tempo zu wiederholen.',
-        },
-        {
-          question: 'Wie trete ich der privaten WhatsApp-Community bei?',
-          answer:
-            'Der einzigartige Einladungslink zur privaten Gruppe wird ausschließlich nach erfolgreicher Zahlungsbestätigung im System freigeschaltet.',
-        },
-      ],
-    },
-    checkout: {
-      title: 'Offizielle Anmeldung zum Internationalen Seminar',
-      subtitle: 'Sichern Sie Ihren Platz bei Antonio Ferreiras Live-Masterclass',
-      step1Title: '1. Teilnehmer-Daten',
-      step2Title: '2. Zahlungsauswahl (USD)',
-      step3Title: '3. Bestätigung & Zugänge',
-      fullName: 'Vollständiger Name (für Zertifikat)',
-      email: 'E-Mail-Adresse',
-      phone: 'Telefon / WhatsApp (mit Ländervorwahl)',
-      country: 'Wohnsitzland',
-      selectCountry: 'Wähle dein Land...',
-      paymentMethod: 'Zahlungsmethode',
-      payWithStripe: 'Kredit- / Debitkarte (Stripe)',
-      payWithPaypal: 'PayPal Express Checkout',
-      cardNumber: 'Kartennummer',
-      cardExpiry: 'Ablaufdatum (MM/JJ)',
-      cardCvc: 'CVC-Code',
-      proceedToPayment: 'Weiter zur Zahlung ($149 USD)',
-      completePayment: 'Sichere Zahlung abschließen ($149 USD)',
-      processing: 'Sichere Anmeldung wird verarbeitet...',
-      successTitle: 'Anmeldung erfolgreich bestätigt!',
-      successSubtitle: 'Willkommen bei Ferreira Academy. Dein offizieller Platz wurde reserviert.',
-      orderId: 'Transaktions-ID',
-      joinWhatsapp: 'DER EXKLUSIVEN WHATSAPP-COMMUNITY BEITRETEN',
-      whatsappBadge: 'Zugang ausschließlich nach Zahlung gewährt',
-      zoomDetails: 'Zoom-Zugangsdaten',
-      zoomDate: '15. Oktober 2026 | 14:00 UTC',
-      zoomLink: 'Zoom HD-Raum-Link',
-      closeModal: 'Portal schließen',
-      modalBadge: 'Internationales Live-Seminar 2026',
-    },
-    footer: {
-      rights: '© 2026 Ferreira Academy. Alle Rechte vorbehalten.',
-      privacy: 'Datenschutzrichtlinie',
-      terms: 'Allgemeine Geschäftsbedingungen',
-      disclaimer:
-        'Ferreira Academy ist eine eingetragene Marke für internationale Bildung im Premium-Barbering.',
-      quickLinks: 'SCHNELL-LINKS',
-      followUs: 'FOLGE UNS',
-      securePlatform: 'SICHERE PLATTFORM',
-      paySafely: 'Zahle sicher mit:',
-      globalPlatform: 'GLOBALE PROFESSIONELLE AUSBILDUNGSPLATTFORM.',
-      navLinks: ['Startseite', 'Vorteile', 'Der Kurs', 'Erfahrungsberichte', 'Kontakt'],
-    },
-    cta: {
-      bannerTitlePart1: 'DEIN NÄCHSTES LEVEL',
-      bannerTitlePart2: 'BEGINNT HIER',
-      bannerSubtitle:
-        'Schließe dich Hunderten von Studierenden an, die ihr Talent bereits in eine professionelle Karriere verwandeln.',
-      button: 'JETZT ANMELDEN',
-    },
-  },
-};
+        instructorTag: 'Antonio Ferreira',
+        instructorSub: 'Master Educator & Barber Authority',
+        academyLine1: 'INTERNATIONALE AKADEMIE',
+        academyLine2: 'FÜR HERRENHAARSCHNITT & PROFESSIONELLES BARBERING',
+        headline1: 'MEISTERE DIE KUNST',
+        headline2: 'TRANSFORMIERE DEINE ZUKUNFT',
+        subtitleText: 'Fortgeschrittene Schulung für Profis: Fade-Techniken und Zeitoptimierung basierend auf der Schädelstruktur.',
+        securePayments: '100% SICHERE ZAHLUNGEN',
+        stats: [
+          { line1: 'PRÄSENZ-', line2: 'UNTERRICHT' },
+          { line1: 'TEILNAHME-', line2: 'ZERTIFIKAT' },
+          { line1: 'COFFEE', line2: 'BREAK' },
+          { line1: 'INTERNATIONALE', line2: 'COMMUNITY' },
+        ],
+      },
+      instructor: {
+        badge: 'Internationale Autorität',
+        title: 'Entdecke Antonio Ferreira',
+        subtitle:
+          'Globale Referenz in der Entwicklung des zeitgenössischen Männer-Stylings und des Premium-Barberings.',
+        bio1: 'Mit über 15 Jahren Erfahrung auf Bühnen und Bildungsplattformen in Europa und Amerika hat Antonio Ferreira das Konzept des luxuriösen Herrenhaarschnitts revolutioniert, indem er klassische Geometrie mit modernem Dynamismus verbindet.',
+        bio2: 'Seine praktische und visionäre Methodik hat Tausende von professionellen Barbieren ausgebildet, die heute die renommiertesten Studios auf internationalem Niveau leiten.',
+        stat1Label: 'Jahre Erfahrung',
+        stat1Value: '15+',
+        stat2Label: 'Zertifizierte Profis',
+        stat2Value: '+10.000',
+        stat3Label: 'Erreichte Länder',
+        stat3Value: '35+',
+        signatureLabel: 'Offizielle akademische Garantie-Signatur',
+      },
+      benefits: {
+        badge: 'Warum Teilnehmen',
+        title: '6 Säulen der professionellen Transformation',
+        subtitle:
+          'Konzipiert für Barbiere und Stylisten, die sich auf einem stark wettbewerbsorientierten globalen Markt abheben möchten.',
+        items: [
+          {
+            title: 'Moderne Schnitttechniken',
+            description:
+              'Beherrschung von sauberen Verläufen, fortgeschrittenem Scherenhandwerk, dynamischer Texturierung und individuellem Visagismus für jeden Kunden.',
+          },
+          {
+            title: 'Echte Praxis und Fallstudien',
+            description:
+              'Schritt-für-Schritt-Live-Demonstration an echten Modellen mit Echtzeit-Korrekturen von Winkeln und Strukturen.',
+          },
+          {
+            title: 'Beschleunigtes Karrierewachstum',
+            description:
+              'Personal-Branding-Strategien, Premium-Preismodelle und Kundenbindung im Hochpreissegment.',
+          },
+          {
+            title: 'Exklusives Internationales Netzwerk',
+            description:
+              'Tritt einem globalen Elite-Netzwerk von Barbieren bei, um internationale Chancen und Wissen auszutauschen.',
+          },
+          {
+            title: 'Offizielle Digitale Zertifizierung',
+            description:
+              'Belege deine Ausbildung mit einem international anerkannten Zertifikat mit der Originalsignatur von Antonio Ferreira.',
+          },
+          {
+            title: 'Personalisierte Nachbetreuung',
+            description:
+              'Exklusiver Zugang zur privaten Community für Fragen, detailliertes Feedback und fortlaufende Betreuung.',
+          },
+        ],
+        sectionHeading: 'WARUM AN DER FERREIRA ACADEMY STUDIEREN?',
+        shortTitles: [
+          'MODERNE\nSCHNITTTECHNIKEN',
+          'ECHTE\nPRAXIS',
+          'WACHSE\nPROFESSIONELL',
+          'VON ÜBERALL\nAUF DER WELT',
+          'DIGITALE\nZERTIFIZIERUNG',
+          'PERSONALISIERTE\nBETREUUNG',
+        ],
+      },
+      seminar: {
+        badge: 'Seminar-Details',
+        title: 'FADED MASTERY ELITE',
+        subtitle:
+          'Fortgeschrittene Schulung für Profis: Fade-Techniken und Zeitoptimierung basierend auf der Schädelstruktur.',
+        dateLabel: 'Offizielles Datum',
+        dateValue: 'Sonntag, 09.08.2026',
+        modalityLabel: 'Format',
+        modalityValue: 'Präsenzunterricht',
+        priceTag: 'Zertifizierung & Inklusion',
+        originalPrice: '',
+        currentPrice: '$80 USD',
+        ctaButton: 'JETZT ANMELDEN',
+        modulesTitle: 'Seminarprogramm',
+        modules: [
+          {
+            number: '01',
+            title: 'Visagismus & Schädelstruktur',
+            desc: 'Morphopsychologische Gesichtsanalyse zur Gestaltung von Haarschnitten, die der Anatomie jedes Kunden entsprechen.',
+          },
+          {
+            number: '02',
+            title: 'Chirurgischer Fade & Texturierung',
+            desc: 'Techniken zur Linienauflösung, polierten Übergängen und absoluter Kontrolle von Schere vs. Maschine.',
+          },
+          {
+            number: '03',
+            title: 'Bartpflege-Therapie & Executive-Styling',
+            desc: 'Vollständiges Ritual zur Bartpflege mit heißen Handtüchern und Finish mit Produkten der Luxusklasse.',
+          },
+          {
+            number: '04',
+            title: 'Personal Branding & Monetarisierung',
+            desc: 'Wie man Luxustarife verlangt, wirkungsvolle Inhalte erstellt und seine Marke global skaliert.',
+          },
+        ],
+        liveBadge: 'PRÄSENZ',
+        courseTitleLine1: 'FADED MASTERY',
+        courseTitleLine2: 'ELITE',
+        checklist: [
+          'Teilnahmezertifikat',
+          'Coffee Break',
+          'Präsenzunterricht',
+          'Sonntag, 09.08.2026',
+        ],
+      },
+      certificate: {
+        badge: 'Internationale Gültigkeit',
+        title: 'Offizielles Digitales Zertifikat',
+        subtitle:
+          'Unterstützt durch das charakteristische Siegel und die offizielle handschriftliche Signatur von Antonio Ferreira.',
+        nameInputLabel: 'Vorschau deines Namens auf dem Zertifikat:',
+        placeholderName: 'Dein vollständiger Name',
+        downloadPdf: 'Muster-PDF-Zertifikat herunterladen',
+        officialBadge: 'Verifizierte Akkreditierung 2026',
+        verificationText: 'Einzigartiger QR-Authentifizierungscode',
+        signatory: 'Antonio Ferreira',
+        titleRole: 'Gründer & Master Director, Ferreira Academy',
+      },
+      testimonials: {
+        badge: 'Erfolgsgeschichten',
+        title: 'Was Profis Sagen',
+        subtitle:
+          'Barbiere aus aller Welt, die ihre Unternehmen und Fähigkeiten auf die nächste Stufe gehoben haben.',
+        items: [
+          {
+            name: 'Carlos Mendoza',
+            role: 'Inhaber & Master Barber',
+            location: 'Madrid, Spanien',
+            comment:
+              'Das Lernen mit Antonio Ferreira hat die Präzision meiner Schnitte drastisch verbessert. Meine Kunden bemerkten den Unterschied sofort und ich konnte meine Preise verdoppeln.',
+            rating: 5,
+          },
+          {
+            name: 'Alex Rivera',
+            role: 'Barber Studio Direktor',
+            location: 'Miami, USA',
+            comment:
+              'Antonios Live-Masterclass ist reine Praxis ohne Umschweife. Die Community nach dem Event liefert weiterhin unschätzbaren Mehrwert.',
+            rating: 5,
+          },
+          {
+            name: 'Jean-Luc Moreau',
+            role: 'Senior Herren-Stylist',
+            location: 'Paris, Frankreich',
+            comment:
+              'Ein wahrlich luxuriöses internationales Seminar. Das von Antonio signierte Zertifikat ist ein Prestigesiegel, das ich stolz in meinem Salon ausstelle.',
+            rating: 5,
+          },
+        ],
+        sectionHeading: 'WAS UNSERE STUDIERENDEN SAGEN',
+        countries: ['Mexiko', 'Kolumbien', 'Chile'],
+      },
+      faq: {
+        badge: 'Fragen & Antworten',
+        title: 'Häufig Gestellte Fragen',
+        subtitle: 'Alles, was du wissen musst, bevor du deinen internationalen Platz sicherst.',
+        items: [
+          {
+            question: 'Wie nehme ich am Präsenzseminar teil?',
+            answer:
+              'Unmittelbar nach Abschluss deiner Zahlung wirst du zu deinem Bestätigungsportal weitergeleitet, wo du alle Details zum Veranstaltungsort und die exklusive Einladung zur WhatsApp-Gruppe erhältst.',
+          },
+          {
+            question: 'Wann und wie erhalte ich mein offizielles Zertifikat?',
+            answer:
+              'Nach Ende des Seminars erhältst du automatisch per E-Mail dein hochauflösendes digitales PDF-Zertifikat mit deinem vollständigen Namen und der offiziellen Signatur von Antonio Ferreira.',
+          },
+          {
+            question: 'Welche Zahlungsmethoden werden akzeptiert?',
+            answer:
+              'Wir akzeptieren sichere internationale Zahlungen in US-Dollar (USD) über Stripe (Kreditkarten und Debitkarten Visa, Mastercard, AMEX) und PayPal.',
+          },
+          {
+            question: 'Was passiert, wenn ich nicht zum geplanten Termin teilnehmen kann?',
+            answer:
+              'Bitte kontaktiere unser Support-Team im Voraus, um deine Teilnahme auf den nächsten verfügbaren Termin zu verschieben.',
+          },
+          {
+            question: 'Wie trete ich der privaten WhatsApp-Community bei?',
+            answer:
+              'Der einzigartige Einladungslink zur privaten Gruppe wird ausschließlich nach erfolgreicher Zahlungsbestätigung im System freigeschaltet.',
+          },
+        ],
+      },
+      checkout: {
+        title: 'Offizielle Anmeldung zum Präsenzseminar',
+        subtitle: 'Sichere dir deinen Platz bei Antonio Ferreiras Live-Schulung',
+        step1Title: '1. Teilnehmer-Daten',
+        step2Title: '2. Zahlungsauswahl (USD)',
+        step3Title: '3. Bestätigung & Zugänge',
+        fullName: 'Vollständiger Name (für Zertifikat)',
+        email: 'E-Mail-Adresse',
+        phone: 'Telefon / WhatsApp (mit Ländervorwahl)',
+        country: 'Wohnsitzland',
+        selectCountry: 'Wähle dein Land...',
+        paymentMethod: 'Zahlungsmethode',
+        payWithStripe: 'Kredit- / Debitkarte (Stripe)',
+        payWithPaypal: 'PayPal Express Checkout',
+        cardNumber: 'Kartennummer',
+        cardExpiry: 'Ablaufdatum (MM/JJ)',
+        cardCvc: 'CVC-Code',
+        proceedToPayment: 'Weiter zur Zahlung ($80 USD)',
+        completePayment: 'Sichere Zahlung abschließen ($80 USD)',
+        processing: 'Sichere Anmeldung wird verarbeitet...',
+        successTitle: 'Anmeldung erfolgreich bestätigt!',
+        successSubtitle: 'Willkommen bei Ferreira Academy. Dein offizieller Platz wurde reserviert.',
+        orderId: 'Transaktions-ID',
+        joinWhatsapp: 'DER EXKLUSIVEN WHATSAPP-COMMUNITY BEITRETEN',
+        whatsappBadge: 'Zugang ausschließlich nach Zahlung gewährt',
+        zoomDetails: 'Veranstaltungsdetails',
+        zoomDate: 'Sonntag, 09.08.2026',
+        zoomLink: 'Standort- / Raum-Informationen',
+        closeModal: 'Portal schließen',
+        modalBadge: 'Präsenz-Seminar 2026',
+      },
+      footer: {
+        rights: '© 2026 Ferreira Academy. Alle Rechte vorbehalten.',
+        privacy: 'Datenschutzrichtlinie',
+        terms: 'Allgemeine Geschäftsbedingungen',
+        disclaimer:
+          'Ferreira Academy ist eine eingetragene Marke für internationale Bildung im Premium-Barbering.',
+        quickLinks: 'SCHNELL-LINKS',
+        followUs: 'FOLGE UNS',
+        securePlatform: 'SICHERE PLATTFORM',
+        paySafely: 'Zahle sicher mit:',
+        globalPlatform: 'GLOBALE PROFESSIONELLE AUSBILDUNGSPLATTFORM.',
+        navLinks: ['Startseite', 'Vorteile', 'Der Kurs', 'Erfahrungsberichte', 'Kontakt'],
+      },
+      cta: {
+        bannerTitlePart1: 'DEIN NÄCHSTES LEVEL',
+        bannerTitlePart2: 'BEGINNT HIER',
+        bannerSubtitle: 'Schließe dich Hunderten von Studierenden an, die ihr Talent bereits in eine professionelle Karriere verwandeln.',
+        button: 'JETZT ANMELDEN',
+      }
+    }
+
+  };

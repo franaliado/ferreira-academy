@@ -97,9 +97,8 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ currentL
               </div>
             </div>
 
-            {/* Description */}
             <p className="text-xs sm:text-sm text-neutral-700 text-center max-w-2xl mx-auto font-sans leading-relaxed">
-              Por haber completado satisfactoriamente el Seminario Internacional de Alta Barbería y Corte Masculino de Elite (8 Horas Lectivas), demostrando el dominio de técnicas avanzadas de visagismo, tijera ejecutiva y degradados de precisión.
+              Por haber completado satisfactoriamente el curso FADED MASTERY ELITE (Capacitación Avanzada para Profesionales), demostrando el dominio en técnicas de fade y optimización de tiempos en función del sistema craneal.
             </p>
 
             {/* Footer with Signature & Verification Stamp */}

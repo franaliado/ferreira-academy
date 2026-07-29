@@ -9,7 +9,7 @@ import {
   Lock,
   ArrowRight,
   MessageCircle,
-  Video,
+  MapPin,
   Award,
   Sparkles,
   ShieldCheck,
@@ -363,22 +363,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </a>
             </div>
 
-            {/* Zoom Access Info */}
+            {/* Event Access Info */}
             <div className="bg-neutral-900/80 p-4 rounded-2xl border border-amber-500/20 text-left space-y-2 text-xs">
               <div className="flex items-center space-x-2 text-[#D4AF37] font-bold font-serif text-sm">
-                <Video className="w-4 h-4" />
+                <MapPin className="w-4 h-4" />
                 <span>{t.zoomDetails}</span>
               </div>
               <p className="text-gray-300">📅 {t.zoomDate}</p>
               <p className="text-gray-300">
-                🔗 Link: <span className="text-amber-300 underline font-mono">https://zoom.us/j/98471203948?pwd=FA2026</span>
+                📍 {t.zoomLink}
               </p>
             </div>
 
             {/* Certificate Quick Notice */}
             <div className="flex items-center space-x-3 bg-amber-500/10 p-3 rounded-xl border border-amber-500/30 text-xs text-amber-200 text-left">
               <Award className="w-5 h-5 text-[#D4AF37] shrink-0" />
-              <span>Tu Certificado Digital Oficial con la firma de Antonio Ferreira estará habilitado inmediatamente al concluir las 8 horas del seminario.</span>
+              <span>Tu Certificado Digital Oficial con la firma de Antonio Ferreira estará habilitado inmediatamente al concluir el seminario.</span>
             </div>
 
             <button

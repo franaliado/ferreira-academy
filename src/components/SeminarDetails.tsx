@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Language, translations } from '@/lib/translations';
-import { Calendar, Video, Clock, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Calendar, Video, CheckCircle2, ChevronRight } from 'lucide-react';
 
 interface SeminarDetailsProps {
   currentLang: Language;
@@ -72,20 +72,6 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
               <div>
                 <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t.dateLabel}</p>
                 <p className="text-white text-xl font-black uppercase tracking-wide">{t.dateValue}</p>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-[#D4AF37]/15" />
-
-            {/* Duration */}
-            <div className="flex items-start space-x-4">
-              <div className="p-2.5 border border-[#D4AF37]/40 rounded-lg shrink-0">
-                <Clock className="w-5 h-5 text-[#D4AF37]" />
-              </div>
-              <div>
-                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t.durationLabel}</p>
-                <p className="text-white text-xl font-black uppercase tracking-wide">{t.durationValue}</p>
               </div>
             </div>
 
