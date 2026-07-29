@@ -10,25 +10,28 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
+  // Carga de las traducciones según el idioma actual seleccionado
   const t = translations[currentLang].hero;
 
+  // Referencias para controlar de forma independiente el escalado móvil de cada línea del título
   const line1ContainerRef = useRef<HTMLDivElement>(null);
   const line1TextRef = useRef<HTMLSpanElement>(null);
   const line2ContainerRef = useRef<HTMLDivElement>(null);
   const line2TextRef = useRef<HTMLSpanElement>(null);
 
+  // Hook para calcular y escalar dinámicamente las líneas de texto en dispositivos móviles
   useEffect(() => {
     const scaleText = (container: HTMLDivElement | null, text: HTMLSpanElement | null) => {
       if (!container || !text) return;
       
-      // En pantallas de escritorio (sm en adelante), reseteamos la escala
+      // En pantallas de escritorio (sm en adelante), reseteamos los estilos dinámicos para usar Tailwind
       if (window.innerWidth >= 640) {
         text.style.transform = 'none';
         text.style.display = 'block';
         return;
       }
 
-      // Resetear para medir el ancho natural real de manera idéntica
+      // Restablecer estilos temporalmente para medir el ancho real completo de la frase traducida
       text.style.transform = 'none';
       text.style.display = 'inline-block';
       
@@ -36,6 +39,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
       const textWidth = text.scrollWidth;
 
       if (textWidth > 0 && containerWidth > 0) {
+        // Cálculo matemático del factor de escala para ajustar el texto de lado a lado del móvil
         const scaleFactor = containerWidth / textWidth;
         text.style.display = 'block';
         text.style.transformOrigin = 'left center';
@@ -48,8 +52,10 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
       scaleText(line2ContainerRef.current, line2TextRef.current);
     };
 
+    // Ejecutar al cargar el componente o cambiar de idioma
     handleResize();
 
+    // Observador para reaccionar fluidamente a cambios de tamaño en los contenedores
     const observer = new ResizeObserver(() => {
       handleResize();
     });
@@ -64,6 +70,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
     };
   }, [currentLang, t.headline1, t.headline2]);
 
+  // Iconos SVG para las estadísticas del Hero
   const statIcons = [
     (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6 sm:w-7 sm:h-7" key="1">
@@ -96,7 +103,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
 
   return (
     <section id="hero" className="relative bg-[#0A0A0A] text-white">
-      {/* Background layer */}
+      {/* Capa de fondo decorativa con cuadrícula */}
       <div className="absolute inset-0 pointer-events-none">
         <div
           className="absolute inset-0 opacity-[0.05]"
@@ -109,14 +116,14 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
       </div>
 
-      {/* Content Container */}
+      {/* Contenedor principal del contenido */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-28 pb-10 sm:pt-32 sm:pb-12 lg:pt-28 lg:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-0">
 
-          {/* LEFT COLUMN */}
+          {/* COLUMNA IZQUIERDA — Textos, titulares, estadísticas y llamadas a la acción */}
           <div className="relative z-30 lg:col-span-7 space-y-5 order-2 lg:order-1">
 
-            {/* Eyebrow text */}
+            {/* Texto de la cabecera (Eyebrow) */}
             <div className="space-y-1">
               <p className="text-[#D4AF37] font-extrabold uppercase tracking-widest text-[0.75rem]" style={{ letterSpacing: '0.28em' }}>
                 {t.academyLine1}
@@ -126,10 +133,10 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               </p>
             </div>
 
-            {/* Main Headline */}
+            {/* Título Principal — Escalado móvil independiente por cada línea */}
             <h1 className="font-black uppercase leading-tight tracking-tight text-4xl sm:text-5xl lg:text-[2.8rem] xl:text-[3.4rem]">
               
-              {/* Line 1 Container */}
+              {/* Contenedor de la primera línea ("Domina el arte") */}
               <div ref={line1ContainerRef} className="w-full overflow-hidden block">
                 <span 
                   ref={line1TextRef}
@@ -140,25 +147,27 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
                 </span>
               </div>
 
-              {/* Line 2 Container — Sin dangerouslySetInnerHTML para medir idéntico */}
+              {/* Contenedor de la segunda línea ("Transforma tu futuro") */}
               <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
                 <span 
                   ref={line2TextRef}
-                  className="block gold-gradient-text drop-shadow-lg whitespace-nowrap tracking-tight sm:text-[2.8rem] xl:text-[3.4rem]"
+                  className="block whitespace-nowrap tracking-tight sm:text-[2.8rem] xl:text-[3.4rem]"
                   style={{ fontSize: '2.25rem' }}
                 >
-                  {t.headline2}
+                  <span className="gold-gradient-text drop-shadow-lg inline-block">
+                    {t.headline2}
+                  </span>
                 </span>
               </div>
 
             </h1>
 
-            {/* Subtitle */}
+            {/* Subtítulo descriptivo */}
             <p className="text-gray-200 text-sm sm:text-base leading-relaxed max-w-xl font-medium">
               {t.subtitleText}
             </p>
 
-            {/* 4-stat icon grid */}
+            {/* Cuadrícula de 4 estadísticas con iconos */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-lg pt-1">
               {t.stats.map((s, i) => (
                 <div key={i} className="flex flex-col items-center text-center space-y-2">
@@ -174,7 +183,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               ))}
             </div>
 
-            {/* CTA Button */}
+            {/* Botón principal de llamada a la acción (CTA) */}
             <div className="pt-2">
               <button
                 onClick={onOpenCheckout}
@@ -186,7 +195,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               </button>
             </div>
 
-            {/* Payment security row */}
+            {/* Fila de seguridad y métodos de pago */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
               <span className="text-gray-200 font-bold uppercase text-[0.68rem]" style={{ letterSpacing: '0.2em' }}>
                 {t.securePayments}
@@ -214,7 +223,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
             </div>
           </div>
 
-          {/* RIGHT COLUMN */}
+          {/* COLUMNA DERECHA — Imagen principal de Antonio Ferreira */}
           <div className="relative z-10 lg:col-span-5 w-full flex justify-center lg:justify-end items-center order-1 lg:order-2">
             <div className="relative w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[520px] flex items-center justify-center">
               <img
