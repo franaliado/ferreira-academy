@@ -140,8 +140,8 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               <div ref={line1ContainerRef} className="w-full overflow-hidden block">
                 <span 
                   ref={line1TextRef}
-                  className="block text-white whitespace-nowrap tracking-tight lg:text-[2.8rem] xl:text-[3.4rem]"
-                  style={{ fontSize: '2.25rem' }} 
+                  className="block text-white whitespace-nowrap tracking-tight lg:text-[3.0rem] xl:text-[3.6rem]"
+                  /* style={{ fontSize: '2.25rem' }} */
                 >
                   {t.headline1}
                 </span>
@@ -151,8 +151,8 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
                 <span 
                   ref={line2TextRef}
-                  className="block whitespace-nowrap tracking-tight lg:text-[2.8rem] xl:text-[3.4rem]"
-                  style={{ fontSize: '2.25rem' }}
+                  className="block whitespace-nowrap tracking-tight lg:text-[2.6rem] xl:text-[3.2rem]"
+                  /* style={{ fontSize: '2.25rem' }} */
                 >
                   <span className="gold-gradient-text drop-shadow-lg inline-block">
                     {t.headline2}
