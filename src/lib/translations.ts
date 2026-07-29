@@ -281,8 +281,8 @@ export const translations: Record<Language, TranslationSchema> = {
       modalityLabel: 'Modalidad',
       modalityValue: 'Atención presencial',
       priceTag: 'Precio de Inscripción',
-      originalPrice: '$80 USD',
-      currentPrice: '$80 USD',
+      originalPrice: '$95 USD',
+      currentPrice: '$95 USD',
       ctaButton: 'INSCRÍBETE AHORA',
       modulesTitle: 'Programa del Seminario',
       modules: [
@@ -559,8 +559,8 @@ export const translations: Record<Language, TranslationSchema> = {
       modalityLabel: 'Modality',
       modalityValue: 'In-person attendance',
       priceTag: 'Enrollment Price',
-      originalPrice: '$80 USD',
-      currentPrice: '$80 USD',
+      originalPrice: '$95 USD',
+      currentPrice: '$95 USD',
       ctaButton: 'ENROLL NOW',
       modulesTitle: 'Seminar Curriculum',
       modules: [
@@ -721,6 +721,7 @@ export const translations: Record<Language, TranslationSchema> = {
       bannerTitlePart2: 'STARTS HERE',
       bannerSubtitle:
         'Join hundreds of students who are already transforming their talent into a professional career.',
+      button: 'ENROLL NOW',
     },
   },
 
