@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Language, translations } from '@/lib/translations';
 import { ChevronRight } from 'lucide-react';
 
@@ -11,6 +11,62 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
   const t = translations[currentLang].hero;
+
+  // Refs para controlar de forma independiente el escalado móvil de cada línea
+  const line1ContainerRef = useRef<HTMLDivElement>(null);
+  const line1TextRef = useRef<HTMLSpanElement>(null);
+  const line2ContainerRef = useRef<HTMLDivElement>(null);
+  const line2TextRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const scaleText = (container: HTMLDivElement | null, text: HTMLSpanElement | null) => {
+      if (!container || !text) return;
+      
+      // En pantallas de escritorio (sm en adelante), reseteamos la escala para que usen Tailwind
+      if (window.innerWidth >= 640) {
+        text.style.transform = 'none';
+        text.style.display = 'block';
+        return;
+      }
+
+      // Resetear temporalmente para medir el ancho real natural de la frase traducida
+      text.style.transform = 'none';
+      text.style.display = 'inline-block';
+      
+      const containerWidth = container.clientWidth;
+      const textWidth = text.scrollWidth;
+
+      if (textWidth > 0 && containerWidth > 0) {
+        // Calcular el factor de escala exacto para ajustar el texto de lado a lado del móvil
+        const scaleFactor = containerWidth / textWidth;
+        text.style.display = 'block';
+        text.style.transformOrigin = 'left center';
+        text.style.transform = `scale(${scaleFactor})`;
+      }
+    };
+
+    const handleResize = () => {
+      scaleText(line1ContainerRef.current, line1TextRef.current);
+      scaleText(line2ContainerRef.current, line2TextRef.current);
+    };
+
+    // Ejecutar al cargar y cambiar de idioma
+    handleResize();
+
+    // Observador para detectar cambios de tamaño del contenedor de forma fluida
+    const observer = new ResizeObserver(() => {
+      handleResize();
+    });
+
+    if (line1ContainerRef.current) observer.observe(line1ContainerRef.current);
+    if (line2ContainerRef.current) observer.observe(line2ContainerRef.current);
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [currentLang, t.headline1, t.headline2]);
 
   const statIcons = [
     (
@@ -57,11 +113,11 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
       </div>
 
-      {/* Content Container — pt accounts for fixed header (~88px tall: h-16 + py-3) */}
+      {/* Content Container */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-28 pb-10 sm:pt-32 sm:pb-12 lg:pt-28 lg:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-0">
 
-          {/* LEFT COLUMN — order-2 on mobile so image shows first on small screens */}
+          {/* LEFT COLUMN */}
           <div className="relative z-30 lg:col-span-7 space-y-5 order-2 lg:order-1">
 
             {/* Eyebrow text */}
@@ -74,26 +130,30 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               </p>
             </div>
 
-            {/* Main Headline — Container Query independent sizing */}
+            {/* Main Headline — Independent Perfect Mobile Scaling */}
             <h1 className="font-black uppercase leading-tight tracking-tight text-4xl sm:text-5xl lg:text-[2.8rem] xl:text-[3.4rem]">
-              {/* Contenedor 1 con propiedad de contenedor CSS */}
-              <span className="block text-white w-full overflow-hidden [@supports(container-type:inline-size)]:[container-type:inline-size]">
+              
+              {/* Line 1 Container */}
+              <div ref={line1ContainerRef} className="w-full overflow-hidden block">
                 <span 
-                  className="block w-full tracking-tight whitespace-nowrap sm:text-[2.8rem] xl:text-[3.4rem]"
-                  style={{ fontSize: 'clamp(1rem, 14cqw, 2.8rem)' }}
+                  ref={line1TextRef}
+                  className="block text-white whitespace-nowrap tracking-tight sm:text-[2.8rem] xl:text-[3.4rem]"
+                  style={{ fontSize: '2.25rem' }} 
                 >
                   {t.headline1}
                 </span>
-              </span>
+              </div>
 
-              {/* Contenedor 2 con propiedad de contenedor CSS */}
-              <span className="block gold-gradient-text mt-1 drop-shadow-lg w-full overflow-hidden [@supports(container-type:inline-size)]:[container-type:inline-size]">
+              {/* Line 2 Container */}
+              <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
                 <span 
-                  className="block w-full tracking-tight whitespace-nowrap sm:text-[2.8rem] xl:text-[3.4rem]"
-                  style={{ fontSize: 'clamp(1rem, 7.8cqw, 2.8rem)' }}
+                  ref={line2TextRef}
+                  className="block gold-gradient-text drop-shadow-lg whitespace-nowrap tracking-tight sm:text-[2.8rem] xl:text-[3.4rem]"
+                  style={{ fontSize: '2.25rem' }}
                   dangerouslySetInnerHTML={{ __html: t.headline2 }} 
                 />
-              </span>
+              </div>
+
             </h1>
 
             {/* Subtitle */}
@@ -101,7 +161,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               {t.subtitleText}
             </p>
 
-            {/* 4-stat icon grid — 2 cols on mobile, 4 on sm+ */}
+            {/* 4-stat icon grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-lg pt-1">
               {t.stats.map((s, i) => (
                 <div key={i} className="flex flex-col items-center text-center space-y-2">
@@ -117,7 +177,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               ))}
             </div>
 
-            {/* CTA Button — full width on mobile, auto on sm+ */}
+            {/* CTA Button */}
             <div className="pt-2">
               <button
                 onClick={onOpenCheckout}
@@ -157,7 +217,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
             </div>
           </div>
 
-          {/* RIGHT COLUMN — order-1 on mobile: image appears FIRST, visually impactful */}
+          {/* RIGHT COLUMN */}
           <div className="relative z-10 lg:col-span-5 w-full flex justify-center lg:justify-end items-center order-1 lg:order-2">
             <div className="relative w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[520px] flex items-center justify-center">
               <img
