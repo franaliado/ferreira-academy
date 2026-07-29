@@ -12,7 +12,6 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
   const t = translations[currentLang].hero;
 
-  // Refs para controlar de forma independiente el escalado móvil de cada línea
   const line1ContainerRef = useRef<HTMLDivElement>(null);
   const line1TextRef = useRef<HTMLSpanElement>(null);
   const line2ContainerRef = useRef<HTMLDivElement>(null);
@@ -22,14 +21,14 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
     const scaleText = (container: HTMLDivElement | null, text: HTMLSpanElement | null) => {
       if (!container || !text) return;
       
-      // En pantallas de escritorio (sm en adelante), reseteamos la escala para que usen Tailwind
+      // En pantallas de escritorio (sm en adelante), reseteamos la escala
       if (window.innerWidth >= 640) {
         text.style.transform = 'none';
         text.style.display = 'block';
         return;
       }
 
-      // Resetear temporalmente para medir el ancho real natural de la frase traducida
+      // Resetear para medir el ancho natural real de manera idéntica
       text.style.transform = 'none';
       text.style.display = 'inline-block';
       
@@ -37,7 +36,6 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
       const textWidth = text.scrollWidth;
 
       if (textWidth > 0 && containerWidth > 0) {
-        // Calcular el factor de escala exacto para ajustar el texto de lado a lado del móvil
         const scaleFactor = containerWidth / textWidth;
         text.style.display = 'block';
         text.style.transformOrigin = 'left center';
@@ -50,10 +48,8 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
       scaleText(line2ContainerRef.current, line2TextRef.current);
     };
 
-    // Ejecutar al cargar y cambiar de idioma
     handleResize();
 
-    // Observador para detectar cambios de tamaño del contenedor de forma fluida
     const observer = new ResizeObserver(() => {
       handleResize();
     });
@@ -130,7 +126,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               </p>
             </div>
 
-            {/* Main Headline — Independent Perfect Mobile Scaling */}
+            {/* Main Headline */}
             <h1 className="font-black uppercase leading-tight tracking-tight text-4xl sm:text-5xl lg:text-[2.8rem] xl:text-[3.4rem]">
               
               {/* Line 1 Container */}
@@ -144,14 +140,15 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
                 </span>
               </div>
 
-              {/* Line 2 Container */}
+              {/* Line 2 Container — Sin dangerouslySetInnerHTML para medir idéntico */}
               <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
                 <span 
                   ref={line2TextRef}
                   className="block gold-gradient-text drop-shadow-lg whitespace-nowrap tracking-tight sm:text-[2.8rem] xl:text-[3.4rem]"
                   style={{ fontSize: '2.25rem' }}
-                  dangerouslySetInnerHTML={{ __html: t.headline2 }} 
-                />
+                >
+                  {t.headline2}
+                </span>
               </div>
 
             </h1>
