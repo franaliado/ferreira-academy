@@ -835,8 +835,8 @@ export const translations: Record<Language, TranslationSchema> = {
       modalityLabel: 'Modalidade',
       modalityValue: 'Atendimento presencial',
       priceTag: 'Preço de Inscrição',
-      originalPrice: '$80 USD',
-      currentPrice: '$80 USD',
+      originalPrice: '$95 USD',
+      currentPrice: '$95 USD',
       ctaButton: 'INSCREVA-SE AGORA',
       modulesTitle: 'Programa do Seminário',
       modules: [
@@ -1113,8 +1113,8 @@ export const translations: Record<Language, TranslationSchema> = {
       modalityLabel: 'Modalità',
       modalityValue: 'Dal Vivo via Zoom HD',
       priceTag: 'Offerta di Lancio Internazionale',
-      originalPrice: '$350 USD',
-      currentPrice: '$149 USD',
+      originalPrice: '$95 USD',
+      currentPrice: '$95 USD',
       ctaButton: 'ISCRIVITI ORA',
       modulesTitle: 'Programma del Seminario',
       modules: [
@@ -1393,8 +1393,8 @@ export const translations: Record<Language, TranslationSchema> = {
       modalityLabel: 'Modalité',
       modalityValue: 'En Direct via Zoom HD',
       priceTag: 'Offre de Lancement Internationale',
-      originalPrice: '$350 USD',
-      currentPrice: '$149 USD',
+      originalPrice: '$95 USD',
+      currentPrice: '$95 USD',
       ctaButton: 'S\'INSCRIRE MAINTENANT',
       modulesTitle: 'Programme du Séminaire',
       modules: [
@@ -1673,8 +1673,8 @@ export const translations: Record<Language, TranslationSchema> = {
         modalityLabel: 'Format',
         modalityValue: 'Präsenzunterricht',
         priceTag: 'Zertifizierung & Inklusion',
-        originalPrice: '',
-        currentPrice: '$80 USD',
+      originalPrice: '$95 USD',
+      currentPrice: '$95 USD',
         ctaButton: 'JETZT ANMELDEN',
         modulesTitle: 'Seminarprogramm',
         modules: [
