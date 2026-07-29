@@ -133,31 +133,57 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               </p>
             </div>
 
-            {/* Título Principal — Tratamiento independiente para Móvil y PC */}
+            {/* Título Principal — Separado de forma independiente para Móvil y PC */}
             <h1 className="font-black uppercase leading-tight tracking-tight">
               
-              {/* Contenedor de la primera línea ("Domina el arte") */}
-              <div ref={line1ContainerRef} className="w-full overflow-hidden block">
-                <span 
-                  ref={line1TextRef}
-                  className="block text-white whitespace-nowrap tracking-tight lg:text-[3.0rem] xl:text-[3.6rem]"
-                  /* style={{ fontSize: '2.25rem' }} */
-                >
-                  {t.headline1}
-                </span>
+              {/* ========================================== */}
+              {/* 1. VERSIÓN MÓVIL (Usa el script y escala exacta) */}
+              {/* ========================================== */}
+              <div className="block sm:hidden space-y-1">
+                {/* Línea 1 Móvil */}
+                <div ref={line1ContainerRef} className="w-full overflow-hidden block">
+                  <span 
+                    ref={line1TextRef}
+                    className="block text-white whitespace-nowrap tracking-tight"
+                    style={{ fontSize: '2.25rem' }}
+                  >
+                    {t.headline1}
+                  </span>
+                </div>
+
+                {/* Línea 2 Móvil */}
+                <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
+                  <span 
+                    ref={line2TextRef}
+                    className="block whitespace-nowrap tracking-tight"
+                    style={{ fontSize: '2.25rem' }}
+                  >
+                    <span className="gold-gradient-text drop-shadow-lg inline-block">
+                      {t.headline2}
+                    </span>
+                  </span>
+                </div>
               </div>
 
-              {/* Contenedor de la segunda línea ("Transforma tu futuro") */}
-              <div ref={line2ContainerRef} className="w-full overflow-hidden block mt-1">
-                <span 
-                  ref={line2TextRef}
-                  className="block whitespace-nowrap tracking-tight lg:text-[2.6rem] xl:text-[3.2rem]"
-                  /* style={{ fontSize: '2.25rem' }} */
-                >
-                  <span className="gold-gradient-text drop-shadow-lg inline-block">
-                    {t.headline2}
+              {/* ========================================== */}
+              {/* 2. VERSIÓN PC (Tamaños fijos y directos por CSS) */}
+              {/* ========================================== */}
+              <div className="hidden sm:block space-y-1">
+                {/* Línea 1 PC — Cambia el tamaño aquí libremente */}
+                <div className="w-full">
+                  <span className="block text-white whitespace-nowrap tracking-tight text-[2.8rem] xl:text-[3.4rem]">
+                    {t.headline1}
                   </span>
-                </span>
+                </div>
+
+                {/* Línea 2 PC — Cambia el tamaño aquí libremente */}
+                <div className="w-full mt-1">
+                  <span className="block whitespace-nowrap tracking-tight text-[2.4rem] xl:text-[3.0rem]">
+                    <span className="gold-gradient-text drop-shadow-lg inline-block">
+                      {t.headline2}
+                    </span>
+                  </span>
+                </div>
               </div>
 
             </h1>
