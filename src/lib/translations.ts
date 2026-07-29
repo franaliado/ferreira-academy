@@ -1112,8 +1112,6 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: '15 Ottobre 2026',
       modalityLabel: 'Modalità',
       modalityValue: 'Dal Vivo via Zoom HD',
-      durationLabel: 'Durata Totale',
-      durationValue: '8 ORE',
       priceTag: 'Offerta di Lancio Internazionale',
       originalPrice: '$350 USD',
       currentPrice: '$149 USD',
