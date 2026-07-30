@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { Language, translations } from '@/lib/translations';
+import { currentCourse } from '@/data/currentCourse';
+import { CountdownTimer } from '@/components/CountdownTimer';
 import { Calendar, Video, CheckCircle2, ChevronRight } from 'lucide-react';
 
 interface SeminarDetailsProps {
@@ -16,6 +18,9 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
     <section id="seminar" className="bg-black relative overflow-hidden">
       {/* Top gold separator */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+
+      {/* Contador regresivo posicionado exactamente en la sección superior previa a los datos detallados del curso */}
+      <CountdownTimer targetDate={currentCourse.startDate} currentLang={currentLang} />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* On mobile: stacks vertically. On lg+: 3-column grid side by side */}

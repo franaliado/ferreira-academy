@@ -2,7 +2,9 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Language, translations } from '@/lib/translations';
-import { ChevronRight } from 'lucide-react';
+import { currentCourse } from '@/data/currentCourse';
+import { ChevronRight, Sparkles } from 'lucide-react';
+import { LemonSqueezyLogo } from './LemonSqueezyLogo';
 
 interface HeroProps {
   currentLang: Language;
@@ -209,6 +211,19 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               ))}
             </div>
 
+            {/* Banner destacado con el Nombre del Curso Actual */}
+            <div className="bg-gradient-to-r from-amber-500/20 via-[#D4AF37]/10 to-transparent border-l-4 border-[#D4AF37] p-3.5 sm:p-4 rounded-r-xl space-y-1 my-2 shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-[#D4AF37] animate-pulse" />
+                <span className="text-[#D4AF37] text-[11px] sm:text-xs font-black uppercase tracking-[0.2em]">
+                  PRÓXIMO SEMINARIO EN VIVO
+                </span>
+              </div>
+              <h2 className="text-white text-base sm:text-lg lg:text-xl font-extrabold uppercase tracking-wide leading-snug">
+                {currentCourse.title}
+              </h2>
+            </div>
+
             {/* Botón principal de llamada a la acción (CTA) */}
             <div className="pt-2">
               <button
@@ -227,7 +242,8 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
                 {t.securePayments}
               </span>
 
-              <span className="font-extrabold text-base text-[#8792FF] tracking-tight">stripe</span>
+              {/* Lemon Squeezy Logo / Badge */}
+              <LemonSqueezyLogo size="sm" className="px-2 py-1 rounded-md bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" />
 
               <span className="font-black text-base tracking-tight">
                 <span className="text-[#0079C1]">Pay</span>

@@ -15,6 +15,7 @@ import {
   Sparkles,
   ShieldCheck,
 } from 'lucide-react';
+import { LemonSqueezyLogo } from './LemonSqueezyLogo';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -36,7 +37,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     phone: '',
     country: '',
   });
-  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal'>('stripe');
+  const [paymentMethod, setPaymentMethod] = useState<'lemonSqueezy' | 'paypal'>('lemonSqueezy');
   const [cardDetails, setCardDetails] = useState({
     number: '4242 •••• •••• 4242',
     expiry: '12/28',
@@ -69,7 +70,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           paymentMethod,
           amount: currentCourse.priceAmount,
           currency: currentCourse.currency,
-          stripePriceId: currentCourse.stripePriceId,
+          lemonSqueezyVariantId: currentCourse.lemonSqueezyVariantId,
           paypalPlanId: currentCourse.paypalPlanId,
         }),
       });
@@ -234,16 +235,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
-                onClick={() => setPaymentMethod('stripe')}
+                onClick={() => setPaymentMethod('lemonSqueezy')}
                 className={`p-4 rounded-2xl border flex flex-col items-center justify-center space-y-2 transition-all ${
-                  paymentMethod === 'stripe'
+                  paymentMethod === 'lemonSqueezy'
                     ? 'border-[#D4AF37] bg-amber-500/10 shadow-[0_0_20px_rgba(212,175,55,0.2)]'
                     : 'border-amber-500/20 bg-neutral-900 opacity-60 hover:opacity-100'
                 }`}
               >
-                <CreditCard className="w-6 h-6 text-[#D4AF37]" />
-                <span className="text-xs font-bold text-white">Stripe</span>
-                <span className="text-[10px] text-gray-400">Tarjetas Crédito/Débito</span>
+                <LemonSqueezyLogo size="md" />
+                <span className="text-[10px] text-gray-400">Tarjetas / Apple & Google Pay</span>
               </button>
 
               <button
@@ -261,36 +261,45 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </button>
             </div>
 
-            {/* Card Simulator Fields if Stripe */}
-            {paymentMethod === 'stripe' && (
-              <div className="space-y-4 bg-neutral-900/60 p-4 rounded-2xl border border-amber-500/20">
-                <div className="space-y-1">
-                  <label className="block text-xs text-gray-400">{t.cardNumber}</label>
-                  <input
-                    type="text"
-                    value={cardDetails.number}
-                    onChange={(e) => setCardDetails({ ...cardDetails, number: e.target.value })}
-                    className="w-full bg-neutral-950 border border-amber-500/30 rounded-xl px-4 py-2.5 text-xs text-white font-mono"
-                  />
+            {/* Lemon Squeezy Payment Gateway Info */}
+            {paymentMethod === 'lemonSqueezy' && (
+              <div className="space-y-3 bg-neutral-900/60 p-4 rounded-2xl border border-amber-500/20 text-center">
+                <div className="flex justify-center items-center space-x-2 text-yellow-400 text-sm font-bold">
+                  <span>Pasarela</span>
+                  <LemonSqueezyLogo size="sm" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <p className="text-xs text-gray-300">
+                  Procesamiento global seguro con tarjeta de crédito/débito, Apple Pay y Google Pay.
+                </p>
+                <div className="space-y-4 bg-neutral-950 p-3 rounded-xl border border-amber-500/30 text-left">
                   <div className="space-y-1">
-                    <label className="block text-xs text-gray-400">{t.cardExpiry}</label>
+                    <label className="block text-xs text-gray-400">{t.cardNumber}</label>
                     <input
                       type="text"
-                      value={cardDetails.expiry}
-                      onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
-                      className="w-full bg-neutral-950 border border-amber-500/30 rounded-xl px-4 py-2.5 text-xs text-white font-mono"
+                      value={cardDetails.number}
+                      onChange={(e) => setCardDetails({ ...cardDetails, number: e.target.value })}
+                      className="w-full bg-neutral-900 border border-amber-500/30 rounded-xl px-4 py-2.5 text-xs text-white font-mono"
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="block text-xs text-gray-400">{t.cardCvc}</label>
-                    <input
-                      type="text"
-                      value={cardDetails.cvc}
-                      onChange={(e) => setCardDetails({ ...cardDetails, cvc: e.target.value })}
-                      className="w-full bg-neutral-950 border border-amber-500/30 rounded-xl px-4 py-2.5 text-xs text-white font-mono"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="block text-xs text-gray-400">{t.cardExpiry}</label>
+                      <input
+                        type="text"
+                        value={cardDetails.expiry}
+                        onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
+                        className="w-full bg-neutral-900 border border-amber-500/30 rounded-xl px-4 py-2.5 text-xs text-white font-mono"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-xs text-gray-400">{t.cardCvc}</label>
+                      <input
+                        type="text"
+                        value={cardDetails.cvc}
+                        onChange={(e) => setCardDetails({ ...cardDetails, cvc: e.target.value })}
+                        className="w-full bg-neutral-900 border border-amber-500/30 rounded-xl px-4 py-2.5 text-xs text-white font-mono"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

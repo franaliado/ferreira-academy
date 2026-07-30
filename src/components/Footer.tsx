@@ -3,6 +3,7 @@
 import React from 'react';
 import { Language, translations } from '@/lib/translations';
 import { Instagram, Facebook, Youtube, ShieldCheck } from 'lucide-react';
+import { LemonSqueezyLogo } from './LemonSqueezyLogo';
 
 interface FooterProps {
   currentLang: Language;
@@ -100,10 +101,8 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
               {t.paySafely}
             </p>
             <div className="flex items-center flex-wrap gap-2 sm:gap-3 pt-1">
-              {/* Stripe */}
-              <span className="font-extrabold text-sm text-[#8792FF] tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
-                stripe
-              </span>
+              {/* Lemon Squeezy */}
+              <LemonSqueezyLogo size="sm" className="px-2 py-1 rounded border border-white/10 bg-white/5" />
               {/* PayPal */}
               <span className="font-black text-sm tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
                 <span className="text-[#0079C1]">Pay</span>

@@ -128,7 +128,8 @@ export interface TranslationSchema {
     country: string;
     selectCountry: string;
     paymentMethod: string;
-    payWithStripe: string;
+    payWithStripe?: string;
+    payWithLemonSqueezy?: string;
     payWithPaypal: string;
     cardNumber: string;
     cardExpiry: string;
@@ -146,6 +147,14 @@ export interface TranslationSchema {
     zoomLink: string;
     closeModal: string;
     modalBadge: string;
+  };
+  countdown?: {
+    title: string;
+    days: string;
+    hours: string;
+    minutes: string;
+    seconds: string;
+    expired: string;
   };
   footer: {
     rights: string;
