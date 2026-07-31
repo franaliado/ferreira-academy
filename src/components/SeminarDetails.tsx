@@ -29,9 +29,9 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
           {/* Column 1: Course Photo — full height on desktop, fixed height on mobile */}
           <div className="relative overflow-hidden" style={{ minHeight: '260px' }}>
             <img
-              src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1200"
+              src="/cortes/Corte-1.png"
               alt="Demostración de corte de cabello masculino profesional"
-              className="w-full h-full object-cover object-center absolute inset-0"
+              className="w-full h-full object-cover object-top absolute inset-0"
             />
             {/* Overlays */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/60 pointer-events-none" />
