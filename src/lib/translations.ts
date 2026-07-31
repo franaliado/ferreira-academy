@@ -148,7 +148,8 @@ export interface TranslationSchema {
     closeModal: string;
     modalBadge: string;
   };
-  countdown?: {
+  countdown: {
+    topBadge: string;
     title: string;
     days: string;
     hours: string;
@@ -314,9 +315,9 @@ export const translations: Record<Language, TranslationSchema> = {
       courseTitleLine1: 'FADED MASTERY',
       courseTitleLine2: 'ELITE',
       checklist: [
-        'Capacitación avanzada',
+        'Capacitación Presencial',
         'Técnicas de fade y optimización de tiempos en función del sistema craneal',
-        'Certificado de Participación',
+        'Certificación',
         'Coffee Break',
       ],
     },
@@ -449,6 +450,15 @@ export const translations: Record<Language, TranslationSchema> = {
       bannerSubtitle:
         'Únete a cientos de estudiantes que ya están transformando su talento en una carrera profesional.',
       button: 'INSCRÍBETE AHORA',
+    },
+    countdown: {
+      topBadge: 'OPORTUNIDAD LIMITADA',
+      title: 'EL PRÓXIMO SEMINARIO INICIA EN:',
+      days: 'Días',
+      hours: 'Horas',
+      minutes: 'Minutos',
+      seconds: 'Segundos',
+      expired: '¡EL CURSO ESTÁ POR COMENZAR! ÚLTIMOS CUPOS DISPONIBLES',
     },
   },
 
@@ -589,9 +599,9 @@ export const translations: Record<Language, TranslationSchema> = {
       courseTitleLine1: 'FADED MASTERY',
       courseTitleLine2: 'ELITE',
       checklist: [
-        'Advanced training',
+        'In-Person Training',
         'Fade techniques and time optimization based on the cranial system',
-        'Certificate of Participation',
+        'Certification',
         'Coffee Break',
       ],
     },
@@ -722,6 +732,15 @@ export const translations: Record<Language, TranslationSchema> = {
       bannerSubtitle:
         'Join hundreds of students who are already transforming their talent into a professional career.',
       button: 'ENROLL NOW',
+    },
+    countdown: {
+      topBadge: 'LIMITED OPPORTUNITY',
+      title: 'THE NEXT SEMINAR STARTS IN:',
+      days: 'Days',
+      hours: 'Hours',
+      minutes: 'Minutes',
+      seconds: 'Seconds',
+      expired: 'THE COURSE IS ABOUT TO START! LAST SPOTS AVAILABLE',
     },
   },
 
@@ -862,9 +881,9 @@ export const translations: Record<Language, TranslationSchema> = {
       courseTitleLine1: 'FADED MASTERY',
       courseTitleLine2: 'ELITE',
       checklist: [
-        'Capacitação avançada',
+        'Capacitação Presencial',
         'Técnicas de fade e otimização de tempos com base no sistema cranial',
-        'Certificado de Participação',
+        'Certificação',
         'Coffee Break',
       ],
     },
@@ -997,6 +1016,15 @@ export const translations: Record<Language, TranslationSchema> = {
       bannerSubtitle:
         'Junte-se a centenas de estudantes que já estão transformando seu talento em uma carreira profissional.',
       button: 'INSCREVA-SE AGORA',
+    },
+    countdown: {
+      topBadge: 'OPORTUNIDADE LIMITADA',
+      title: 'O PRÓXIMO SEMINÁRIO COMEÇA EM:',
+      days: 'Dias',
+      hours: 'Horas',
+      minutes: 'Minutos',
+      seconds: 'Segundos',
+      expired: 'O CURSO ESTÁ PRESTES A COMEÇAR! ÚLTIMAS VAGAS DISPONÍVEIS',
     },
   },
 
@@ -1137,9 +1165,9 @@ export const translations: Record<Language, TranslationSchema> = {
       courseTitleLine1: 'TAGLIO MASCHILE',
       courseTitleLine2: 'E BARBERIA PROFESSIONALE',
       checklist: [
-        'Fondamenti e tecniche avanzate di taglio maschile',
+        'Formazione in Presenza',
         'Sfumature, texture e finiture professionali',
-        'Cura della barba e profilatura',
+        'Certificazione',
         'Styling e tendenze attuali',
         'Sessioni dal vivo + accesso illimitato alle registrazioni',
         'Certificato digitale al completamento',
@@ -1274,6 +1302,15 @@ export const translations: Record<Language, TranslationSchema> = {
       bannerSubtitle:
         'Unisciti a centinaia di studenti che stanno già trasformando il loro talento in una carriera professionale.',
       button: 'ISCRIVITI ORA',
+    },
+    countdown: {
+      topBadge: 'OPPORTUNITÀ LIMITATA',
+      title: 'IL PROSSIMO SEMINARIO INIZIA TRA:',
+      days: 'Giorni',
+      hours: 'Ore',
+      minutes: 'Minuti',
+      seconds: 'Secondi',
+      expired: 'IL CORSO STA PER INIZIARE! ULTIMI POSTI DISPONIBILI',
     },
   },
 
@@ -1414,9 +1451,9 @@ export const translations: Record<Language, TranslationSchema> = {
       courseTitleLine1: 'COUPE MASCULINE',
       courseTitleLine2: 'ET BARBERIE PROFESSIONNELLE',
       checklist: [
-        'Fondamentaux et techniques avancées de coupe masculine',
+        'Formation en Présentiel',
         'Dégradés, textures et finitions professionnelles',
-        'Soin de la barbe et profilage',
+        'Certification',
         'Styling et tendances actuelles',
         'Sessions en direct + accès illimité aux enregistrements',
         'Certificat numérique à la fin',
@@ -1551,6 +1588,15 @@ export const translations: Record<Language, TranslationSchema> = {
       bannerSubtitle:
         'Rejoignez des centaines d\'étudiants qui transforment déjà leur talent en une carrière professionnelle.',
       button: "S'INSCRIRE MAINTENANT",
+    },
+    countdown: {
+      topBadge: 'OPPORTUNITÉ LIMITÉE',
+      title: 'LE PROCHAIN SÉMINAIRE COMMENCE DANS :',
+      days: 'Jours',
+      hours: 'Heures',
+      minutes: 'Minutes',
+      seconds: 'Secondes',
+      expired: 'LE COURS EST SUR LE POINT DE COMMENCER ! DERNIÈRES PLACES DISPONIBLES',
     },
   },
 
@@ -1691,9 +1737,9 @@ export const translations: Record<Language, TranslationSchema> = {
         courseTitleLine1: 'FADED MASTERY',
         courseTitleLine2: 'ELITE',
         checklist: [
-          'Teilnahmezertifikat',
+          'Präsenz-Schulung',
           'Coffee Break',
-          'Präsenzunterricht',
+          'Zertifizierung',
           'Sonntag, 09.08.2026',
         ],
       },
@@ -1825,6 +1871,15 @@ export const translations: Record<Language, TranslationSchema> = {
         bannerTitlePart2: 'BEGINNT HIER',
         bannerSubtitle: 'Schließe dich Hunderten von Studierenden an, die ihr Talent bereits in eine professionelle Karriere verwandeln.',
         button: 'JETZT ANMELDEN',
+      },
+      countdown: {
+        topBadge: 'BEGRENZTE GELEGENHEIT',
+        title: 'DAS NÄCHSTE SEMINAR BEGINNT IN:',
+        days: 'Tage',
+        hours: 'Stunden',
+        minutes: 'Minuten',
+        seconds: 'Sekunden',
+        expired: 'DER KURS BEGINNT IN KÜRZE! LETZTE PLÄTZE VERFÜGBAR',
       }
     }
 

@@ -17,8 +17,9 @@ interface TimeLeft {
 }
 
 export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate, currentLang }) => {
-  const t = translations[currentLang].countdown || {
-    title: 'EL PRÓXIMO SEMINARIO EN VIVO INICIA EN:',
+  const t = translations[currentLang]?.countdown || {
+    topBadge: 'OPORTUNIDAD LIMITADA',
+    title: 'EL PRÓXIMO SEMINARIO INICIA EN:',
     days: 'Días',
     hours: 'Horas',
     minutes: 'Minutos',
@@ -74,7 +75,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate, curr
           </div>
           <div>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#D4AF37]/20 text-[#D4AF37] uppercase tracking-widest border border-[#D4AF37]/40 mb-1">
-              ⚡ OPORTUNIDAD LIMITADA
+              ⚡ {t.topBadge}
             </span>
             <h3 className="text-white text-base sm:text-lg font-black uppercase tracking-wider leading-snug">
               {t.title}
