@@ -5,6 +5,7 @@ import { Language, translations } from '@/lib/translations';
 import { currentCourse } from '@/data/currentCourse';
 import {
   X,
+  ArrowLeft,
   CreditCard,
   CheckCircle2,
   Lock,
@@ -16,6 +17,15 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { LemonSqueezyLogo } from './LemonSqueezyLogo';
+
+const backText: Record<Language, string> = {
+  es: 'Regresar',
+  en: 'Go Back',
+  pt: 'Voltar',
+  it: 'Indietro',
+  fr: 'Retour',
+  de: 'Zurück',
+};
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -47,6 +57,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [orderId, setOrderId] = useState('');
 
   if (!isOpen) return null;
+
+  const handleBackClick = () => {
+    if (step === 3) {
+      setStep(2);
+    } else if (step === 2) {
+      setStep(1);
+    } else {
+      onClose();
+    }
+  };
 
   const handleNextToPayment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,10 +126,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-4 pb-4 px-3 sm:px-4 bg-black/80 backdrop-blur-xl overflow-y-auto">
       <div className="relative w-full max-w-xl bg-neutral-950 border-2 border-amber-500/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_60px_rgba(212,175,55,0.25)] my-2">
         
+        {/* Return Button */}
+        <button
+          onClick={handleBackClick}
+          className="absolute top-3 left-3 flex items-center px-2.5 py-1.5 rounded-full bg-neutral-900 border border-amber-500/30 text-[10px] sm:text-xs font-bold font-serif text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black hover:border-[#D4AF37] transition-all shadow-[0_0_15px_rgba(212,175,55,0.15)] active:scale-95 z-20"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+          <span>{backText[currentLang]}</span>
+        </button>
+
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 p-1.5 rounded-full bg-neutral-900 border border-amber-500/20 text-gray-400 hover:text-white hover:border-[#D4AF37] transition-all"
+          className="absolute top-3 right-3 p-1.5 rounded-full bg-neutral-900 border border-amber-500/20 text-gray-400 hover:text-white hover:border-[#D4AF37] transition-all z-20"
         >
           <X className="w-4 h-4" />
         </button>

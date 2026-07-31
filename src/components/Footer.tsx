@@ -12,7 +12,17 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
   const t = translations[currentLang].footer;
 
-  const hrefs = ['#hero', '#benefits', '#seminar', '#testimonials', '#faq'];
+  const navTranslations: Record<Language, string[]> = {
+    es: ['Inicio', 'Beneficios', 'Seminario', 'Testimonios', 'Galería', 'Contacto'],
+    en: ['Home', 'Benefits', 'Seminar', 'Testimonials', 'Gallery', 'Contact'],
+    pt: ['Início', 'Benefícios', 'Seminário', 'Depoimentos', 'Galeria', 'Contato'],
+    it: ['Inizio', 'Benefici', 'Seminario', 'Testimonianze', 'Galleria', 'Contatti'],
+    fr: ['Accueil', 'Avantages', 'Séminaire', 'Témoignages', 'Galerie', 'Contact'],
+    de: ['Startseite', 'Vorteile', 'Seminar', 'Referenzen', 'Galerie', 'Kontakt'],
+  };
+
+  const labels = navTranslations[currentLang];
+  const hrefs = ['/#hero', '/#benefits', '/#seminar', '/#testimonials', '/galeria', '/#footer'];
 
   return (
     <footer id="footer" className="bg-black text-white relative overflow-hidden pt-14 sm:pt-16 pb-10 sm:pb-12 border-t border-[#D4AF37]/30">
@@ -47,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
               {t.quickLinks}
             </h3>
             <ul className="space-y-2.5">
-              {t.navLinks.map((label, idx) => (
+              {labels.map((label, idx) => (
                 <li key={idx}>
                   <a
                     href={hrefs[idx]}

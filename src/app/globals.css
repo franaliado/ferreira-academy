@@ -186,8 +186,8 @@ body {
 }
 
 .reveal           { transform: translateY(40px); }
-.reveal-left      { transform: translateX(-50px); }
-.reveal-right     { transform: translateX(50px); }
+.reveal-left      { transform: translateY(40px); }
+.reveal-right     { transform: translateY(40px); }
 .reveal-scale     { transform: scale(0.92) translateY(30px); }
 
 .reveal.is-visible,
@@ -236,19 +236,19 @@ body {
   animation: fadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Fade in from left */
+/* Fade in from left -> updated to from bottom (no lateral movement) */
 @keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-40px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in-left {
   animation: fadeInLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Fade in from right */
+/* Fade in from right -> updated to from bottom (no lateral movement) */
 @keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(40px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in-right {
   animation: fadeInRight 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;

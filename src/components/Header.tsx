@@ -34,12 +34,23 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
     de: { label: 'Deutsch', flagCode: 'de' },
   };
 
+  const navTranslations: Record<Language, string[]> = {
+    es: ['Inicio', 'Beneficios', 'Seminario', 'Testimonios', 'Galería', 'Contacto'],
+    en: ['Home', 'Benefits', 'Seminar', 'Testimonials', 'Gallery', 'Contact'],
+    pt: ['Início', 'Benefícios', 'Seminário', 'Depoimentos', 'Galeria', 'Contato'],
+    it: ['Inizio', 'Benefici', 'Seminario', 'Testimonianze', 'Galleria', 'Contatti'],
+    fr: ['Accueil', 'Avantages', 'Séminaire', 'Témoignages', 'Galerie', 'Contact'],
+    de: ['Startseite', 'Vorteile', 'Seminar', 'Referenzen', 'Galerie', 'Kontakt'],
+  };
+
+  const labels = navTranslations[currentLang];
   const navItems = [
-    { href: '#hero', label: t.home.toUpperCase() },
-    { href: '#seminar', label: t.seminar.toUpperCase() },
-    { href: '#benefits', label: t.benefits.toUpperCase() },
-    { href: '#testimonials', label: t.instructor.toUpperCase() },
-    { href: '#footer', label: t.faq.toUpperCase() },
+    { href: '/#hero', label: labels[0].toUpperCase() },
+    { href: '/#benefits', label: labels[1].toUpperCase() },
+    { href: '/#seminar', label: labels[2].toUpperCase() },
+    { href: '/#testimonials', label: labels[3].toUpperCase() },
+    { href: '/galeria', label: labels[4].toUpperCase() },
+    { href: '/#footer', label: labels[5].toUpperCase() },
   ];
 
   return (
