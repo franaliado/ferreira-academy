@@ -23,95 +23,82 @@ function detectLanguage(): Language {
   return 'es';
 }
 
+// Page-level translations (title, subtitle, back button only — NO items array)
 const galleryTranslations: Record<Language, {
   title: string;
   subtitle: string;
   backText: string;
-  items: Array<{ title: string; category: string; src: string }>;
 }> = {
   es: {
     title: 'Galería de Arte y Estilo',
     subtitle: 'Explora los trabajos exclusivos de Ferreira Academy',
     backText: 'Regresar',
-    items: [
-      { title: 'Técnica de Fade Avanzada', category: 'Corte de Precisión', src: '/galeria/imagen-1.png' },
-      { title: 'Geometría y Estructura Craneal', category: 'Seminario Presencial', src: '/galeria/Screenshot_88.png' },
-      { title: 'Styling y Texturizado Premium', category: 'Acabados', src: '/galeria/imagen-1.png' },
-      { title: 'Masterclass en Vivo 2026', category: 'Eventos', src: '/galeria/Screenshot_88.png' },
-      { title: 'Perfilado Clásico & Barboterapia', category: 'Barba de Lujo', src: '/galeria/imagen-1.png' },
-      { title: 'Graduados Ferreira Academy', category: 'Certificación', src: '/galeria/Screenshot_88.png' },
-    ]
   },
   en: {
     title: 'Art & Style Gallery',
     subtitle: 'Explore the exclusive works of Ferreira Academy',
     backText: 'Go Back',
-    items: [
-      { title: 'Advanced Fade Technique', category: 'Precision Cut', src: '/galeria/imagen-1.png' },
-      { title: 'Geometry & Cranial Structure', category: 'In-person Seminar', src: '/galeria/Screenshot_88.png' },
-      { title: 'Premium Styling & Texturing', category: 'Finishes', src: '/galeria/imagen-1.png' },
-      { title: 'Live Masterclass 2026', category: 'Events', src: '/galeria/Screenshot_88.png' },
-      { title: 'Classic Profiling & Beard Therapy', category: 'Luxury Beard', src: '/galeria/imagen-1.png' },
-      { title: 'Ferreira Academy Graduates', category: 'Certification', src: '/galeria/Screenshot_88.png' },
-    ]
   },
   pt: {
     title: 'Galeria de Arte e Estilo',
     subtitle: 'Explore os trabalhos exclusivos da Ferreira Academy',
     backText: 'Voltar',
-    items: [
-      { title: 'Técnica de Fade Avançada', category: 'Corte de Precisão', src: '/galeria/imagen-1.png' },
-      { title: 'Geometria e Estrutura Cranial', category: 'Seminário Presencial', src: '/galeria/Screenshot_88.png' },
-      { title: 'Styling e Texturização Premium', category: 'Acabamentos', src: '/galeria/imagen-1.png' },
-      { title: 'Masterclass ao Vivo 2026', category: 'Eventos', src: '/galeria/Screenshot_88.png' },
-      { title: 'Perfilamento Clássico & Barboterapia', category: 'Barba de Luxo', src: '/galeria/imagen-1.png' },
-      { title: 'Graduados Ferreira Academy', category: 'Certificação', src: '/galeria/Screenshot_88.png' },
-    ]
   },
   it: {
     title: 'Galleria d\'Arte e Stile',
     subtitle: 'Esplora i lavori esclusivi di Ferreira Academy',
     backText: 'Indietro',
-    items: [
-      { title: 'Tecnica di Fade Avanzata', category: 'Taglio di Precisione', src: '/galeria/imagen-1.png' },
-      { title: 'Geometria e Struttura Craniale', category: 'Seminario in Presenza', src: '/galeria/Screenshot_88.png' },
-      { title: 'Styling e Texturizzazione Premium', category: 'Finiture', src: '/galeria/imagen-1.png' },
-      { title: 'Masterclass dal Vivo 2026', category: 'Eventi', src: '/galeria/Screenshot_88.png' },
-      { title: 'Modellatura Classica e Barba Therapy', category: 'Barba di Lusso', src: '/galeria/imagen-1.png' },
-      { title: 'Laureati Ferreira Academy', category: 'Certificazione', src: '/galeria/Screenshot_88.png' },
-    ]
   },
   fr: {
     title: 'Galerie d\'Art et de Style',
     subtitle: 'Explorez les travaux exclusifs de Ferreira Academy',
     backText: 'Retour',
-    items: [
-      { title: 'Technique de Fade Avancée', category: 'Coupe de Précision', src: '/galeria/imagen-1.png' },
-      { title: 'Géométrie et Structure Crânienne', category: 'Séminaire Présentiel', src: '/galeria/Screenshot_88.png' },
-      { title: 'Styling et Texturisation Premium', category: 'Finitions', src: '/galeria/imagen-1.png' },
-      { title: 'Masterclass en Direct 2026', category: 'Événements', src: '/galeria/Screenshot_88.png' },
-      { title: 'Rasage Classique & Thérapie de Barbe', category: 'Barbe de Luxe', src: '/galeria/imagen-1.png' },
-      { title: 'Diplômés Ferreira Academy', category: 'Certification', src: '/galeria/Screenshot_88.png' },
-    ]
   },
   de: {
     title: 'Kunst & Stil Galerie',
     subtitle: 'Entdecken Sie die exklusiven Arbeiten der Ferreira Academy',
     backText: 'Zurück',
-    items: [
-      { title: 'Fortgeschrittene Fade-Technik', category: 'Präzisionsschnitt', src: '/galeria/imagen-1.png' },
-      { title: 'Geometrie & Schädelstruktur', category: 'Präsenzseminar', src: '/galeria/Screenshot_88.png' },
-      { title: 'Premium-Styling & Texturierung', category: 'Finishes', src: '/galeria/imagen-1.png' },
-      { title: 'Live-Masterclass 2026', category: 'Veranstaltungen', src: '/galeria/Screenshot_88.png' },
-      { title: 'Klassisches Bart-Profiling & Therapie', category: 'Luxusbart', src: '/galeria/imagen-1.png' },
-      { title: 'Ferreira Academy Absolventen', category: 'Zertifizierung', src: '/galeria/Screenshot_88.png' },
-    ]
   }
+};
+
+// Per-file translated metadata, keyed by lowercase filename.
+// Only files that exist in public/galeria will be shown; this map
+// simply enriches them with human-readable titles & categories.
+const itemTranslations: Record<Language, Record<string, { title: string; category: string }>> = {
+  es: {
+    'imagen-1.png':      { title: 'Técnica de Fade Avanzada',        category: 'Corte de Precisión'    },
+    'screenshot_88.png': { title: 'Geometría y Estructura Craneal',  category: 'Seminario Presencial'  },
+  },
+  en: {
+    'imagen-1.png':      { title: 'Advanced Fade Technique',         category: 'Precision Cut'         },
+    'screenshot_88.png': { title: 'Geometry & Cranial Structure',    category: 'In-person Seminar'     },
+  },
+  pt: {
+    'imagen-1.png':      { title: 'Técnica de Fade Avançada',        category: 'Corte de Precisão'     },
+    'screenshot_88.png': { title: 'Geometria e Estrutura Cranial',   category: 'Seminário Presencial'  },
+  },
+  it: {
+    'imagen-1.png':      { title: 'Tecnica di Fade Avanzata',        category: 'Taglio di Precisione'  },
+    'screenshot_88.png': { title: 'Geometria e Struttura Craniale',  category: 'Seminario in Presenza' },
+  },
+  fr: {
+    'imagen-1.png':      { title: 'Technique de Fade Avancée',       category: 'Coupe de Précision'    },
+    'screenshot_88.png': { title: 'Géométrie et Structure Crânienne', category: 'Séminaire Présentiel' },
+  },
+  de: {
+    'imagen-1.png':      { title: 'Fortgeschrittene Fade-Technik',   category: 'Präzisionsschnitt'     },
+    'screenshot_88.png': { title: 'Geometrie & Schädelstruktur',     category: 'Präsenzseminar'        },
+  },
 };
 
 export default function GalleryPage() {
   const [currentLang, setCurrentLang] = useState<Language>('es');
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [galleryItems, setGalleryItems] = useState<Array<{ title: string; category: string; src: string }>>([]);
+
+  // Swipe navigation touch state
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   useEffect(() => {
     setCurrentLang(detectLanguage());
@@ -121,8 +108,37 @@ export default function GalleryPage() {
     setCurrentLang(lang);
   };
 
+  const gt = galleryTranslations[currentLang] || galleryTranslations['es'];
+  const langItemMap = itemTranslations[currentLang] || itemTranslations['es'];
+
+  // Load files dynamically from the API — single source of truth
+  useEffect(() => {
+    async function fetchItems() {
+      try {
+        const res = await fetch('/api/galeria');
+        const data = await res.json();
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          // Enrich each real file with translated metadata when available
+          const enriched = data.items.map((item: { title: string; category: string; src: string }) => {
+            const filename = item.src.split('/').pop()?.toLowerCase() || '';
+            const meta = langItemMap[filename];
+            if (meta) {
+              return { ...item, title: meta.title, category: meta.category };
+            }
+            return item;
+          });
+          setGalleryItems(enriched);
+        }
+      } catch (err) {
+        console.error('Error loading gallery items:', err);
+      }
+    }
+    fetchItems();
+  }, [currentLang, langItemMap]);
+
   // Scroll reveal Intersection Observer
   useEffect(() => {
+    if (galleryItems.length === 0) return;
     const elements = document.querySelectorAll<HTMLElement>('.reveal, .reveal-scale');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -137,25 +153,47 @@ export default function GalleryPage() {
     );
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [currentLang]);
-
-  const gt = galleryTranslations[currentLang] || galleryTranslations['es'];
+  }, [galleryItems]);
 
   // Keyboard navigation for Lightbox
   useEffect(() => {
-    if (selectedIndex === null) return;
+    if (selectedIndex === null || galleryItems.length === 0) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
-        setSelectedIndex((prev) => (prev !== null ? (prev + 1) % gt.items.length : null));
+        setSelectedIndex((prev) => (prev !== null ? (prev + 1) % galleryItems.length : null));
       } else if (e.key === 'ArrowLeft') {
-        setSelectedIndex((prev) => (prev !== null ? (prev - 1 + gt.items.length) % gt.items.length : null));
+        setSelectedIndex((prev) => (prev !== null ? (prev - 1 + galleryItems.length) % galleryItems.length : null));
       } else if (e.key === 'Escape') {
         setSelectedIndex(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedIndex, gt.items.length]);
+  }, [selectedIndex, galleryItems.length]);
+
+  // Touch Swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      setSelectedIndex((prev) => (prev !== null ? (prev + 1) % galleryItems.length : null));
+    } else if (isRightSwipe) {
+      setSelectedIndex((prev) => (prev !== null ? (prev - 1 + galleryItems.length) % galleryItems.length : null));
+    }
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
 
   return (
     <div className="bg-[#0A0A0A] text-white min-h-screen flex flex-col">
@@ -191,8 +229,8 @@ export default function GalleryPage() {
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {gt.items.map((item, index) => (
+        <div className="gallery-grid">
+          {galleryItems.map((item, index) => (
             <div
               key={index}
               onClick={() => setSelectedIndex(index)}
@@ -232,10 +270,13 @@ export default function GalleryPage() {
       <Footer currentLang={currentLang} />
 
       {/* Lightbox / Visor de Imágenes a Pantalla Completa (con Carrusel) */}
-      {selectedIndex !== null && (
+      {selectedIndex !== null && galleryItems[selectedIndex] && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 sm:p-8 select-none"
           onClick={() => setSelectedIndex(null)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {/* Close button */}
           <button
@@ -249,7 +290,7 @@ export default function GalleryPage() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedIndex((prev) => (prev !== null ? (prev - 1 + gt.items.length) % gt.items.length : null));
+              setSelectedIndex((prev) => (prev !== null ? (prev - 1 + galleryItems.length) % galleryItems.length : null));
             }}
             className="absolute left-4 md:left-8 p-3 rounded-full bg-neutral-900/80 border border-amber-500/30 text-[#D4AF37] hover:text-white hover:border-[#D4AF37] hover:bg-neutral-800 transition-all z-50 cursor-pointer shadow-lg"
             aria-label="Previous image"
@@ -262,29 +303,30 @@ export default function GalleryPage() {
             className="relative max-w-4xl w-full max-h-[80vh] flex flex-col items-center justify-center transition-all duration-300"
             onClick={(e) => e.stopPropagation()}
           >
-            {/\.(mp4|webm|ogg|mov)$/i.test(gt.items[selectedIndex].src) ? (
+            {/\.(mp4|webm|ogg|mov)$/i.test(galleryItems[selectedIndex].src) ? (
               <video
-                src={gt.items[selectedIndex].src}
+                src={galleryItems[selectedIndex].src}
                 autoPlay
+                muted
                 controls
                 loop
                 playsInline
-                className="max-w-full max-h-[70vh] object-contain rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)]"
+                className="w-full h-[50vh] sm:h-[60vh] object-cover rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)]"
               />
             ) : (
               <img
-                src={gt.items[selectedIndex].src}
-                alt={gt.items[selectedIndex].title}
-                className="max-w-full max-h-[70vh] object-contain rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)] select-none pointer-events-none"
+                src={galleryItems[selectedIndex].src}
+                alt={galleryItems[selectedIndex].title}
+                className="w-full h-[50vh] sm:h-[60vh] object-cover rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)] select-none pointer-events-none"
               />
             )}
             {/* Details overlay below the media */}
             <div className="mt-4 text-center max-w-lg">
               <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37]">
-                {gt.items[selectedIndex].category}
+                {galleryItems[selectedIndex].category}
               </span>
               <h3 className="text-white text-lg font-bold font-serif mt-1">
-                {gt.items[selectedIndex].title}
+                {galleryItems[selectedIndex].title}
               </h3>
             </div>
           </div>
@@ -293,7 +335,7 @@ export default function GalleryPage() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedIndex((prev) => (prev !== null ? (prev + 1) % gt.items.length : null));
+              setSelectedIndex((prev) => (prev !== null ? (prev + 1) % galleryItems.length : null));
             }}
             className="absolute right-4 md:right-8 p-3 rounded-full bg-neutral-900/80 border border-amber-500/30 text-[#D4AF37] hover:text-white hover:border-[#D4AF37] hover:bg-neutral-800 transition-all z-50 cursor-pointer shadow-lg"
             aria-label="Next image"
@@ -305,3 +347,4 @@ export default function GalleryPage() {
     </div>
   );
 }
+
