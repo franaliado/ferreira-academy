@@ -45,18 +45,48 @@ export async function ensurePurchasesTable(): Promise<void> {
   try {
     const admin = getSupabaseAdmin();
 
-    // Attempt to run the CREATE TABLE IF NOT EXISTS via Supabase's rpc.
-    // This requires a Postgres function or direct SQL execution.
-    // We use the REST approach: try a select first; if it errors with
-    // "relation does not exist", we create the table.
+    // 1. Probe & ensure registrations table
+    const { error: probeRegistrationsError } = await admin
+      .from('registrations')
+      .select('id')
+      .limit(1);
+
+    if (probeRegistrationsError && probeRegistrationsError.message.includes('does not exist')) {
+      const { error: createError } = await admin.rpc('exec_sql', {
+        query: `
+          CREATE TABLE IF NOT EXISTS public.registrations (
+            id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+            created_at      TIMESTAMPTZ DEFAULT NOW(),
+            full_name       TEXT NOT NULL,
+            email           TEXT NOT NULL,
+            phone           TEXT,
+            country         TEXT,
+            payment_method  TEXT NOT NULL,
+            course_name     TEXT DEFAULT 'Fade Mastery Elite',
+            amount          NUMERIC(10,2) NOT NULL,
+            status          TEXT DEFAULT 'completed'
+          );
+        `,
+      });
+
+      if (createError) {
+        console.warn(
+          '[Supabase] Could not auto-create "registrations" table via RPC. ' +
+          'Please verify table existence in Supabase dashboard. Error:',
+          createError.message
+        );
+      } else {
+        console.log('[Supabase] "registrations" table created successfully.');
+      }
+    }
+
+    // 2. Probe & ensure purchases table
     const { error: probeError } = await admin
       .from('purchases')
       .select('id')
       .limit(1);
 
     if (probeError && probeError.message.includes('does not exist')) {
-      // Table doesn't exist — create it via raw SQL through rpc
-      // If the `exec_sql` function isn't available, we fall back gracefully.
       const { error: createError } = await admin.rpc('exec_sql', {
         query: `
           CREATE TABLE IF NOT EXISTS public.purchases (
@@ -82,12 +112,8 @@ export async function ensurePurchasesTable(): Promise<void> {
       });
 
       if (createError) {
-        // If the rpc function doesn't exist, log a warning but don't crash.
-        // The table must be created manually via the Supabase dashboard in this case.
         console.warn(
-          '[Supabase] Could not auto-create "purchases" table. ' +
-          'Please create it manually in the Supabase dashboard. ' +
-          'Error:',
+          '[Supabase] Could not auto-create "purchases" table. Error:',
           createError.message
         );
       } else {
@@ -97,8 +123,7 @@ export async function ensurePurchasesTable(): Promise<void> {
 
     _tableEnsured = true;
   } catch (err) {
-    // Non-fatal — log and continue so the webhook doesn't crash
     console.warn('[Supabase] ensurePurchasesTable check failed:', err);
-    _tableEnsured = true; // Prevent infinite retries
+    _tableEnsured = true;
   }
 }

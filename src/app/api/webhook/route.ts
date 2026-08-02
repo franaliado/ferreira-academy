@@ -123,26 +123,47 @@ export async function POST(request: NextRequest) {
     // Generate a unique internal order ID
     const internalOrderId = `FA-${currency}-${Date.now().toString().slice(-6)}-${orderNumber || Math.floor(1000 + Math.random() * 9000)}`;
 
-    // 8. Ensure the purchases table exists
+    // 8. Ensure required tables exist
     await ensurePurchasesTable();
 
-    // 9. Insert the purchase record into Supabase
     const admin = getSupabaseAdmin();
+    const fullAmount = total > 0 ? total / 100 : 197;
+
+    // 9. Insert into registrations table (Primary table for certificates and payment tracking)
+    const { error: regError } = await admin.from('registrations').insert([
+      {
+        full_name: customerName,
+        email: customerEmail.trim().toLowerCase(),
+        phone: null,
+        country: null,
+        payment_method: 'lemonsqueezy',
+        course_name: 'Fade Mastery Elite',
+        amount: fullAmount,
+        status: status === 'paid' ? 'completed' : status,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
+    if (regError) {
+      console.error('[Webhook] Failed to insert registration:', regError.message);
+    }
+
+    // 10. Insert the purchase record into purchases table
     const { error: insertError } = await admin.from('purchases').insert([
       {
         order_id: internalOrderId,
         customer_name: customerName,
         customer_email: customerEmail,
-        phone: null, // Not available from Lemon Squeezy webhook
-        country: null, // Not available from Lemon Squeezy webhook
-        payment_method: 'lemon_squeezy',
+        phone: null,
+        country: null,
+        payment_method: 'lemonsqueezy',
         transaction_id: orderNumber,
-        amount: total / 100, // Lemon Squeezy sends amounts in cents
+        amount: fullAmount,
         currency: currency.toUpperCase(),
         status: status === 'paid' ? 'completed' : status,
         lemon_order_id: lemonOrderId,
         variant_id: variantId?.toString() || null,
-        product_name: productName,
+        product_name: productName || 'Fade Mastery Elite',
         raw_payload: payload,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

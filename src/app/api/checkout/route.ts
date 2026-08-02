@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin, ensurePurchasesTable, isSupabaseConfigured } from '@/lib/supabase';
+import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
 
 export async function POST(request: Request) {
@@ -20,58 +20,35 @@ export async function POST(request: Request) {
     // Save to Supabase if configured
     if (isSupabaseConfigured() || process.env.SUPABASE_SERVICE_ROLE_KEY) {
       try {
-        // Ensure the purchases table exists
-        await ensurePurchasesTable();
-
         const admin = getSupabaseAdmin();
 
-        // Insert into purchases table (unified table for all payment records)
-        const { error: purchaseError } = await admin.from('purchases').insert([
+        // Insert into registrations table (Primary table for certs & payments)
+        const normalizedPaymentMethod = paymentMethod === 'paypal' ? 'paypal' : 'lemonsqueezy';
+        
+        // Asegurando que se registre siempre el monto completo del curso
+        const fullAmount = Number(currentCourse.priceAmount);
+
+        const { error: regError } = await admin.from('registrations').insert([
           {
-            order_id: orderId,
-            customer_name: fullName,
-            customer_email: email,
-            phone: phone || null,
-            country: country || null,
-            payment_method: paymentMethod || 'direct',
-            transaction_id: null, // Will be updated by webhook if using Lemon Squeezy
-            amount: amount || currentCourse.priceAmount,
-            currency: currency || currentCourse.currency,
-            status: paymentMethod === 'lemonSqueezy' ? 'pending_payment' : 'completed',
-            product_name: currentCourse.title,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            full_name: fullName.trim(),
+            email: email.trim().toLowerCase(),
+            phone: phone ? phone.trim() : 'N/A', // Ensures NOT NULL constraint
+            country: country ? country.trim() : 'N/A', // Ensures NOT NULL constraint
+            payment_method: normalizedPaymentMethod,
+            course_name: 'Fade Mastery Elite',
+            amount: fullAmount,
+            status: 'completed',
           },
         ]);
 
-        if (purchaseError) {
-          console.error('[Checkout] Failed to save purchase:', purchaseError.message);
-          // Don't fail the checkout — log and continue
+        if (regError) {
+          console.error('[Checkout] Failed to save registration:', regError.message);
+          throw new Error('Database insert failed');
         } else {
-          console.log(`[Checkout] ✅ Purchase record created: ${orderId}`);
-        }
-
-        // Also insert into legacy registrations table if it exists
-        try {
-          await admin.from('registrations').insert([
-            {
-              order_id: orderId,
-              full_name: fullName,
-              email,
-              phone,
-              country,
-              payment_method: paymentMethod,
-              amount: amount || currentCourse.priceAmount,
-              currency: currency || currentCourse.currency,
-              status: 'completed',
-              created_at: new Date().toISOString(),
-            },
-          ]);
-        } catch {
-          // registrations table may not exist — that's fine
+          console.log(`[Checkout] ✅ Registration stored in Supabase: ${email}`);
         }
       } catch (dbError) {
-        // Database errors should not break the checkout flow
+        // Log the error but allow checkout flow to complete gracefully
         console.error('[Checkout] Database error (non-fatal):', dbError);
       }
     }
