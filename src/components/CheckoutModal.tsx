@@ -16,7 +16,35 @@ import {
   Sparkles,
   ShieldCheck,
 } from 'lucide-react';
-import { LemonSqueezyLogo } from './LemonSqueezyLogo';
+
+/** Lemon Squeezy logo with original brand colors (orange to yellow gradient) */
+const LemonSqueezyLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }> = ({
+  size = 'md',
+  className = '',
+}) => {
+  const iconSizes = size === 'sm' ? 'w-4 h-4 text-[9px]' : size === 'lg' ? 'w-7 h-7 text-xs' : 'w-5 h-5 text-[10px]';
+  const textSizes = size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-sm';
+
+  return (
+    <div className={`inline-flex items-center space-x-1.5 ${className}`}>
+      <div className={`${iconSizes} rounded-md bg-gradient-to-tr from-orange-500 via-amber-400 to-yellow-300 flex items-center justify-center shadow-md font-black text-black shrink-0`}>
+        🍋
+      </div>
+      <span className={`${textSizes} font-extrabold tracking-tight`}>
+        <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-300 bg-clip-text text-transparent">Lemon</span>
+        <span className="text-white">Squeezy</span>
+      </span>
+    </div>
+  );
+};
+
+/** PayPal logo with original brand colors (vivid blue + white) */
+const PayPalLogo: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`inline-flex items-center text-lg font-black tracking-tight ${className}`}>
+    <span className="text-[#0079C1]">Pay</span>
+    <span className="text-white">Pal</span>
+  </div>
+);
 
 const backText: Record<Language, string> = {
   es: 'Regresar',
@@ -286,7 +314,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     : 'border-amber-500/20 bg-neutral-900 opacity-60 hover:opacity-100'
                 }`}
               >
-                <div className="text-base font-extrabold italic text-[#D4AF37]">PayPal</div>
+                <PayPalLogo className="h-6 w-auto" />
                 <span className="text-xs font-bold text-white">PayPal Express</span>
                 <span className="text-[10px] text-gray-400">Pago Rápido USD</span>
               </button>

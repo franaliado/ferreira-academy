@@ -300,7 +300,7 @@ export default function GalleryPage() {
 
           {/* Image/Video Container */}
           <div 
-            className="relative max-w-4xl w-full max-h-[80vh] flex flex-col items-center justify-center transition-all duration-300"
+            className="relative max-w-5xl w-full max-h-[85vh] flex flex-col items-center justify-center transition-all duration-300 px-2"
             onClick={(e) => e.stopPropagation()}
           >
             {/\.(mp4|webm|ogg|mov)$/i.test(galleryItems[selectedIndex].src) ? (
@@ -311,13 +311,13 @@ export default function GalleryPage() {
                 controls
                 loop
                 playsInline
-                className="w-full h-[50vh] sm:h-[60vh] object-cover rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)]"
+                className="max-w-full max-h-[65vh] sm:max-h-[75vh] w-auto h-auto object-contain rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)]"
               />
             ) : (
               <img
                 src={galleryItems[selectedIndex].src}
                 alt={galleryItems[selectedIndex].title}
-                className="w-full h-[50vh] sm:h-[60vh] object-cover rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)] select-none pointer-events-none"
+                className="max-w-full max-h-[65vh] sm:max-h-[75vh] w-auto h-auto object-contain rounded-lg border border-amber-500/30 shadow-[0_0_50px_rgba(212,175,55,0.25)] select-none"
               />
             )}
             {/* Details overlay below the media */}
