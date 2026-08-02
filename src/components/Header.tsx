@@ -35,12 +35,12 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
   };
 
   const navTranslations: Record<Language, string[]> = {
-    es: ['Inicio', 'Beneficios', 'Seminario', 'Testimonios', 'Galería', 'Contacto'],
-    en: ['Home', 'Benefits', 'Seminar', 'Testimonials', 'Gallery', 'Contact'],
-    pt: ['Início', 'Benefícios', 'Seminário', 'Depoimentos', 'Galeria', 'Contato'],
-    it: ['Inizio', 'Benefici', 'Seminario', 'Testimonianze', 'Galleria', 'Contatti'],
-    fr: ['Accueil', 'Avantages', 'Séminaire', 'Témoignages', 'Galerie', 'Contact'],
-    de: ['Startseite', 'Vorteile', 'Seminar', 'Referenzen', 'Galerie', 'Kontakt'],
+    es: ['Inicio', 'Beneficios', 'Seminario', 'Testimonios', 'Galería'],
+    en: ['Home', 'Benefits', 'Seminar', 'Testimonials', 'Gallery'],
+    pt: ['Início', 'Benefícios', 'Seminário', 'Depoimentos', 'Galeria'],
+    it: ['Inizio', 'Benefici', 'Seminario', 'Testimonianze', 'Galleria'],
+    fr: ['Accueil', 'Avantages', 'Séminaire', 'Témoignages', 'Galerie'],
+    de: ['Startseite', 'Vorteile', 'Seminar', 'Referenzen', 'Galerie'],
   };
 
   const labels = navTranslations[currentLang];
@@ -50,7 +50,6 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
     { href: '/#seminar', label: labels[2].toUpperCase() },
     { href: '/#testimonials', label: labels[3].toUpperCase() },
     { href: '/galeria', label: labels[4].toUpperCase() },
-    { href: '/#footer', label: labels[5].toUpperCase() },
   ];
 
   return (

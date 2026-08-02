@@ -32,16 +32,16 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
   const t = translations[currentLang].footer;
 
   const navTranslations: Record<Language, string[]> = {
-    es: ['Inicio', 'Beneficios', 'Seminario', 'Testimonios', 'Galería', 'Contacto'],
-    en: ['Home', 'Benefits', 'Seminar', 'Testimonials', 'Gallery', 'Contact'],
-    pt: ['Início', 'Benefícios', 'Seminário', 'Depoimentos', 'Galeria', 'Contato'],
-    it: ['Inizio', 'Benefici', 'Seminario', 'Testimonianze', 'Galleria', 'Contatti'],
-    fr: ['Accueil', 'Avantages', 'Séminaire', 'Témoignages', 'Galerie', 'Contact'],
-    de: ['Startseite', 'Vorteile', 'Seminar', 'Referenzen', 'Galerie', 'Kontakt'],
+    es: ['Inicio', 'Beneficios', 'Seminario', 'Testimonios', 'Galería'],
+    en: ['Home', 'Benefits', 'Seminar', 'Testimonials', 'Gallery'],
+    pt: ['Início', 'Benefícios', 'Seminário', 'Depoimentos', 'Galeria'],
+    it: ['Inizio', 'Benefici', 'Seminario', 'Testimonianze', 'Galleria'],
+    fr: ['Accueil', 'Avantages', 'Séminaire', 'Témoignages', 'Galerie'],
+    de: ['Startseite', 'Vorteile', 'Seminar', 'Referenzen', 'Galerie'],
   };
 
   const labels = navTranslations[currentLang];
-  const hrefs = ['/#hero', '/#benefits', '/#seminar', '/#testimonials', '/galeria', '/#footer'];
+  const hrefs = ['/#hero', '/#benefits', '/#seminar', '/#testimonials', '/galeria'];
 
   return (
     <footer id="footer" className="bg-black text-white relative overflow-hidden pt-14 sm:pt-16 pb-10 sm:pb-12 border-t border-[#D4AF37]/30">
