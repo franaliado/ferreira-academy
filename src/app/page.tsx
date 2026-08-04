@@ -8,7 +8,7 @@ import { Benefits } from '@/components/Benefits';
 import { SeminarDetails } from '@/components/SeminarDetails';
 import { Testimonials } from '@/components/Testimonials';
 import { Footer } from '@/components/Footer';
-import { CheckoutModal } from '@/components/CheckoutModal';
+
 import { ChevronRight } from 'lucide-react';
 
 const LANG_STORAGE_KEY = 'ferreia_academy_lang';
@@ -182,7 +182,7 @@ export default function Home() {
             </p>
             <div className="flex justify-center reveal stagger-3">
               <button
-                onClick={handleOpenCheckout}
+                onClick={() => {}}
                 id="cta-final-banner"
                 className="group inline-flex items-center justify-center space-x-3 btn-gold-primary
                            w-full sm:w-auto px-8 sm:px-10 py-4 rounded text-sm font-black
@@ -201,12 +201,6 @@ export default function Home() {
         <Footer currentLang={currentLang} />
       </div>
 
-      {/* Multi-Step Checkout Modal */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={handleCloseCheckout}
-        currentLang={currentLang}
-      />
     </div>
   );
 }

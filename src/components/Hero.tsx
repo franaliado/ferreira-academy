@@ -227,7 +227,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
             {/* Botón principal de llamada a la acción (CTA) */}
             <div className="pt-2">
               <button
-                onClick={onOpenCheckout}
+                onClick={() => {}}
                 id="cta-hero-primary"
                 className="group inline-flex items-center justify-center space-x-3 btn-gold-primary cursor-pointer rounded-sm w-full sm:w-auto px-8 sm:px-10 py-4 text-[0.88rem] font-black uppercase tracking-[0.12em]"
               >
