@@ -65,7 +65,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           window.location.href =
             'https://chat.whatsapp.com/DYZZgiY5rm4Imls1wGIZzy?s=cl&p=a&ilr=1';
         },
-        onError: (err) => {
+        onError: (err: any) => {
           console.error(err);
           alert('Error al procesar el pago.');
         },
