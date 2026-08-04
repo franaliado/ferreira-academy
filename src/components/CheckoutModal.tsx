@@ -8,7 +8,11 @@ import {
   Lock,
   Sparkles,
 } from 'lucide-react';
-
+declare global {
+  interface Window {
+    paypal?: any;
+  }
+}
 
 
 /** PayPal logo with original brand colors (vivid blue + white) */
