@@ -129,7 +129,6 @@ export interface TranslationSchema {
     selectCountry: string;
     paymentMethod: string;
     payWithStripe?: string;
-    payWithLemonSqueezy?: string;
     payWithPaypal: string;
     cardNumber: string;
     cardExpiry: string;

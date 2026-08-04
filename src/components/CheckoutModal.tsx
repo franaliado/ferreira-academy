@@ -9,25 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-declare global {
-  interface Window {
-    createLemonSqueezy?: () => void;
-    LemonSqueezy?: {
-      Url: {
-        Open: (url: string) => void;
-        Close: () => void;
-      };
-      Setup: (options: {
-        eventHandler: (event: { event: string; data?: any }) => void;
-      }) => void;
-    };
-  }
-}
 
-
-
-
-// Lemon Squeezy integration removed in favor of PayPal Smart Buttons.
 
 /** PayPal logo with original brand colors (vivid blue + white) */
 const PayPalLogo: React.FC<{ className?: string }> = ({ className = '' }) => (
@@ -58,8 +40,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   });
 // Payment method state removed; PayPal is the only option.
   const [isProcessing, setIsProcessing] = useState(false);
-
-// Lemon Squeezy SDK initialization removed.
 
   // Initialize PayPal Smart Buttons when modal opens
   useEffect(() => {

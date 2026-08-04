@@ -18,10 +18,6 @@ export interface CourseConfig {
   currency: string;
   /** String formateado listo para mostrar en UI */
   displayPrice: string;
-  /** Variant ID de Lemon Squeezy (modo live o test) */
-  lemonSqueezyVariantId: string;
-  /** URL directa de checkout de Lemon Squeezy (opcional) */
-  lemonSqueezyCheckoutUrl?: string;
   /** Plan ID de PayPal (modo live o sandbox) */
   paypalPlanId: string;
   /** Fecha y hora de inicio del curso para el contador regresivo */
@@ -34,9 +30,7 @@ export const currentCourse: CourseConfig = {
   priceAmount: 95,
   currency: 'USD',
   displayPrice: '$95 USD',
-  // ⚠️ Reemplaza con los IDs reales de tu dashboard de Lemon Squeezy y PayPal
-  lemonSqueezyVariantId: 'variant_XXXXXXXXXXXXXXXXXXXXXXXXXX',
-  lemonSqueezyCheckoutUrl: 'https://ferreiraacademy.lemonsqueezy.com/checkout/buy/faded-mastery-2026',
+  // ⚠️ Reemplaza con los IDs reales de tu dashboard de PayPal
   paypalPlanId: 'P-XXXXXXXXXXXXXXXXXXXXXXXXXX',
   startDate: '2026-10-15T18:00:00Z',
 };

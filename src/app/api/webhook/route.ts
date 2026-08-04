@@ -1,13 +1,9 @@
-import { POST as lemonsqueezyPOST } from '../webhooks/lemonsqueezy/route';
+import { POST as paypalPOST, GET as paypalGET } from '../webhooks/paypal/route';
 
 export async function POST(request: Request) {
-  return lemonsqueezyPOST(request);
+  return paypalPOST(request);
 }
 
 export async function GET() {
-  return Response.json({
-    status: 'ok',
-    endpoint: 'Lemon Squeezy Webhook (Legacy Forwarder)',
-    timestamp: new Date().toISOString(),
-  });
+  return paypalGET();
 }
