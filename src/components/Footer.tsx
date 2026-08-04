@@ -3,26 +3,7 @@
 import React from 'react';
 import { Language, translations } from '@/lib/translations';
 import { Facebook, ShieldCheck } from 'lucide-react';
-
-const LemonSqueezyLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }> = ({
-  size = 'md',
-  className = '',
-}) => {
-  const iconSizes = size === 'sm' ? 'w-4 h-4 text-[9px]' : size === 'lg' ? 'w-7 h-7 text-xs' : 'w-5 h-5 text-[10px]';
-  const textSizes = size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-sm';
-
-  return (
-    <div className={`inline-flex items-center space-x-1.5 ${className}`}>
-      <div className={`${iconSizes} rounded-md bg-gradient-to-tr from-orange-500 via-amber-400 to-yellow-300 flex items-center justify-center shadow-md font-black text-black shrink-0`}>
-        🍋
-      </div>
-      <span className={`${textSizes} font-extrabold tracking-tight`}>
-        <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-300 bg-clip-text text-transparent">Lemon</span>
-        <span className="text-white">Squeezy</span>
-      </span>
-    </div>
-  );
-};
+import { CreditCardBadge, PayPalBadge } from './PaymentBadges';
 
 interface FooterProps {
   currentLang: Language;
@@ -172,16 +153,11 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
               {t.securePlatform}
             </h3>
             <p className="text-gray-400 text-xs font-medium">
-              {t.paySafely}
+              Pagos seguros con Tarjeta de Crédito, Débito y PayPal
             </p>
             <div className="flex items-center flex-wrap gap-2 sm:gap-3 pt-1">
-              {/* Lemon Squeezy */}
-              <LemonSqueezyLogo size="sm" className="px-2 py-1 rounded border border-white/10 bg-white/5" />
-              {/* PayPal */}
-              <span className="font-black text-sm tracking-tight bg-white/5 px-2 py-1 rounded border border-white/10">
-                <span className="text-[#0079C1]">Pay</span>
-                <span className="text-white">Pal</span>
-              </span>
+              <CreditCardBadge />
+              <PayPalBadge />
             </div>
             <div className="flex items-center space-x-2 pt-1 text-gray-400">
               <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />

@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.45.0",
     "clsx": "^2.1.1",
