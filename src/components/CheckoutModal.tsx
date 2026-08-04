@@ -59,7 +59,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           const data = await res.json();
           return data.orderID;
         },
-        onApprove: async (data, actions) => {
+        onApprove: async (data: any, actions: any) => {
           await actions.order.capture();
           onClose();
           window.location.href =
