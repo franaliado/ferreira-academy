@@ -174,6 +174,28 @@ export interface TranslationSchema {
     bannerSubtitle: string;
     button: string;
   };
+  enrollmentModal: {
+    back: string;
+    close: string;
+    courseTitle: string;
+    subtitle: string;
+    officialDateLabel: string;
+    officialDateValue: string;
+    cityLabel: string;
+    cityValue: string;
+    officialPriceLabel: string;
+    officialPriceValue: string;
+    includesTitle: string;
+    includes: {
+      certificate: string;
+      coffeeBreak: string;
+      vipCommunity: string;
+      courseMaterial: string;
+      inPersonTraining: string;
+    };
+    paymentNote: string;
+    continuePayment: string;
+  };
 };
 
 export const translations: Record<Language, TranslationSchema> = {
@@ -459,6 +481,28 @@ export const translations: Record<Language, TranslationSchema> = {
       seconds: 'Segundos',
       expired: '¡EL CURSO ESTÁ POR COMENZAR! ÚLTIMOS CUPOS DISPONIBLES',
     },
+    enrollmentModal: {
+      back: 'Regresar',
+      close: 'Cerrar',
+      courseTitle: 'Fade Mastery Elite',
+      subtitle: 'Capacitación Presencial 2026',
+      officialDateLabel: 'Fecha oficial del curso',
+      officialDateValue: '15 de Octubre, 2026',
+      cityLabel: 'Ciudad',
+      cityValue: 'Por confirmar',
+      officialPriceLabel: 'Precio oficial',
+      officialPriceValue: '95 USD',
+      includesTitle: 'Incluye',
+      includes: {
+        certificate: 'Certificado Digital',
+        coffeeBreak: 'Coffee Break',
+        vipCommunity: 'Acceso a la Comunidad VIP',
+        courseMaterial: 'Material del Curso',
+        inPersonTraining: 'Capacitación Presencial',
+      },
+      paymentNote: 'Al continuar, serás redirigido a la plataforma oficial y segura de PayPal, donde podrás pagar utilizando tu cuenta PayPal o una tarjeta de crédito o débito.',
+      continuePayment: 'Continuar al Pago',
+    },
   },
 
   // ─────────────────────────── ENGLISH ───────────────────────────
@@ -740,6 +784,28 @@ export const translations: Record<Language, TranslationSchema> = {
       minutes: 'Minutes',
       seconds: 'Seconds',
       expired: 'THE COURSE IS ABOUT TO START! LAST SPOTS AVAILABLE',
+    },
+    enrollmentModal: {
+      back: 'Back',
+      close: 'Close',
+      courseTitle: 'Fade Mastery Elite',
+      subtitle: 'In-Person Training 2026',
+      officialDateLabel: 'Official course date',
+      officialDateValue: 'October 15, 2026',
+      cityLabel: 'City',
+      cityValue: 'To be confirmed',
+      officialPriceLabel: 'Official price',
+      officialPriceValue: '95 USD',
+      includesTitle: 'Includes',
+      includes: {
+        certificate: 'Digital Certificate',
+        coffeeBreak: 'Coffee Break',
+        vipCommunity: 'VIP Community Access',
+        courseMaterial: 'Course Material',
+        inPersonTraining: 'In-Person Training',
+      },
+      paymentNote: 'By continuing, you will be redirected to PayPal\'s official secure platform, where you can pay using your PayPal account or a credit/debit card.',
+      continuePayment: 'Proceed to Checkout',
     },
   },
 
@@ -1024,6 +1090,28 @@ export const translations: Record<Language, TranslationSchema> = {
       minutes: 'Minutos',
       seconds: 'Segundos',
       expired: 'O CURSO ESTÁ PRESTES A COMEÇAR! ÚLTIMAS VAGAS DISPONÍVEIS',
+    },
+    enrollmentModal: {
+      back: 'Voltar',
+      close: 'Fechar',
+      courseTitle: 'Fade Mastery Elite',
+      subtitle: 'Treinamento Presencial 2026',
+      officialDateLabel: 'Data oficial do curso',
+      officialDateValue: '15 de Outubro de 2026',
+      cityLabel: 'Cidade',
+      cityValue: 'A confirmar',
+      officialPriceLabel: 'Preço oficial',
+      officialPriceValue: '95 USD',
+      includesTitle: 'Inclui',
+      includes: {
+        certificate: 'Certificado Digital',
+        coffeeBreak: 'Coffee Break',
+        vipCommunity: 'Acesso à Comunidade VIP',
+        courseMaterial: 'Material do Curso',
+        inPersonTraining: 'Treinamento Presencial',
+      },
+      paymentNote: 'Ao continuar, você será redirecionado para a plataforma oficial e segura do PayPal, onde poderá pagar usando sua conta do PayPal ou cartão de crédito/débito.',
+      continuePayment: 'Prosseguir para o Pagamento',
     },
   },
 
@@ -1311,6 +1399,28 @@ export const translations: Record<Language, TranslationSchema> = {
       seconds: 'Secondi',
       expired: 'IL CORSO STA PER INIZIARE! ULTIMI POSTI DISPONIBILI',
     },
+    enrollmentModal: {
+      back: 'Indietro',
+      close: 'Chiudi',
+      courseTitle: 'Fade Mastery Elite',
+      subtitle: 'Formazione Presenziale 2026',
+      officialDateLabel: 'Data ufficiale del corso',
+      officialDateValue: '15 Ottobre 2026',
+      cityLabel: 'Città',
+      cityValue: 'Da confermare',
+      officialPriceLabel: 'Prezzo ufficiale',
+      officialPriceValue: '95 USD',
+      includesTitle: 'Include',
+      includes: {
+        certificate: 'Certificato Digitale',
+        coffeeBreak: 'Coffee Break',
+        vipCommunity: 'Accesso alla Community VIP',
+        courseMaterial: 'Materiale del Corso',
+        inPersonTraining: 'Formazione Presenziale',
+      },
+      paymentNote: 'Continuando, verrai reindirizzato alla piattaforma ufficiale e sicura di PayPal, dove potrai pagare utilizzando il tuo conto PayPal o una carta di credito/debito.',
+      continuePayment: 'Procedi al Pagamento',
+    },
   },
 
   // ─────────────────────────── FRANÇAIS ───────────────────────────
@@ -1597,6 +1707,28 @@ export const translations: Record<Language, TranslationSchema> = {
       seconds: 'Secondes',
       expired: 'LE COURS EST SUR LE POINT DE COMMENCER ! DERNIÈRES PLACES DISPONIBLES',
     },
+    enrollmentModal: {
+      back: 'Retour',
+      close: 'Fermer',
+      courseTitle: 'Fade Mastery Elite',
+      subtitle: 'Formation En Présentiel 2026',
+      officialDateLabel: 'Date officielle du cours',
+      officialDateValue: '15 Octobre 2026',
+      cityLabel: 'Ville',
+      cityValue: 'À confirmer',
+      officialPriceLabel: 'Prix officiel',
+      officialPriceValue: '95 USD',
+      includesTitle: 'Inclus',
+      includes: {
+        certificate: 'Certificat Numérique',
+        coffeeBreak: 'Pause Café',
+        vipCommunity: 'Accès à la Communauté VIP',
+        courseMaterial: 'Matériel de Cours',
+        inPersonTraining: 'Formation En Présentiel',
+      },
+      paymentNote: 'En continuant, vous serez redirigé vers la plateforme officielle et sécurisée de PayPal, où vous pourrez payer avec votre compte PayPal ou une carte de crédit/débit.',
+      continuePayment: 'Poursuivre le Paiement',
+    },
   },
 
 // ─────────────────────────── DEUTSCH ───────────────────────────
@@ -1879,7 +2011,28 @@ export const translations: Record<Language, TranslationSchema> = {
         minutes: 'Minuten',
         seconds: 'Sekunden',
         expired: 'DER KURS BEGINNT IN KÜRZE! LETZTE PLÄTZE VERFÜGBAR',
-      }
-    }
-
+      },
+      enrollmentModal: {
+        back: 'Zurück',
+        close: 'Schließen',
+        courseTitle: 'Fade Mastery Elite',
+        subtitle: 'Präsenz-Schulung 2026',
+        officialDateLabel: 'Offizielles Kursdatum',
+        officialDateValue: '15. Oktober 2026',
+        cityLabel: 'Stadt',
+        cityValue: 'Wird noch bestätigt',
+        officialPriceLabel: 'Offizieller Preis',
+        officialPriceValue: '95 USD',
+        includesTitle: 'Enthält',
+        includes: {
+          certificate: 'Digitales Zertifikat',
+          coffeeBreak: 'Kaffeepause',
+          vipCommunity: 'Zugang zur VIP-Community',
+          courseMaterial: 'Kursmaterialien',
+          inPersonTraining: 'Präsenz-Schulung',
+        },
+        paymentNote: 'Wenn Sie fortfahren, werden Sie zur offiziellen und sicheren PayPal-Plattform weitergeleitet, auf der Sie mit Ihrem PayPal-Konto oder einer Kredit-/Debitkarte bezahlen können.',
+        continuePayment: 'Weiter zur Zahlung',
+      },
+    },
   };

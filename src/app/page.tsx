@@ -8,6 +8,7 @@ import { Benefits } from '@/components/Benefits';
 import { SeminarDetails } from '@/components/SeminarDetails';
 import { Testimonials } from '@/components/Testimonials';
 import { Footer } from '@/components/Footer';
+import { EnrollmentModal } from '@/components/EnrollmentModal';
 
 import { ChevronRight } from 'lucide-react';
 
@@ -182,7 +183,7 @@ export default function Home() {
             </p>
             <div className="flex justify-center reveal stagger-3">
               <button
-                onClick={() => {}}
+                onClick={handleOpenCheckout}
                 id="cta-final-banner"
                 className="group inline-flex items-center justify-center space-x-3 btn-gold-primary
                            w-full sm:w-auto px-8 sm:px-10 py-4 rounded text-sm font-black
@@ -200,6 +201,9 @@ export default function Home() {
       <div className="reveal">
         <Footer currentLang={currentLang} />
       </div>
+
+      {/* Enrollment Modal (Stage 1) */}
+      <EnrollmentModal isOpen={isCheckoutOpen} onClose={handleCloseCheckout} currentLang={currentLang} />
 
     </div>
   );

@@ -96,7 +96,7 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
 
             {/* CTA Button — full width */}
             <button
-              onClick={() => {}}
+              onClick={onOpenCheckout}
               id="cta-seminar-secondary"
               className="group w-full btn-gold-primary py-4 rounded text-sm font-black uppercase tracking-[0.12em] flex items-center justify-center space-x-3 cursor-pointer mt-2"
             >
