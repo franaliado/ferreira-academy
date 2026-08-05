@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Image from 'next/image';
 import { Language, translations } from '@/lib/translations';
 
@@ -16,7 +16,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   currentLang = 'es',
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const backBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const t = (translations[currentLang] || translations.es).enrollmentModal;
 
@@ -28,7 +31,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     { icon: '✂️', label: t.includes.inPersonTraining },
   ];
 
-  // Close on ESC and focus trap
+  // Close on ESC and trap focus
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -78,9 +81,11 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
 
-      // Focus back button on open
+      setErrorMessage(null);
+      setIsLoading(false);
+
       requestAnimationFrame(() => {
-        backBtnRef.current?.focus();
+        closeBtnRef.current?.focus();
       });
     } else {
       const scrollY = document.body.style.top;
@@ -94,8 +99,29 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     }
   }, [isOpen]);
 
-  const handleContinuePayment = () => {
-    console.log('Continuar al Pago');
+  const handleContinuePayment = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(null);
+
+      const res = await fetch('/api/paypal/create-order', {
+        method: 'POST',
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.approveUrl) {
+        throw new Error(data.error || 'No se pudo generar la orden de PayPal');
+      }
+
+      // Cerrar el modal de Ferreira Academy y redirigir al Checkout oficial de PayPal
+      onClose();
+      window.location.href = data.approveUrl;
+    } catch (err: any) {
+      console.error('Error iniciando Checkout de PayPal:', err);
+      setIsLoading(false);
+      setErrorMessage('Ocurrió un error al conectar con el Checkout de PayPal.');
+    }
   };
 
   if (!isOpen) return null;
@@ -140,30 +166,9 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
         {/* Top Gold Subtle Shimmer Line */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-80" />
 
-        {/* Back Button (Top Left) */}
-        <button
-          ref={backBtnRef}
-          onClick={onClose}
-          aria-label={t.back}
-          className="absolute top-3 left-3 p-2 rounded-full bg-white/5 border border-[#D4AF37]/20 text-gray-300 hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
-        >
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-        </button>
-
         {/* Close Button (Top Right) */}
         <button
+          ref={closeBtnRef}
           onClick={onClose}
           aria-label={t.close}
           className="absolute top-3 right-3 p-2 rounded-full bg-white/5 border border-[#D4AF37]/20 text-gray-300 hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
@@ -274,15 +279,22 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
           {t.paymentNote}
         </p>
 
+        {/* Error message */}
+        {errorMessage && (
+          <div className="mb-4 p-3 bg-rose-500/10 border border-rose-500/40 rounded-xl text-center text-xs font-bold text-rose-400">
+            {errorMessage}
+          </div>
+        )}
+
         {/* Main Action Button */}
         <button
           onClick={handleContinuePayment}
-          className="group w-full btn-gold-primary py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center space-x-2 shadow-[0_6px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.6)] transition-all cursor-pointer"
+          disabled={isLoading}
+          className="group w-full btn-gold-primary py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center space-x-2 shadow-[0_6px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.6)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span>{t.continuePayment}</span>
+          <span>{isLoading ? 'Redirigiendo a PayPal...' : t.continuePayment}</span>
         </button>
       </div>
     </div>
   );
 };
-

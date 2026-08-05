@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, translations } from '@/lib/translations';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
@@ -10,7 +10,7 @@ import { Testimonials } from '@/components/Testimonials';
 import { Footer } from '@/components/Footer';
 import { EnrollmentModal } from '@/components/EnrollmentModal';
 
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const LANG_STORAGE_KEY = 'ferreia_academy_lang';
 
@@ -55,34 +55,27 @@ function useScrollReveal() {
 function useParallax() {
   useEffect(() => {
     let rafId: number;
-    let lastY = window.scrollY;
 
     const onScroll = () => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         const y = window.scrollY;
 
-        // Slow layers: move at 20% of scroll speed (upward)
         document.querySelectorAll<HTMLElement>('.parallax-slow').forEach((el) => {
           el.style.transform = `translateY(${y * -0.08}px)`;
         });
 
-        // Medium layers: move at 14% of scroll speed
         document.querySelectorAll<HTMLElement>('.parallax-medium').forEach((el) => {
           el.style.transform = `translateY(${y * -0.14}px)`;
         });
 
-        // Fast layers: move at 22% of scroll speed
         document.querySelectorAll<HTMLElement>('.parallax-fast').forEach((el) => {
           el.style.transform = `translateY(${y * -0.22}px)`;
         });
 
-        // Background blobs: subtle drift
         document.querySelectorAll<HTMLElement>('.parallax-bg').forEach((el) => {
           el.style.transform = `translateY(${y * -0.06}px)`;
         });
-
-        lastY = y;
       });
     };
 
@@ -97,11 +90,76 @@ function useParallax() {
 export default function Home() {
   const [currentLang, setCurrentLang] = useState<Language>('es');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'cancel' | 'error';
+    text: string;
+  } | null>(null);
 
-  useEffect(() => { setCurrentLang(detectLanguage()); }, []);
+  useEffect(() => {
+    setCurrentLang(detectLanguage());
+  }, []);
 
   useScrollReveal();
   useParallax();
+
+  // Escuchar el retorno del Checkout oficial de PayPal
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const paypalStatus = searchParams.get('paypal_status');
+    const token = searchParams.get('token');
+
+    if (paypalStatus === 'success' && token) {
+      // Capturar la orden en PayPal (sin guardar en Supabase)
+      fetch('/api/paypal/capture-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderID: token }),
+      })
+        .then((res) => res.json())
+        .then((captureData) => {
+          if (captureData.status === 'COMPLETED' || captureData.orderID) {
+            console.log('--- PAGO APROBADO EXITOSAMENTE ---');
+            console.log('Order ID:', captureData.orderID);
+            console.log('Capture ID:', captureData.captureID);
+            console.log('Amount:', captureData.amount);
+            console.log('Currency:', captureData.currency);
+            console.log('Email del comprador:', captureData.payerEmail);
+            console.log('Nombre del comprador:', captureData.payerName);
+            console.log('-----------------------------------');
+
+            setNotification({
+              type: 'success',
+              text: 'Pago aprobado correctamente.',
+            });
+          } else {
+            console.error('Error al capturar la orden:', captureData);
+            setNotification({
+              type: 'error',
+              text: 'Ocurrió un error al verificar el pago.',
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Error en captura de pago PayPal:', err);
+          setNotification({
+            type: 'error',
+            text: 'Ocurrió un error con el Checkout de PayPal.',
+          });
+        })
+        .finally(() => {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        });
+    } else if (paypalStatus === 'cancel') {
+      console.log('Checkout de PayPal cancelado.');
+      setNotification({
+        type: 'cancel',
+        text: 'El pago fue cancelado.',
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const handleLanguageChange = (lang: Language) => {
     localStorage.setItem(LANG_STORAGE_KEY, lang);
@@ -115,19 +173,48 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen bg-black text-white selection:bg-[#D4AF37] selection:text-black"
+      className="min-h-screen bg-black text-white selection:bg-[#D4AF37] selection:text-black relative"
       style={{ fontFamily: "'Montserrat', sans-serif" }}
     >
+      {/* Banner de notificación flotante tras retorno de PayPal */}
+      {notification && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[200] w-[90%] max-w-md animate-fade-in">
+          <div
+            className={`p-4 rounded-xl shadow-2xl flex items-center justify-between space-x-3 border backdrop-blur-md ${
+              notification.type === 'success'
+                ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-300'
+                : notification.type === 'cancel'
+                ? 'bg-amber-950/90 border-amber-500/50 text-amber-300'
+                : 'bg-rose-950/90 border-rose-500/50 text-rose-300'
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              {notification.type === 'success' ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+              ) : (
+                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+              )}
+              <p className="text-xs sm:text-sm font-bold">{notification.text}</p>
+            </div>
+            <button
+              onClick={() => setNotification(null)}
+              className="text-xs opacity-70 hover:opacity-100 font-bold underline cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Fixed Header */}
       <Header currentLang={currentLang} onLanguageChange={handleLanguageChange} />
 
       <main>
-        {/* ── 1. Hero — immediately visible, parallax on decorative blobs ── */}
+        {/* ── 1. Hero ── */}
         <Hero currentLang={currentLang} onOpenCheckout={handleOpenCheckout} />
 
-        {/* ── 2. Benefits — reveal from bottom, each card staggered ── */}
+        {/* ── 2. Benefits ── */}
         <section className="relative overflow-hidden">
-          {/* Parallax glow blob behind section */}
           <div
             className="parallax-bg absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px]
                         bg-amber-900/8 rounded-full blur-3xl pointer-events-none"
@@ -137,9 +224,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 3. Seminar Details — reveal from left / right split ── */}
+        {/* ── 3. Seminar Details ── */}
         <section className="relative overflow-hidden">
-          {/* Parallax accent orbs */}
           <div
             className="parallax-slow absolute -left-24 top-1/3 w-72 h-72
                         bg-amber-500/5 rounded-full blur-3xl pointer-events-none"
@@ -153,7 +239,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 4. Testimonials — reveal scale-in ── */}
+        {/* ── 4. Testimonials ── */}
         <section className="relative overflow-hidden">
           <div
             className="parallax-medium absolute top-0 right-0 w-96 h-96
@@ -164,9 +250,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 5. Final CTA Banner — reveal from bottom with inner stagger ── */}
+        {/* ── 5. Final CTA Banner ── */}
         <section className="relative py-16 sm:py-20 bg-black overflow-hidden">
-          {/* Parallax golden glow */}
           <div
             className="parallax-bg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                         w-[900px] h-[300px] bg-amber-800/10 rounded-full blur-3xl pointer-events-none"
@@ -197,14 +282,13 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer — reveal from bottom */}
+      {/* Footer */}
       <div className="reveal">
         <Footer currentLang={currentLang} />
       </div>
 
-      {/* Enrollment Modal (Stage 1) */}
+      {/* Enrollment Modal */}
       <EnrollmentModal isOpen={isCheckoutOpen} onClose={handleCloseCheckout} currentLang={currentLang} />
-
     </div>
   );
 }

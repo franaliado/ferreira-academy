@@ -27,7 +27,6 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning className="bg-black text-white antialiased selection:bg-amber-400 selection:text-black">
         {children}
-        <script src="https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD" defer></script>
       </body>
     </html>
   );
