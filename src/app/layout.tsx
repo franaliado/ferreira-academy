@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { PayPalProvider } from "@/components/PayPalProvider";
 
 export const metadata: Metadata = {
   title: "Ferreira Academy | Seminarios Internacionales de Barbería con Antonio Ferreira",
@@ -26,7 +27,9 @@ export default function RootLayout({
         <link rel="icon" href="/Logo_Simbolo_FA.png" type="image/png" />
       </head>
       <body suppressHydrationWarning className="bg-black text-white antialiased selection:bg-amber-400 selection:text-black">
-        {children}
+        <PayPalProvider>
+          {children}
+        </PayPalProvider>
       </body>
     </html>
   );

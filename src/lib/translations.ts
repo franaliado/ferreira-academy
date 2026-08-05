@@ -194,7 +194,7 @@ export interface TranslationSchema {
       inPersonTraining: string;
     };
     paymentNote: string;
-    continuePayment: string;
+    proceedToCheckout: string;
   };
 };
 
@@ -501,7 +501,7 @@ export const translations: Record<Language, TranslationSchema> = {
         inPersonTraining: 'Capacitación Presencial',
       },
       paymentNote: 'Al continuar, serás redirigido a la plataforma oficial y segura de PayPal, donde podrás pagar utilizando tu cuenta PayPal o una tarjeta de crédito o débito.',
-      continuePayment: 'Continuar al Pago',
+      proceedToCheckout: 'PROCEDER AL PAGO',
     },
   },
 
@@ -805,7 +805,7 @@ export const translations: Record<Language, TranslationSchema> = {
         inPersonTraining: 'In-Person Training',
       },
       paymentNote: 'By continuing, you will be redirected to PayPal\'s official secure platform, where you can pay using your PayPal account or a credit/debit card.',
-      continuePayment: 'Proceed to Checkout',
+      proceedToCheckout: 'PROCEED TO CHECKOUT',
     },
   },
 
@@ -1111,7 +1111,7 @@ export const translations: Record<Language, TranslationSchema> = {
         inPersonTraining: 'Treinamento Presencial',
       },
       paymentNote: 'Ao continuar, você será redirecionado para a plataforma oficial e segura do PayPal, onde poderá pagar usando sua conta do PayPal ou cartão de crédito/débito.',
-      continuePayment: 'Prosseguir para o Pagamento',
+      proceedToCheckout: 'AVANÇAR PARA O PAGAMENTO',
     },
   },
 
@@ -1419,7 +1419,7 @@ export const translations: Record<Language, TranslationSchema> = {
         inPersonTraining: 'Formazione Presenziale',
       },
       paymentNote: 'Continuando, verrai reindirizzato alla piattaforma ufficiale e sicura di PayPal, dove potrai pagare utilizzando il tuo conto PayPal o una carta di credito/debito.',
-      continuePayment: 'Procedi al Pagamento',
+      proceedToCheckout: 'PROCEDI AL PAGAMENTO',
     },
   },
 
@@ -1727,7 +1727,7 @@ export const translations: Record<Language, TranslationSchema> = {
         inPersonTraining: 'Formation En Présentiel',
       },
       paymentNote: 'En continuant, vous serez redirigé vers la plateforme officielle et sécurisée de PayPal, où vous pourrez payer avec votre compte PayPal ou une carte de crédit/débit.',
-      continuePayment: 'Poursuivre le Paiement',
+      proceedToCheckout: 'PASSER À LA CAISSE',
     },
   },
 
@@ -2032,7 +2032,7 @@ export const translations: Record<Language, TranslationSchema> = {
           inPersonTraining: 'Präsenz-Schulung',
         },
         paymentNote: 'Wenn Sie fortfahren, werden Sie zur offiziellen und sicheren PayPal-Plattform weitergeleitet, auf der Sie mit Ihrem PayPal-Konto oder einer Kredit-/Debitkarte bezahlen können.',
-        continuePayment: 'Weiter zur Zahlung',
+        proceedToCheckout: 'ZUR KASSE GEHEN',
       },
     },
   };
