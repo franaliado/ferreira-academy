@@ -9,8 +9,10 @@ import { SeminarDetails } from '@/components/SeminarDetails';
 import { Testimonials } from '@/components/Testimonials';
 import { Footer } from '@/components/Footer';
 import { EnrollmentModal } from '@/components/EnrollmentModal';
+import { CertificateModal } from '@/components/CertificateModal';
+import type { PaymentCaptureData } from '@/components/CertificateModal';
 
-import { ChevronRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ChevronRight, AlertCircle } from 'lucide-react';
 
 const LANG_STORAGE_KEY = 'ferreia_academy_lang';
 
@@ -91,9 +93,13 @@ export default function Home() {
   const [currentLang, setCurrentLang] = useState<Language>('es');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [notification, setNotification] = useState<{
-    type: 'success' | 'cancel' | 'error';
+    type: 'cancel' | 'error';
     text: string;
   } | null>(null);
+
+  // Certificate modal state — opened after a COMPLETED PayPal payment
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
+  const [captureData, setCaptureData] = useState<PaymentCaptureData | null>(null);
 
   useEffect(() => {
     setCurrentLang(detectLanguage());
@@ -111,30 +117,35 @@ export default function Home() {
     const token = searchParams.get('token');
 
     if (paypalStatus === 'success' && token) {
-      // Capturar la orden en PayPal (sin guardar en Supabase)
+      // Capture the order and then open the CertificateModal
       fetch('/api/paypal/capture-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderID: token }),
       })
         .then((res) => res.json())
-        .then((captureData) => {
-          if (captureData.status === 'COMPLETED' || captureData.orderID) {
-            console.log('--- PAGO APROBADO EXITOSAMENTE ---');
-            console.log('Order ID:', captureData.orderID);
-            console.log('Capture ID:', captureData.captureID);
-            console.log('Amount:', captureData.amount);
-            console.log('Currency:', captureData.currency);
-            console.log('Email del comprador:', captureData.payerEmail);
-            console.log('Nombre del comprador:', captureData.payerName);
-            console.log('-----------------------------------');
+        .then((captureResult) => {
+          if (captureResult.status === 'COMPLETED') {
+            console.log('--- PAGO APROBADO EXITOSAMENTE (redirect flow) ---');
+            console.log('Order ID:', captureResult.orderID);
 
-            setNotification({
-              type: 'success',
-              text: 'Pago aprobado correctamente.',
-            });
+            const data: PaymentCaptureData = {
+              orderID: captureResult.orderID || token,
+              captureID: captureResult.captureID,
+              payerName: captureResult.payerName || '',
+              payerEmail: captureResult.payerEmail || '',
+              payerPhone: captureResult.payerPhone || null,
+              payerCountry: captureResult.payerCountry || 'N/A',
+              // In redirect flow we cannot detect card vs paypal reliably, default to paypal
+              paymentMethod: 'paypal',
+              amount: captureResult.amount || '95.00',
+              currency: captureResult.currency || 'USD',
+              payerID: captureResult.payerID || '',
+            };
+            setCaptureData(data);
+            setIsCertModalOpen(true);
           } else {
-            console.error('Error al capturar la orden:', captureData);
+            console.error('Error al capturar la orden:', captureResult);
             setNotification({
               type: 'error',
               text: 'Ocurrió un error al verificar el pago.',
@@ -169,6 +180,17 @@ export default function Home() {
   const handleOpenCheckout = () => setIsCheckoutOpen(true);
   const handleCloseCheckout = () => setIsCheckoutOpen(false);
 
+  /** Called by EnrollmentModal when PayPal payment is COMPLETED */
+  const handlePaymentCompleted = (data: PaymentCaptureData) => {
+    setCaptureData(data);
+    setIsCertModalOpen(true);
+  };
+
+  const handleCloseCertModal = () => {
+    setIsCertModalOpen(false);
+    setCaptureData(null);
+  };
+
   const t = translations[currentLang];
 
   return (
@@ -176,24 +198,18 @@ export default function Home() {
       className="min-h-screen bg-black text-white selection:bg-[#D4AF37] selection:text-black relative"
       style={{ fontFamily: "'Montserrat', sans-serif" }}
     >
-      {/* Banner de notificación flotante tras retorno de PayPal */}
+      {/* Banner de notificación flotante tras retorno cancelado o error de PayPal */}
       {notification && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[200] w-[90%] max-w-md animate-fade-in">
           <div
             className={`p-4 rounded-xl shadow-2xl flex items-center justify-between space-x-3 border backdrop-blur-md ${
-              notification.type === 'success'
-                ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-300'
-                : notification.type === 'cancel'
+              notification.type === 'cancel'
                 ? 'bg-amber-950/90 border-amber-500/50 text-amber-300'
                 : 'bg-rose-950/90 border-rose-500/50 text-rose-300'
             }`}
           >
             <div className="flex items-center space-x-3">
-              {notification.type === 'success' ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-              ) : (
-                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
-              )}
+              <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
               <p className="text-xs sm:text-sm font-bold">{notification.text}</p>
             </div>
             <button
@@ -287,8 +303,20 @@ export default function Home() {
         <Footer currentLang={currentLang} />
       </div>
 
-      {/* Enrollment Modal */}
-      <EnrollmentModal isOpen={isCheckoutOpen} onClose={handleCloseCheckout} currentLang={currentLang} />
+      {/* Enrollment Modal (course info + PayPal checkout) */}
+      <EnrollmentModal
+        isOpen={isCheckoutOpen}
+        onClose={handleCloseCheckout}
+        currentLang={currentLang}
+        onPaymentCompleted={handlePaymentCompleted}
+      />
+
+      {/* Certificate Modal (post-payment: certificate name + Supabase save + WhatsApp redirect) */}
+      <CertificateModal
+        isOpen={isCertModalOpen}
+        captureData={captureData}
+        onClose={handleCloseCertModal}
+      />
     </div>
   );
 }

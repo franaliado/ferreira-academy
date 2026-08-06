@@ -5,17 +5,21 @@ import Image from 'next/image';
 import { Language, translations } from '@/lib/translations';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { ShieldCheck, X, ChevronRight } from 'lucide-react';
+import type { PaymentCaptureData } from '@/components/CertificateModal';
 
 interface EnrollmentModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentLang?: Language;
+  /** Called when a PayPal payment is captured with status COMPLETED */
+  onPaymentCompleted?: (data: PaymentCaptureData) => void;
 }
 
 export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
   onClose,
   currentLang = 'es',
+  onPaymentCompleted,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -317,12 +321,54 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ orderID: data.orderID }),
                     });
-                    const details = await res.json();
+                    const details = await res.json() as {
+                      status?: string;
+                      orderID?: string;
+                      captureID?: string;
+                      payerEmail?: string;
+                      payerName?: string;
+                      payerPhone?: string | null;
+                      payerCountry?: string;
+                      amount?: string;
+                      currency?: string;
+                      payerID?: string;
+                      fundingSource?: string;
+                      error?: string;
+                    };
                     if (!res.ok) {
                       throw new Error(details.error || 'Error al capturar el pago');
                     }
-                    alert('¡Pago completado con éxito!');
-                    onClose();
+                    if (details.status === 'COMPLETED') {
+                      // Detect payment method: PayPal account vs card
+                      // data.paymentSource is the most reliable signal from the SDK
+                      const paymentSource = (data as unknown as Record<string, unknown>).paymentSource as string | undefined;
+                      const fundingSource = details.fundingSource || '';
+                      const isCard =
+                        typeof paymentSource === 'string'
+                          ? paymentSource === 'card'
+                          : fundingSource === 'card' || fundingSource === 'credit_card' || fundingSource === 'debit_card';
+
+                      const captureData: PaymentCaptureData = {
+                        orderID: details.orderID || data.orderID,
+                        captureID: details.captureID,
+                        payerName: details.payerName || '',
+                        payerEmail: details.payerEmail || '',
+                        payerPhone: details.payerPhone || null,
+                        payerCountry: details.payerCountry || 'N/A',
+                        paymentMethod: isCard ? 'card' : 'paypal',
+                        amount: details.amount || '95.00',
+                        currency: details.currency || 'USD',
+                        payerID: details.payerID || data.payerID || '',
+                      };
+
+                      // Close checkout modal first, then open certificate modal
+                      onClose();
+                      if (onPaymentCompleted) {
+                        onPaymentCompleted(captureData);
+                      }
+                    } else {
+                      throw new Error('El pago no fue completado correctamente.');
+                    }
                   } catch (err) {
                     console.error('Error al capturar pago:', err);
                     setErrorMessage('Error al procesar la aprobación del pago.');

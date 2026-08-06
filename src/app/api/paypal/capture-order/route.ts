@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-
-// POST /api/paypal/capture-order
-// Captures a approved PayPal order without saving to Supabase
+import { supabase } from '@/lib/supabase'; // Asegúrate de que esta ruta apunte a tu cliente de supabase
 
 async function getPayPalAccessToken(): Promise<string> {
   const clientId = process.env.PAYPAL_CLIENT_ID;
@@ -32,7 +30,11 @@ async function getPayPalAccessToken(): Promise<string> {
 
 export async function POST(request: Request) {
   try {
-    const { orderID } = await request.json() as { orderID: string };
+    const { orderID, certificateName, courseName } = await request.json() as { 
+      orderID: string; 
+      certificateName?: string; 
+      courseName?: string; 
+    };
 
     if (!orderID) {
       return NextResponse.json({ error: 'Missing orderID' }, { status: 400 });
@@ -60,10 +62,14 @@ export async function POST(request: Request) {
       id: string;
       status: string;
       payer?: {
+        payer_id?: string;
         email_address?: string;
         name?: { given_name?: string; surname?: string };
+        phone?: { phone_number?: { national_number?: string } };
+        address?: { country_code?: string };
       };
       purchase_units?: Array<{
+        shipping?: { address?: { country_code?: string } };
         payments?: {
           captures?: Array<{
             id: string;
@@ -74,24 +80,56 @@ export async function POST(request: Request) {
       }>;
     };
 
-    const firstCapture = data.purchase_units?.[0]?.payments?.captures?.[0];
+    const firstPurchaseUnit = data.purchase_units?.[0];
+    const firstCapture = firstPurchaseUnit?.payments?.captures?.[0];
     const captureID = firstCapture?.id || 'N/A';
-    const amount = firstCapture?.amount?.value || '95.00';
-    const currency = firstCapture?.amount?.currency_code || 'USD';
-    const payerEmail = data.payer?.email_address || 'N/A';
+    const amountVal = parseFloat(firstCapture?.amount?.value || '95.00');
+    const currencyCode = firstCapture?.amount?.currency_code || 'USD';
+    const payerEmail = data.payer?.email_address || 'unknown@paypal.com';
     const givenName = data.payer?.name?.given_name || '';
     const surname = data.payer?.name?.surname || '';
-    const payerName = `${givenName} ${surname}`.trim() || 'N/A';
+    const payerName = `${givenName} ${surname}`.trim() || 'PayPal User';
+    const payerID = data.payer?.payer_id || '';
+    const rawPhone = data.payer?.phone?.phone_number?.national_number;
+    const payerPhone = rawPhone || null;
+    const payerCountry = data.payer?.address?.country_code || firstPurchaseUnit?.shipping?.address?.country_code || 'N/A';
+
+    // Inserción directa en Supabase adaptada 100% a las columnas de tu tabla
+    const { error: dbError } = await supabase.from('registrations').insert([
+      {
+        buyer_name: payerName,
+        email: payerEmail,
+        phone: payerPhone,
+        country: payerCountry,
+        certificate_name: certificateName || payerName, // Usa el del input o el nombre del pagador por defecto
+        course_name: courseName || 'Fade Mastery Elite (Presencial)',
+        amount: amountVal,
+        currency: currencyCode,
+        payment_method: 'PayPal',
+        status: data.status,
+        paypal_order_id: data.id,
+        payer_id: payerID,
+        certificate_sent: false,
+      },
+    ]);
+
+    if (dbError) {
+      console.error('Supabase insert error:', dbError);
+      return NextResponse.json({ error: 'Payment captured, but database registration failed: ' + dbError.message }, { status: 500 });
+    }
 
     return NextResponse.json(
       {
         status: data.status,
         orderID: data.id,
         captureID,
-        amount,
-        currency,
+        amount: amountVal,
+        currency: currencyCode,
         payerEmail,
         payerName,
+        payerID,
+        payerPhone,
+        payerCountry,
       },
       { status: 200 }
     );
