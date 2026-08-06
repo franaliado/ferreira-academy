@@ -10,6 +10,7 @@ export function PayPalProvider({ children }: { children: React.ReactNode }) {
         clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
         intent: 'capture',
         currency: 'USD',
+        environment: 'sandbox',
       }}
     >
       {children}
