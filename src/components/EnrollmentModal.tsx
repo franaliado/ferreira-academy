@@ -240,7 +240,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               {t.paymentNote}
             </p>
 
-            {/* Botón traducido dinámicamente según el idioma actual */}
             <button
               onClick={() => setStep('checkout')}
               className="w-full group inline-flex items-center justify-center space-x-3 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3.5 px-6 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-lg hover:opacity-95 transition-all cursor-pointer"
@@ -301,10 +300,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       method: 'POST',
                     });
                     const data = await res.json();
-                    if (!res.ok || !data.orderID) {
+                    if (!res.ok || !data.id) {
                       throw new Error(data.error || 'No se pudo generar la orden de PayPal');
                     }
-                    return data.orderID;
+                    return data.id;
                   } catch (err) {
                     console.error('Error al crear orden:', err);
                     setErrorMessage('Ocurrió un error al conectar con PayPal.');
