@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+// POST /api/paypal/create-order
+// Creates a PayPal order and returns its ID
+
 async function getPayPalAccessToken(): Promise<string> {
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
@@ -71,7 +74,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ orderID: orderData.id }, { status: 200 });
+    return NextResponse.json({ id: orderData.id }, { status: 200 });
   } catch (error: any) {
     console.error('Error in PayPal create-order:', error);
     return NextResponse.json({ error: error.message || 'Internal error' }, { status: 500 });
