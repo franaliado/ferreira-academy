@@ -29,6 +29,8 @@ export interface TranslationSchema {
     headline2: string;
     subtitleText: string;
     securePayments: string;
+    upcomingSeminarBadge: string;
+    courseFullTitle: string;
     stats: [
       { line1: string; line2: string },
       { line1: string; line2: string },
@@ -196,6 +198,30 @@ export interface TranslationSchema {
     paymentNote: string;
     proceedToCheckout: string;
   };
+  certificateModal: {
+    successTitlePart1: string;
+    successTitlePart2: string;
+    confirmedSubtitle: string;
+    dataNoticePart1: string;
+    dataNoticeHighlight: string;
+    dataNoticePart2: string;
+    badgeLabel: string;
+    inputLabel: string;
+    inputPlaceholder: string;
+    requiredError: string;
+    minLengthError: string;
+    maxLengthError: string;
+    submitError: string;
+    submittingButton: string;
+    submitButton: string;
+    footerNotePart1: string;
+    footerNoteHighlight: string;
+    successScreenTitle: string;
+    successLine1: string;
+    successLine2: string;
+    successLine3: string;
+    acceptButton: string;
+  };
 };
 
 export const translations: Record<Language, TranslationSchema> = {
@@ -230,6 +256,8 @@ export const translations: Record<Language, TranslationSchema> = {
       headline2: 'TRANSFORMA TU FUTURO',
       subtitleText: 'Capacitación Avanzada para Profesionales. Técnicas de fade y optimización de tiempos en función del sistema craneal.',
       securePayments: 'PAGOS 100% SEGUROS',
+      upcomingSeminarBadge: 'PRÓXIMO SEMINARIO PRESENCIAL',
+      courseFullTitle: 'SEMINARIO DE ALTA BARBERÍA: FADED MASTERY ELITE 2026',
       stats: [
         { line1: 'CLASES PRESENCIALES', line2: 'EN VIVO' },
         { line1: 'CERTIFICADO DE', line2: 'PARTICIPACIÓN' },
@@ -332,9 +360,9 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'Cómo cobrar tarifas de lujo, crear contenido de alto impacto y escalar tu barbería a nivel global.',
         },
       ],
-      liveBadge: 'ATENCIÓN PRESENCIAL',
-      courseTitleLine1: 'FADED MASTERY',
-      courseTitleLine2: 'ELITE',
+      liveBadge: 'PRÓXIMO SEMINARIO PRESENCIAL',
+      courseTitleLine1: 'SEMINARIO DE ALTA BARBERÍA:',
+      courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
         'Capacitación Presencial',
         'Técnicas de fade y optimización de tiempos en función del sistema craneal',
@@ -503,6 +531,30 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentNote: 'Al continuar, serás redirigido a la plataforma oficial y segura de PayPal, donde podrás pagar utilizando tu cuenta PayPal o una tarjeta de crédito o débito.',
       proceedToCheckout: 'PROCEDER AL PAGO',
     },
+    certificateModal: {
+      successTitlePart1: '¡Pago realizado ',
+      successTitlePart2: 'correctamente!',
+      confirmedSubtitle: 'Tu inscripción ha sido confirmada correctamente.',
+      dataNoticePart1: 'Solo necesitamos un último dato para emitir correctamente tu ',
+      dataNoticeHighlight: 'Certificado Digital',
+      dataNoticePart2: ' cuando finalice el curso.',
+      badgeLabel: 'Datos para el certificado',
+      inputLabel: 'Nombre que aparecerá en el certificado',
+      inputPlaceholder: 'Ejemplo: Antonio José Ferreira',
+      requiredError: 'Este campo es obligatorio.',
+      minLengthError: 'El nombre debe tener al menos 3 caracteres.',
+      maxLengthError: 'Máximo 150 caracteres permitidos.',
+      submitError: 'Tu pago fue recibido correctamente, pero ocurrió un problema registrando tu inscripción. Nuestro equipo revisará tu caso.',
+      submittingButton: 'Finalizando inscripción…',
+      submitButton: 'Finalizar inscripción',
+      footerNotePart1: 'Al finalizar serás redirigido automáticamente a la ',
+      footerNoteHighlight: 'Comunidad VIP de WhatsApp',
+      successScreenTitle: '¡Inscripción Exitosa!',
+      successLine1: '{name}',
+      successLine2: 'ha sido exitosamente registrado en el curso de',
+      successLine3: '{course}',
+      acceptButton: 'Aceptar',
+    },
   },
 
   // ─────────────────────────── ENGLISH ───────────────────────────
@@ -536,6 +588,8 @@ export const translations: Record<Language, TranslationSchema> = {
       headline2: 'TRANSFORM YOUR FUTURE',
       subtitleText: 'Advanced Training for Professionals. Fade techniques and time optimization based on the cranial system.',
       securePayments: '100% SECURE PAYMENTS',
+      upcomingSeminarBadge: 'UPCOMING IN-PERSON SEMINAR',
+      courseFullTitle: 'HIGH-END BARBERING SEMINAR: FADED MASTERY ELITE 2026',
       stats: [
         { line1: 'IN-PERSON CLASSES', line2: 'LIVE' },
         { line1: 'CERTIFICATE OF', line2: 'PARTICIPATION' },
@@ -638,9 +692,9 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'How to charge luxury rates, produce high-impact content, and scale your brand globally.',
         },
       ],
-      liveBadge: 'IN-PERSON TRAINING',
-      courseTitleLine1: 'FADED MASTERY',
-      courseTitleLine2: 'ELITE',
+      liveBadge: 'UPCOMING IN-PERSON SEMINAR',
+      courseTitleLine1: 'HIGH-END BARBERING SEMINAR:',
+      courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
         'In-Person Training',
         'Fade techniques and time optimization based on the cranial system',
@@ -807,6 +861,30 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentNote: 'By continuing, you will be redirected to PayPal\'s official secure platform, where you can pay using your PayPal account or a credit/debit card.',
       proceedToCheckout: 'PROCEED TO CHECKOUT',
     },
+    certificateModal: {
+      successTitlePart1: 'Payment completed ',
+      successTitlePart2: 'successfully!',
+      confirmedSubtitle: 'Your registration has been successfully confirmed.',
+      dataNoticePart1: 'We just need one last piece of information to issue your ',
+      dataNoticeHighlight: 'Digital Certificate',
+      dataNoticePart2: ' when the course ends.',
+      badgeLabel: 'Certificate details',
+      inputLabel: 'Name that will appear on the certificate',
+      inputPlaceholder: 'Example: Antonio José Ferreira',
+      requiredError: 'This field is required.',
+      minLengthError: 'Name must be at least 3 characters long.',
+      maxLengthError: 'Maximum 150 characters allowed.',
+      submitError: 'Your payment was received, but an issue occurred registering your enrollment. Our team will review your case.',
+      submittingButton: 'Finalizing registration…',
+      submitButton: 'Complete registration',
+      footerNotePart1: 'Upon completion you will be automatically redirected to the ',
+      footerNoteHighlight: 'VIP WhatsApp Community',
+      successScreenTitle: 'Registration Successful!',
+      successLine1: '{name}',
+      successLine2: 'has been successfully registered in the course',
+      successLine3: '{course}',
+      acceptButton: 'Accept',
+    },
   },
 
      // ─────────────────────────── PORTUGUEZ ───────────────────────────
@@ -840,6 +918,8 @@ export const translations: Record<Language, TranslationSchema> = {
       headline2: 'TRANSFORME SEU FUTURO',
       subtitleText: 'Capacitação Avançada para Profissionais. Técnicas de fade e otimização de tempos com base no sistema cranial.',
       securePayments: 'PAGAMENTOS 100% SEGUROS',
+      upcomingSeminarBadge: 'PRÓXIMO SEMINÁRIO PRESENCIAL',
+      courseFullTitle: 'SEMINÁRIO DE ALTA BARBEARIA: FADED MASTERY ELITE 2026',
       stats: [
         { line1: 'CLASES PRESENCIAIS', line2: 'AO VIVO' },
         { line1: 'CERTIFICADO DE', line2: 'PARTICIPAÇÃO' },
@@ -942,9 +1022,9 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'Como cobrar tarifas de luxo, gerar conteúdo de alto impacto e escalar sua barbearia mundialmente.',
         },
       ],
-      liveBadge: 'ATENDIMENTO PRESENCIAL',
-      courseTitleLine1: 'FADED MASTERY',
-      courseTitleLine2: 'ELITE',
+      liveBadge: 'PRÓXIMO SEMINÁRIO PRESENCIAL',
+      courseTitleLine1: 'SEMINÁRIO DE ALTA BARBEARIA:',
+      courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
         'Capacitação Presencial',
         'Técnicas de fade e otimização de tempos com base no sistema cranial',
@@ -1113,6 +1193,30 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentNote: 'Ao continuar, você será redirecionado para a plataforma oficial e segura do PayPal, onde poderá pagar usando sua conta do PayPal ou cartão de crédito/débito.',
       proceedToCheckout: 'AVANÇAR PARA O PAGAMENTO',
     },
+    certificateModal: {
+      successTitlePart1: 'Pagamento realizado ',
+      successTitlePart2: 'com sucesso!',
+      confirmedSubtitle: 'Sua inscrição foi confirmada com sucesso.',
+      dataNoticePart1: 'Precisamos apenas de uma última informação para emitir seu ',
+      dataNoticeHighlight: 'Certificado Digital',
+      dataNoticePart2: ' quando o curso terminar.',
+      badgeLabel: 'Dados para o certificado',
+      inputLabel: 'Nome que aparecerá no certificado',
+      inputPlaceholder: 'Exemplo: Antonio José Ferreira',
+      requiredError: 'Este campo é obrigatório.',
+      minLengthError: 'O nome deve ter pelo menos 3 caracteres.',
+      maxLengthError: 'Máximo de 150 caracteres permitidos.',
+      submitError: 'Seu pagamento foi recebido, mas ocorreu um problema ao registrar sua inscrição. Nossa equipe analisará seu caso.',
+      submittingButton: 'Finalizando inscrição…',
+      submitButton: 'Finalizar inscrição',
+      footerNotePart1: 'Ao finalizar você será redirecionado automaticamente para a ',
+      footerNoteHighlight: 'Comunidade VIP do WhatsApp',
+      successScreenTitle: 'Inscrição Concluída!',
+      successLine1: '{name}',
+      successLine2: 'foi registrado com sucesso no curso de',
+      successLine3: '{course}',
+      acceptButton: 'Aceitar',
+    },
   },
 
   // ─────────────────────────── ITALIANO ───────────────────────────
@@ -1146,6 +1250,8 @@ export const translations: Record<Language, TranslationSchema> = {
       headline2: 'TRASFORMA IL TUO FUTURO',
       subtitleText: 'Impara le tecniche moderne di taglio maschile e barberia professionale con Antonio Ferreira, da qualsiasi parte del mondo.',
       securePayments: 'PAGAMENTI 100% SICURI',
+      upcomingSeminarBadge: 'PROSSIMO SEMINARIO IN PRESENZA',
+      courseFullTitle: 'SEMINARIO DI ALTA BARBERIA: FADED MASTERY ELITE 2026',
       stats: [
         { line1: 'LEZIONI DAL VIVO', line2: 'VIA ZOOM' },
         { line1: 'ACCESSO PERMANENTE', line2: 'ALLE REGISTRAZIONI' },
@@ -1248,9 +1354,9 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'Come applicare tariffe di lusso, creare contenuti ad alto impatto e scalare il tuo brand a livello globale.',
         },
       ],
-      liveBadge: 'CORSO DAL VIVO',
-      courseTitleLine1: 'TAGLIO MASCHILE',
-      courseTitleLine2: 'E BARBERIA PROFESSIONALE',
+      liveBadge: 'PROSSIMO SEMINARIO IN PRESENZA',
+      courseTitleLine1: 'SEMINARIO DI ALTA BARBERIA:',
+      courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
         'Formazione in Presenza',
         'Sfumature, texture e finiture professionali',
@@ -1421,6 +1527,30 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentNote: 'Continuando, verrai reindirizzato alla piattaforma ufficiale e sicura di PayPal, dove potrai pagare utilizzando il tuo conto PayPal o una carta di credito/debito.',
       proceedToCheckout: 'PROCEDI AL PAGAMENTO',
     },
+    certificateModal: {
+      successTitlePart1: 'Pagamento effettuato ',
+      successTitlePart2: 'correttamente!',
+      confirmedSubtitle: 'La tua iscrizione è stata confermata con successo.',
+      dataNoticePart1: 'Abbiamo solo bisogno di un ultimo dato per emettere il tuo ',
+      dataNoticeHighlight: 'Certificato Digitale',
+      dataNoticePart2: ' al termine del corso.',
+      badgeLabel: 'Dati per il certificato',
+      inputLabel: 'Nome che apparirà sul certificato',
+      inputPlaceholder: 'Esempio: Antonio José Ferreira',
+      requiredError: 'Questo campo è obbligatorio.',
+      minLengthError: 'Il nome deve contenere almeno 3 caratteri.',
+      maxLengthError: 'Massimo 150 caratteri consentiti.',
+      submitError: 'Il tuo pagamento è stato ricevuto, ma si è verificato un problema durante la registrazione dell\'iscrizione. Il nostro team verificherà il tuo caso.',
+      submittingButton: 'Completamento iscrizione…',
+      submitButton: 'Completare l\'iscrizione',
+      footerNotePart1: 'Al termine verrai reindirizzato automaticamente alla ',
+      footerNoteHighlight: 'Comunità VIP di WhatsApp',
+      successScreenTitle: 'Iscrizione Riuscita!',
+      successLine1: '{name}',
+      successLine2: 'è stato iscritto con successo al corso di',
+      successLine3: '{course}',
+      acceptButton: 'Accetta',
+    },
   },
 
   // ─────────────────────────── FRANÇAIS ───────────────────────────
@@ -1454,6 +1584,8 @@ export const translations: Record<Language, TranslationSchema> = {
       headline2: 'TRANSFORMEZ VOTRE AVENIR',
       subtitleText: 'Apprenez les techniques modernes de coupe masculine et de barberie professionnelle avec Antonio Ferreira, depuis n\'importe où dans le monde.',
       securePayments: 'PAIEMENTS 100% SÉCURISÉS',
+      upcomingSeminarBadge: 'PROCHAIN SÉMINAIRE PRÉSENTIEL',
+      courseFullTitle: 'SÉMINAIRE DE HAUTE COIFFURE: FADED MASTERY ELITE 2026',
       stats: [
         { line1: 'COURS EN DIRECT', line2: 'VIA ZOOM' },
         { line1: 'ACCÈS PERMANENT', line2: 'AUX ENREGISTREMENTS' },
@@ -1556,9 +1688,9 @@ export const translations: Record<Language, TranslationSchema> = {
           desc: 'Comment appliquer des tarifs de luxe, créer du contenu à fort impact et développer votre marque à l\'échelle mondiale.',
         },
       ],
-      liveBadge: 'COURS EN DIRECT',
-      courseTitleLine1: 'COUPE MASCULINE',
-      courseTitleLine2: 'ET BARBERIE PROFESSIONNELLE',
+      liveBadge: 'PROCHAIN SÉMINAIRE PRÉSENTIEL',
+      courseTitleLine1: 'SÉMINAIRE DE HAUTE COIFFURE:',
+      courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
         'Formation en Présentiel',
         'Dégradés, textures et finitions professionnelles',
@@ -1729,6 +1861,30 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentNote: 'En continuant, vous serez redirigé vers la plateforme officielle et sécurisée de PayPal, où vous pourrez payer avec votre compte PayPal ou une carte de crédit/débit.',
       proceedToCheckout: 'PASSER À LA CAISSE',
     },
+    certificateModal: {
+      successTitlePart1: 'Paiement effectué ',
+      successTitlePart2: 'avec succès !',
+      confirmedSubtitle: 'Votre inscription a été confirmée avec succès.',
+      dataNoticePart1: 'Nous avons seulement besoin d\'une dernière information pour émettre votre ',
+      dataNoticeHighlight: 'Certificat Numérique',
+      dataNoticePart2: ' à la fin du cours.',
+      badgeLabel: 'Données pour le certificat',
+      inputLabel: 'Nom qui apparaîtra sur le certificat',
+      inputPlaceholder: 'Exemple : Antonio José Ferreira',
+      requiredError: 'Ce champ est obligatoire.',
+      minLengthError: 'Le nom doit comporter au moins 3 caractères.',
+      maxLengthError: 'Maximum 150 caractères autorisés.',
+      submitError: 'Votre paiement a bien été reçu, mais un problème est survenu lors de l\'enregistrement de votre inscription. Notre équipe examinera votre cas.',
+      submittingButton: 'Finalisation de l\'inscription…',
+      submitButton: 'Finaliser l\'inscription',
+      footerNotePart1: 'Une fois terminé, vous serez automatiquement redirigé vers la ',
+      footerNoteHighlight: 'Communauté VIP WhatsApp',
+      successScreenTitle: 'Inscription Réussie !',
+      successLine1: '{name}',
+      successLine2: 'a été inscrit avec succès au cours de',
+      successLine3: '{course}',
+      acceptButton: 'Accepter',
+    },
   },
 
 // ─────────────────────────── DEUTSCH ───────────────────────────
@@ -1762,6 +1918,8 @@ export const translations: Record<Language, TranslationSchema> = {
         headline2: 'TRANSFORMIERE DEINE ZUKUNFT',
         subtitleText: 'Fortgeschrittene Schulung für Profis: Fade-Techniken und Zeitoptimierung basierend auf der Schädelstruktur.',
         securePayments: '100% SICHERE ZAHLUNGEN',
+        upcomingSeminarBadge: 'NÄCHSTES PRÄSENZSEMINAR',
+        courseFullTitle: 'HIGH-END BARBER-SEMINAR: FADED MASTERY ELITE 2026',
         stats: [
           { line1: 'PRÄSENZ-', line2: 'UNTERRICHT' },
           { line1: 'TEILNAHME-', line2: 'ZERTIFIKAT' },
@@ -1864,9 +2022,9 @@ export const translations: Record<Language, TranslationSchema> = {
             desc: 'Wie man Luxustarife verlangt, wirkungsvolle Inhalte erstellt und seine Marke global skaliert.',
           },
         ],
-        liveBadge: 'PRÄSENZ',
-        courseTitleLine1: 'FADED MASTERY',
-        courseTitleLine2: 'ELITE',
+        liveBadge: 'NÄCHSTES PRÄSENZSEMINAR',
+        courseTitleLine1: 'HIGH-END BARBER-SEMINAR:',
+        courseTitleLine2: 'FADED MASTERY ELITE 2026',
         checklist: [
           'Präsenz-Schulung',
           'Coffee Break',
@@ -2033,6 +2191,30 @@ export const translations: Record<Language, TranslationSchema> = {
         },
         paymentNote: 'Wenn Sie fortfahren, werden Sie zur offiziellen und sicheren PayPal-Plattform weitergeleitet, auf der Sie mit Ihrem PayPal-Konto oder einer Kredit-/Debitkarte bezahlen können.',
         proceedToCheckout: 'ZUR KASSE GEHEN',
+      },
+      certificateModal: {
+        successTitlePart1: 'Zahlung erfolgreich ',
+        successTitlePart2: 'abgeschlossen!',
+        confirmedSubtitle: 'Ihre Anmeldung wurde erfolgreich bestätigt.',
+        dataNoticePart1: 'Wir benötigen nur noch eine letzte Angabe, um Ihr ',
+        dataNoticeHighlight: 'Digitales Zertifikat',
+        dataNoticePart2: ' nach Kursende auszustellen.',
+        badgeLabel: 'Daten für das Zertifikat',
+        inputLabel: 'Name, der auf dem Zertifikat erscheint',
+        inputPlaceholder: 'Beispiel: Antonio José Ferreira',
+        requiredError: 'Dieses Feld ist erforderlich.',
+        minLengthError: 'Der Name muss mindestens 3 Zeichen lang sein.',
+        maxLengthError: 'Maximal 150 Zeichen erlaubt.',
+        submitError: 'Ihre Zahlung wurde empfangen, jedoch ist bei der Registrierung ein Problem aufgetreten. Unser Team wird Ihren Fall prüfen.',
+        submittingButton: 'Anmeldung wird abgeschlossen…',
+        submitButton: 'Anmeldung abschließen',
+        footerNotePart1: 'Nach Abschluss werden Sie automatisch zur ',
+        footerNoteHighlight: 'VIP-WhatsApp-Community',
+        successScreenTitle: 'Anmeldung Erfolgreich!',
+        successLine1: '{name}',
+        successLine2: 'wurde erfolgreich im Kurs registriert',
+        successLine3: '{course}',
+        acceptButton: 'Akzeptieren',
       },
     },
   };

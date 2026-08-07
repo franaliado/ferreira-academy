@@ -316,6 +316,7 @@ export default function Home() {
         isOpen={isCertModalOpen}
         captureData={captureData}
         onClose={handleCloseCertModal}
+        currentLang={currentLang}
       />
     </div>
   );

@@ -216,11 +216,11 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
               <div className="flex items-center space-x-2">
                 <Sparkles className="w-4 h-4 text-[#D4AF37] animate-pulse" />
                 <span className="text-[#D4AF37] text-[11px] sm:text-xs font-black uppercase tracking-[0.2em]">
-                  PRÓXIMO SEMINARIO EN VIVO
+                  {t.upcomingSeminarBadge}
                 </span>
               </div>
               <h2 className="text-white text-base sm:text-lg lg:text-xl font-extrabold uppercase tracking-wide leading-snug">
-                {currentCourse.title}
+                {t.courseFullTitle}
               </h2>
             </div>
 

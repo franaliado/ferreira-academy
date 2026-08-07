@@ -270,7 +270,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   Plan Seleccionado
                 </p>
                 <p className="text-white font-bold text-sm sm:text-base">
-                  Fade Mastery Elite (Presencial)
+                  Fade Mastery Elite
                 </p>
               </div>
               <div className="text-right">

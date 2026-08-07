@@ -94,30 +94,7 @@ export async function POST(request: Request) {
     const payerPhone = rawPhone || null;
     const payerCountry = data.payer?.address?.country_code || firstPurchaseUnit?.shipping?.address?.country_code || 'N/A';
 
-    // Inserción directa en Supabase adaptada 100% a las columnas de tu tabla
-    const { error: dbError } = await supabase.from('registrations').insert([
-      {
-        buyer_name: payerName,
-        email: payerEmail,
-        phone: payerPhone,
-        country: payerCountry,
-        certificate_name: certificateName || payerName, // Usa el del input o el nombre del pagador por defecto
-        course_name: courseName || 'Fade Mastery Elite (Presencial)',
-        amount: amountVal,
-        currency: currencyCode,
-        payment_method: 'PayPal',
-        status: data.status,
-        paypal_order_id: data.id,
-        payer_id: payerID,
-        certificate_sent: false,
-      },
-    ]);
-
-    if (dbError) {
-      console.error('Supabase insert error:', dbError);
-      return NextResponse.json({ error: 'Payment captured, but database registration failed: ' + dbError.message }, { status: 500 });
-    }
-
+    // Payment capture successful. Return capture details so CertificateModal can collect certificate_name.
     return NextResponse.json(
       {
         status: data.status,
