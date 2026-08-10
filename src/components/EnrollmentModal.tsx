@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Image from 'next/image';
 import { Language, translations } from '@/lib/translations';
 import { PayPalButtons } from '@paypal/react-paypal-js';
-import { ShieldCheck, X, ChevronRight } from 'lucide-react';
+import { ShieldCheck, X, ChevronRight, User, ChevronDown } from 'lucide-react';
 import type { PaymentCaptureData } from '@/components/CertificateModal';
 
 interface EnrollmentModalProps {
@@ -14,6 +14,43 @@ interface EnrollmentModalProps {
   /** Called when a PayPal payment is captured with status COMPLETED */
   onPaymentCompleted?: (data: PaymentCaptureData) => void;
 }
+
+interface CountryOption {
+  code: string;
+  name: string;
+  flag: string;
+  dial: string;
+}
+
+const COUNTRIES: CountryOption[] = [
+  { code: 'VE', name: 'Venezuela', flag: '🇻🇪', dial: '+58' },
+  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸', dial: '+1' },
+  { code: 'ES', name: 'España', flag: '🇪🇸', dial: '+34' },
+  { code: 'MX', name: 'México', flag: '🇲🇽', dial: '+52' },
+  { code: 'CO', name: 'Colombia', flag: '🇨🇴', dial: '+57' },
+  { code: 'AR', name: 'Argentina', flag: '🇦🇷', dial: '+54' },
+  { code: 'CL', name: 'Chile', flag: '🇨🇱', dial: '+56' },
+  { code: 'PE', name: 'Perú', flag: '🇵🇪', dial: '+51' },
+  { code: 'EC', name: 'Ecuador', flag: '🇪🇨', dial: '+593' },
+  { code: 'DO', name: 'República Dominicana', flag: '🇩🇴', dial: '+1' },
+  { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷', dial: '+1' },
+  { code: 'PA', name: 'Panamá', flag: '🇵🇦', dial: '+507' },
+  { code: 'CR', name: 'Costa Rica', flag: '🇨🇷', dial: '+506' },
+  { code: 'GT', name: 'Guatemala', flag: '🇬🇹', dial: '+502' },
+  { code: 'BR', name: 'Brasil', flag: '🇧🇷', dial: '+55' },
+  { code: 'PT', name: 'Portugal', flag: '🇵🇹', dial: '+351' },
+  { code: 'IT', name: 'Italia', flag: '🇮🇹', dial: '+39' },
+  { code: 'FR', name: 'Francia', flag: '🇫🇷', dial: '+33' },
+  { code: 'DE', name: 'Alemania', flag: '🇩🇪', dial: '+49' },
+  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧', dial: '+44' },
+  { code: 'CA', name: 'Canadá', flag: '🇨🇦', dial: '+1' },
+  { code: 'UY', name: 'Uruguay', flag: '🇺🇾', dial: '+598' },
+  { code: 'PY', name: 'Paraguay', flag: '🇵🇾', dial: '+595' },
+  { code: 'BO', name: 'Bolivia', flag: '🇧🇴', dial: '+591' },
+  { code: 'SV', name: 'El Salvador', flag: '🇸🇻', dial: '+503' },
+  { code: 'HN', name: 'Honduras', flag: '🇭🇳', dial: '+504' },
+  { code: 'NI', name: 'Nicaragua', flag: '🇳🇮', dial: '+505' },
+];
 
 export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
@@ -26,6 +63,14 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
   const [step, setStep] = useState<'details' | 'checkout'>('details');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Participant Information form state
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('Venezuela');
+  const [phonePrefix, setPhonePrefix] = useState('+58');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const t = (translations[currentLang] || translations.es).enrollmentModal;
 
@@ -88,6 +133,12 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
       setStep('details');
       setErrorMessage(null);
+      setFullName('');
+      setEmail('');
+      setCountry('Venezuela');
+      setPhonePrefix('+58');
+      setPhoneNumber('');
+      setValidationError(null);
 
       requestAnimationFrame(() => {
         closeBtnRef.current?.focus();
@@ -103,6 +154,16 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       }
     }
   }, [isOpen]);
+
+  const handleProceedToCheckout = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!fullName.trim() || !email.trim() || !phoneNumber.trim()) {
+      setValidationError(t.requiredFieldsError);
+      return;
+    }
+    setValidationError(null);
+    setStep('checkout');
+  };
 
   if (!isOpen) return null;
 
@@ -154,7 +215,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
           <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
-        {/* ── VISTA 1: DETALLES ── */}
+        {/* ── VISTA 1: DETALLES Y FORMULARIO DE PARTICIPANTE ── */}
         {step === 'details' && (
           <>
             <div className="flex flex-col items-center text-center mt-2 mb-0">
@@ -183,74 +244,156 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
             <div className="mt-4"></div>
 
-            <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-3 sm:p-4 space-y-2 mb-4 shadow-inner">
-              <div className="flex items-center space-x-3 text-xs sm:text-sm">
-                <span className="text-base sm:text-lg">📅</span>
-                <div>
-                  <p className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-400 tracking-wider leading-none mb-0.5">
-                    {t.officialDateLabel}
-                  </p>
-                  <p className="text-white font-bold">{t.officialDateValue}</p>
-                </div>
+            {/* Price Box */}
+            <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-3.5 sm:p-4 mb-4 shadow-inner flex items-center justify-between">
+              <div>
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
+                  {t.officialPriceLabel}
+                </p>
+                <p className="text-white font-bold text-xs sm:text-sm">
+                  {t.includes.inPersonTraining}
+                </p>
               </div>
-
-              <div className="h-px bg-white/5" />
-
-              <div className="flex items-center space-x-3 text-xs sm:text-sm">
-                <span className="text-base sm:text-lg">📍</span>
-                <div>
-                  <p className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-400 tracking-wider leading-none mb-0.5">
-                    {t.cityLabel}
-                  </p>
-                  <p className="text-white font-bold">{t.cityValue}</p>
-                </div>
-              </div>
-
-              <div className="h-px bg-white/5" />
-
-              <div className="flex items-center space-x-3 text-xs sm:text-sm">
-                <span className="text-base sm:text-lg">💰</span>
-                <div>
-                  <p className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-400 tracking-wider leading-none mb-0.5">
-                    {t.officialPriceLabel}
-                  </p>
-                  <p className="text-[#D4AF37] font-black text-sm sm:text-base">
-                    {t.officialPriceValue}
-                  </p>
-                </div>
+              <div className="text-right">
+                <span className="text-[#D4AF37] font-black text-lg sm:text-2xl tracking-tight">
+                  $95.00 USD
+                </span>
               </div>
             </div>
 
-            <div className="mb-4 space-y-1.5">
-              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
-                {t.includesTitle}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                {includes.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center space-x-2.5 bg-white/[0.02] border border-white/5 rounded-lg px-3 py-1.5"
-                  >
-                    <span className="text-sm sm:text-base">{item.icon}</span>
-                    <span className="text-xs font-medium text-gray-200">
-                      {item.label}
-                    </span>
+            {/* PARTICIPANT INFORMATION SECTION */}
+            <form onSubmit={handleProceedToCheckout} className="mb-2">
+              <div className="flex items-center space-x-2 border-b border-[#D4AF37]/20 pb-2 mb-3.5">
+                <User className="w-4 h-4 text-[#D4AF37]" />
+                <h3 className="text-xs sm:text-sm font-extrabold text-[#D4AF37] uppercase tracking-wider">
+                  {t.participantInfoTitle}
+                </h3>
+              </div>
+
+              <div className="space-y-3 mb-4">
+                {/* Full Name */}
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 mb-1 block">
+                    {t.fullNameLabel} <span className="text-[#D4AF37]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={t.fullNamePlaceholder}
+                    className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3.5 py-2.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Email Address */}
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 mb-1 block">
+                    {t.emailLabel} <span className="text-[#D4AF37]">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t.emailPlaceholder}
+                    className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3.5 py-2.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Country */}
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 mb-1 block">
+                    {t.countryLabel} <span className="text-[#D4AF37]">*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={country}
+                      onChange={(e) => {
+                        const selectedName = e.target.value;
+                        setCountry(selectedName);
+                        const found = COUNTRIES.find((c) => c.name === selectedName);
+                        if (found) {
+                          setPhonePrefix(found.dial);
+                        }
+                      }}
+                      className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3.5 py-2.5 text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all appearance-none cursor-pointer pr-10"
+                    >
+                      {COUNTRIES.map((c) => (
+                        <option key={c.code} value={c.name} className="bg-[#121212] text-white">
+                          {c.flag} {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
-                ))}
+                </div>
+
+                {/* Phone Number */}
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 mb-1 block">
+                    {t.phoneLabel} <span className="text-[#D4AF37]">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="relative w-24">
+                      <select
+                        value={phonePrefix}
+                        onChange={(e) => setPhonePrefix(e.target.value)}
+                        className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-2.5 py-2.5 text-white text-xs sm:text-sm font-bold focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all appearance-none cursor-pointer text-center"
+                      >
+                        {Array.from(new Set(COUNTRIES.map((c) => c.dial))).map((dial) => (
+                          <option key={dial} value={dial} className="bg-[#121212] text-white">
+                            {dial}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <input
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder={t.phonePlaceholder}
+                      className="flex-1 bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3.5 py-2.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <p className="text-[10px] sm:text-xs text-gray-400 text-center leading-normal mb-6 px-1 font-medium">
-              {t.paymentNote}
-            </p>
+              {/* INCLUDES section */}
+              <div className="mb-4 space-y-1.5">
+                <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
+                  {t.includesTitle}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {includes.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center space-x-2.5 bg-white/[0.02] border border-white/5 rounded-lg px-3 py-1.5"
+                    >
+                      <span className="text-sm sm:text-base">{item.icon}</span>
+                      <span className="text-xs font-medium text-gray-200">
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            <button
-              onClick={() => setStep('checkout')}
-              className="w-full group inline-flex items-center justify-center space-x-3 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3.5 px-6 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-lg hover:opacity-95 transition-all cursor-pointer"
-            >
-              <span>{t.proceedToCheckout}</span>
-              <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
-            </button>
+              {validationError && (
+                <div className="mb-3 p-2.5 bg-rose-500/10 border border-rose-500/30 rounded-lg text-center text-xs text-rose-400 font-medium">
+                  {validationError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full group inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3.5 px-6 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-lg hover:opacity-95 transition-all cursor-pointer"
+              >
+                <span>{`${t.proceedToPaymentBtn} — $95.00 USD`}</span>
+                <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
+              </button>
+            </form>
           </>
         )}
 
@@ -339,8 +482,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       throw new Error(details.error || 'Error al capturar el pago');
                     }
                     if (details.status === 'COMPLETED') {
-                      // Detect payment method: PayPal account vs card
-                      // data.paymentSource is the most reliable signal from the SDK
                       const paymentSource = (data as unknown as Record<string, unknown>).paymentSource as string | undefined;
                       const fundingSource = details.fundingSource || '';
                       const isCard =
@@ -351,17 +492,16 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       const captureData: PaymentCaptureData = {
                         orderID: details.orderID || data.orderID,
                         captureID: details.captureID,
-                        payerName: details.payerName || '',
-                        payerEmail: details.payerEmail || '',
-                        payerPhone: details.payerPhone || null,
-                        payerCountry: details.payerCountry || 'N/A',
+                        payerName: fullName.trim() || details.payerName || '',
+                        payerEmail: email.trim() || details.payerEmail || '',
+                        payerPhone: phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : (details.payerPhone || null),
+                        payerCountry: country || details.payerCountry || 'N/A',
                         paymentMethod: isCard ? 'card' : 'paypal',
                         amount: details.amount || '95.00',
                         currency: details.currency || 'USD',
                         payerID: details.payerID || data.payerID || '',
                       };
 
-                      // Close checkout modal first, then open certificate modal
                       onClose();
                       if (onPaymentCompleted) {
                         onPaymentCompleted(captureData);

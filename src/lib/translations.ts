@@ -197,6 +197,17 @@ export interface TranslationSchema {
     };
     paymentNote: string;
     proceedToCheckout: string;
+    participantInfoTitle: string;
+    fullNameLabel: string;
+    fullNamePlaceholder: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    countryLabel: string;
+    selectCountryPlaceholder: string;
+    phoneLabel: string;
+    phonePlaceholder: string;
+    proceedToPaymentBtn: string;
+    requiredFieldsError: string;
   };
   certificateModal: {
     successTitlePart1: string;
@@ -530,6 +541,17 @@ export const translations: Record<Language, TranslationSchema> = {
       },
       paymentNote: 'Al continuar, serás redirigido a la plataforma oficial y segura de PayPal, donde podrás pagar utilizando tu cuenta PayPal o una tarjeta de crédito o débito.',
       proceedToCheckout: 'PROCEDER AL PAGO',
+      participantInfoTitle: 'INFORMACIÓN DEL PARTICIPANTE',
+      fullNameLabel: 'Nombre completo para el certificado digital',
+      fullNamePlaceholder: 'Ej. Francisco Silva',
+      emailLabel: 'Correo electrónico',
+      emailPlaceholder: 'ejemplo@correo.com',
+      countryLabel: 'País',
+      selectCountryPlaceholder: 'Selecciona tu país...',
+      phoneLabel: 'Número de teléfono',
+      phonePlaceholder: '4141234567',
+      proceedToPaymentBtn: 'PROCEDER AL PAGO',
+      requiredFieldsError: 'Por favor completa todos los campos obligatorios.',
     },
     certificateModal: {
       successTitlePart1: '¡Pago realizado ',
@@ -860,6 +882,17 @@ export const translations: Record<Language, TranslationSchema> = {
       },
       paymentNote: 'By continuing, you will be redirected to PayPal\'s official secure platform, where you can pay using your PayPal account or a credit/debit card.',
       proceedToCheckout: 'PROCEED TO CHECKOUT',
+      participantInfoTitle: 'PARTICIPANT INFORMATION',
+      fullNameLabel: 'Full name for digital certificate',
+      fullNamePlaceholder: 'Ex. Francisco Silva',
+      emailLabel: 'Email address',
+      emailPlaceholder: 'example@email.com',
+      countryLabel: 'Country',
+      selectCountryPlaceholder: 'Select your country...',
+      phoneLabel: 'Phone number',
+      phonePlaceholder: '4141234567',
+      proceedToPaymentBtn: 'PROCEED TO CHECKOUT',
+      requiredFieldsError: 'Please fill in all required fields.',
     },
     certificateModal: {
       successTitlePart1: 'Payment completed ',
@@ -1192,6 +1225,17 @@ export const translations: Record<Language, TranslationSchema> = {
       },
       paymentNote: 'Ao continuar, você será redirecionado para a plataforma oficial e segura do PayPal, onde poderá pagar usando sua conta do PayPal ou cartão de crédito/débito.',
       proceedToCheckout: 'AVANÇAR PARA O PAGAMENTO',
+      participantInfoTitle: 'INFORMAÇÕES DO PARTICIPANTE',
+      fullNameLabel: 'Nome completo para o certificado digital',
+      fullNamePlaceholder: 'Ex. Francisco Silva',
+      emailLabel: 'Endereço de e-mail',
+      emailPlaceholder: 'exemplo@email.com',
+      countryLabel: 'País',
+      selectCountryPlaceholder: 'Selecione seu país...',
+      phoneLabel: 'Número de telefone',
+      phonePlaceholder: '4141234567',
+      proceedToPaymentBtn: 'PROCEDER AO PAGAMENTO',
+      requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios.',
     },
     certificateModal: {
       successTitlePart1: 'Pagamento realizado ',
@@ -1526,6 +1570,17 @@ export const translations: Record<Language, TranslationSchema> = {
       },
       paymentNote: 'Continuando, verrai reindirizzato alla piattaforma ufficiale e sicura di PayPal, dove potrai pagare utilizzando il tuo conto PayPal o una carta di credito/debito.',
       proceedToCheckout: 'PROCEDI AL PAGAMENTO',
+      participantInfoTitle: 'INFORMAZIONI SUL PARTECIPANTE',
+      fullNameLabel: 'Nome completo per il certificato digitale',
+      fullNamePlaceholder: 'Es. Francisco Silva',
+      emailLabel: 'Indirizzo email',
+      emailPlaceholder: 'esempio@email.com',
+      countryLabel: 'Paese',
+      selectCountryPlaceholder: 'Seleziona il tuo paese...',
+      phoneLabel: 'Numero di telefono',
+      phonePlaceholder: '4141234567',
+      proceedToPaymentBtn: 'PROCEDI AL PAGAMENTO',
+      requiredFieldsError: 'Si prega di compilare tutti i campi obbligatori.',
     },
     certificateModal: {
       successTitlePart1: 'Pagamento effettuato ',
@@ -1860,6 +1915,17 @@ export const translations: Record<Language, TranslationSchema> = {
       },
       paymentNote: 'En continuant, vous serez redirigé vers la plateforme officielle et sécurisée de PayPal, où vous pourrez payer avec votre compte PayPal ou une carte de crédit/débit.',
       proceedToCheckout: 'PASSER À LA CAISSE',
+      participantInfoTitle: 'INFORMATIONS SUR LE PARTICIPANT',
+      fullNameLabel: 'Nom complet pour le certificat numérique',
+      fullNamePlaceholder: 'Ex. Francisco Silva',
+      emailLabel: 'Adresse e-mail',
+      emailPlaceholder: 'exemple@email.com',
+      countryLabel: 'Pays',
+      selectCountryPlaceholder: 'Sélectionnez votre pays...',
+      phoneLabel: 'Numéro de téléphone',
+      phonePlaceholder: '4141234567',
+      proceedToPaymentBtn: 'PASSER À LA CAISSE',
+      requiredFieldsError: 'Veuillez remplir tous les champs obligatoires.',
     },
     certificateModal: {
       successTitlePart1: 'Paiement effectué ',
