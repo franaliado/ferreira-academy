@@ -1,7 +1,0 @@
-ALTER TABLE public.registrations 
-  ALTER COLUMN certificate_name DROP NOT NULL,
-  ALTER COLUMN course_name DROP NOT NULL,
-  ALTER COLUMN amount DROP NOT NULL,
-  ALTER COLUMN currency DROP NOT NULL,
-  ALTER COLUMN payment_method DROP NOT NULL,
-  ALTER COLUMN status DROP NOT NULL;
