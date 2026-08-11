@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { CheckCircle2 } from 'lucide-react';
 import { Language, translations } from '@/lib/translations';
-import { currentCourse } from '@/data/currentCourse';
+import { currentCourse, getFormattedCourseDate } from '@/data/currentCourse';
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -31,11 +31,14 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
     title: '¡Inscripción Exitosa!',
     participantLabel: 'Nombre del participante:',
     enrolledIn: 'Curso inscrito:',
+    courseStartLabel: 'Fecha de inicio:',
     registrationSuccess: 'se ha inscrito exitosamente en el curso',
-    emailNotice: 'Te enviaremos todos los datos y detalles de acceso por correo electrónico.',
-    whatsappNotice: 'Serás agregado a la comunidad VIP de WhatsApp.',
+    whatsappNotice: 'Serás agregado a la comunidad VIP de ',
+    whatsappWord: 'WhatsApp',
     acceptButton: 'Aceptar',
   };
+
+  const formattedStartDate = getFormattedCourseDate(lang, currentCourse.startDate);
 
   const resolvedCourseName = courseName || currentCourse.title;
 
@@ -111,7 +114,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
 
       <div
         ref={modalRef}
-        className="relative w-full max-w-lg bg-[#070707] border border-[#D4AF37]/40 rounded-2xl p-6 sm:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.95),0_0_50px_rgba(212,175,55,0.2)] text-white overflow-hidden animate-success-pop text-center"
+        className="relative w-full max-w-lg bg-[#070707] border border-[#D4AF37]/40 rounded-2xl p-5 sm:p-6 shadow-[0_24px_80px_rgba(0,0,0,0.95),0_0_50px_rgba(212,175,55,0.2)] text-white overflow-hidden animate-success-pop text-center"
       >
         {/* Top gold bar */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
@@ -120,8 +123,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Ferreira Academy Logo */}
-        <div className="flex justify-center mb-3">
-          <div className="relative w-48 sm:w-56 h-20 sm:h-24">
+        <div className="flex justify-center mb-0">
+          <div className="relative w-[360px] sm:w-[420px] h-[160px] sm:h-[180px]">
             <Image
               src="/Logo_Oficial_Negro.png"
               alt="Ferreira Academy Logo"
@@ -133,22 +136,22 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
         </div>
 
         {/* Celebration icon */}
-        <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-[#D4AF37] bg-[#D4AF37]/10 flex items-center justify-center gold-glow">
-            <CheckCircle2 className="w-9 h-9 sm:w-11 sm:h-11 text-[#D4AF37]" />
+        <div className="flex justify-center mb-3 -mt-4">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-[#25D366] bg-[#25D366]/10 flex items-center justify-center" style={{animation: 'goldGlowPulse 2.5s infinite ease-in-out'}}>
+            <CheckCircle2 className="w-9 h-9 sm:w-11 sm:h-11 text-[#25D366]" />
           </div>
         </div>
 
         {/* Title */}
         <h2
           id="success-modal-title"
-          className="text-2xl sm:text-3xl font-black uppercase tracking-wider gold-gradient-text font-cinzel leading-tight mb-4"
+          className="text-xl sm:text-2xl font-black uppercase tracking-wider gold-gradient-text font-cinzel leading-tight mb-3"
         >
           {t.title}
         </h2>
 
         {/* Summary box: [Nombre de la persona] se ha inscrito exitosamente en el curso [Nombre del curso] */}
-        <div className="bg-[#111111] border border-[#D4AF37]/30 rounded-xl p-4 sm:p-5 mb-5 text-left space-y-3">
+        <div className="bg-[#111111] border border-[#D4AF37]/30 rounded-xl p-3 sm:p-4 mb-3 text-left space-y-2">
           <div>
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
               {t.participantLabel}
@@ -168,10 +171,21 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
               {resolvedCourseName}
             </p>
           </div>
+
+          <div className="h-px bg-white/10" />
+
+          <div>
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-400">
+              {t.courseStartLabel}
+            </p>
+            <p className="text-xs sm:text-sm font-bold text-amber-200 mt-0.5">
+              {formattedStartDate}
+            </p>
+          </div>
         </div>
 
         {/* Explanatory text */}
-        <div className="space-y-2 text-xs sm:text-sm text-gray-300 font-medium mb-6 leading-relaxed">
+        <div className="space-y-1.5 text-xs sm:text-sm text-gray-300 font-medium mb-4 leading-relaxed">
           <p className="text-white font-semibold flex items-center justify-center space-x-1.5">
             <span>✨</span>
             <span>
@@ -179,11 +193,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
               <strong className="text-amber-200">{resolvedCourseName}</strong>.
             </span>
           </p>
-          <p className="text-gray-400">
-            {t.emailNotice}
-          </p>
           <p className="text-[#D4AF37] font-semibold pt-1">
-            {t.whatsappNotice}
+            {t.whatsappNotice}<span className="text-[#25D366] font-black">{t.whatsappWord}</span>.
           </p>
         </div>
 

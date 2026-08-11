@@ -244,6 +244,16 @@ export interface TranslationSchema {
     successLine3: string;
     acceptButton: string;
   };
+  successModal: {
+    title: string;
+    participantLabel: string;
+    enrolledIn: string;
+    courseStartLabel: string;
+    registrationSuccess: string;
+    whatsappNotice: string;
+    whatsappWord: string;
+    acceptButton: string;
+  };
 };
 
 export const translations: Record<Language, TranslationSchema> = {
@@ -599,6 +609,16 @@ export const translations: Record<Language, TranslationSchema> = {
       successLine3: '{course}',
       acceptButton: 'Aceptar',
     },
+    successModal: {
+      title: '¡Inscripción Exitosa!',
+      participantLabel: 'Nombre del participante:',
+      enrolledIn: 'Curso inscrito:',
+      courseStartLabel: 'Fecha de inicio:',
+      registrationSuccess: 'se ha inscrito exitosamente en el curso',
+      whatsappNotice: 'Serás agregado a la comunidad VIP de ',
+      whatsappWord: 'WhatsApp',
+      acceptButton: 'Aceptar',
+    },
   },
 
   // ─────────────────────────── ENGLISH ───────────────────────────
@@ -949,6 +969,16 @@ export const translations: Record<Language, TranslationSchema> = {
       successLine1: '{name}',
       successLine2: 'has been successfully registered in the course',
       successLine3: '{course}',
+      acceptButton: 'Accept',
+    },
+    successModal: {
+      title: 'Enrollment Successful!',
+      participantLabel: 'Participant Name:',
+      enrolledIn: 'Enrolled Course:',
+      courseStartLabel: 'Start Date:',
+      registrationSuccess: 'has successfully enrolled in the course',
+      whatsappNotice: 'You will be added to the VIP ',
+      whatsappWord: 'WhatsApp',
       acceptButton: 'Accept',
     },
   },
@@ -1303,6 +1333,16 @@ export const translations: Record<Language, TranslationSchema> = {
       successLine1: '{name}',
       successLine2: 'foi registrado com sucesso no curso de',
       successLine3: '{course}',
+      acceptButton: 'Aceitar',
+    },
+    successModal: {
+      title: 'Inscrição Concluída!',
+      participantLabel: 'Nome do participante:',
+      enrolledIn: 'Curso inscrito:',
+      courseStartLabel: 'Data de início:',
+      registrationSuccess: 'foi inscrito com sucesso no curso',
+      whatsappNotice: 'Você será adicionado à comunidade VIP do ',
+      whatsappWord: 'WhatsApp',
       acceptButton: 'Aceitar',
     },
   },
@@ -1661,6 +1701,16 @@ export const translations: Record<Language, TranslationSchema> = {
       successLine3: '{course}',
       acceptButton: 'Accetta',
     },
+    successModal: {
+      title: 'Iscrizione Riuscita!',
+      participantLabel: 'Nome del partecipante:',
+      enrolledIn: 'Corso iscritto:',
+      courseStartLabel: 'Data di inizio:',
+      registrationSuccess: 'si è iscritto con successo al corso',
+      whatsappNotice: 'Sarai aggiunto alla comunità VIP di ',
+      whatsappWord: 'WhatsApp',
+      acceptButton: 'Accetta',
+    },
   },
 
   // ─────────────────────────── FRANÇAIS ───────────────────────────
@@ -2015,6 +2065,16 @@ export const translations: Record<Language, TranslationSchema> = {
       successLine3: '{course}',
       acceptButton: 'Accepter',
     },
+    successModal: {
+      title: 'Inscription Réussie !',
+      participantLabel: 'Nom du participant :',
+      enrolledIn: 'Cours inscrit :',
+      courseStartLabel: 'Date de début :',
+      registrationSuccess: 's\'est inscrit avec succès au cours',
+      whatsappNotice: 'Vous serez ajouté à la communauté VIP ',
+      whatsappWord: 'WhatsApp',
+      acceptButton: 'Accepter',
+    },
   },
 
 // ─────────────────────────── DEUTSCH ───────────────────────────
@@ -2366,6 +2426,16 @@ export const translations: Record<Language, TranslationSchema> = {
         successLine1: '{name}',
         successLine2: 'wurde erfolgreich im Kurs registriert',
         successLine3: '{course}',
+        acceptButton: 'Akzeptieren',
+      },
+      successModal: {
+        title: 'Anmeldung Erfolgreich!',
+        participantLabel: 'Name des Teilnehmers:',
+        enrolledIn: 'Eingeschriebener Kurs:',
+        courseStartLabel: 'Startdatum:',
+        registrationSuccess: 'wurde erfolgreich im Kurs eingeschrieben',
+        whatsappNotice: 'Sie werden der VIP-Community auf ',
+        whatsappWord: 'WhatsApp',
         acceptButton: 'Akzeptieren',
       },
     },
