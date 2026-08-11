@@ -208,6 +208,8 @@ export interface TranslationSchema {
     phonePlaceholder: string;
     proceedToPaymentBtn: string;
     requiredFieldsError: string;
+    oneTimePayment: string;
+    securePaymentTitle: string;
   };
   certificateModal: {
     successTitlePart1: string;
@@ -523,7 +525,7 @@ export const translations: Record<Language, TranslationSchema> = {
     enrollmentModal: {
       back: 'Regresar',
       close: 'Cerrar',
-      courseTitle: 'Fade Mastery Elite',
+      courseTitle: 'Faded Mastery Elite',
       subtitle: 'Capacitación Presencial 2026',
       officialDateLabel: 'Fecha oficial del curso',
       officialDateValue: '15 de Octubre, 2026',
@@ -552,6 +554,8 @@ export const translations: Record<Language, TranslationSchema> = {
       phonePlaceholder: '4141234567',
       proceedToPaymentBtn: 'PROCEDER AL PAGO',
       requiredFieldsError: 'Por favor completa todos los campos obligatorios.',
+      oneTimePayment: 'Pago Único - Curso Completo',
+      securePaymentTitle: 'Pago Seguro',
     },
     certificateModal: {
       successTitlePart1: '¡Pago realizado ',
@@ -864,7 +868,7 @@ export const translations: Record<Language, TranslationSchema> = {
     enrollmentModal: {
       back: 'Back',
       close: 'Close',
-      courseTitle: 'Fade Mastery Elite',
+      courseTitle: 'Faded Mastery Elite',
       subtitle: 'In-Person Training 2026',
       officialDateLabel: 'Official course date',
       officialDateValue: 'October 15, 2026',
@@ -893,6 +897,8 @@ export const translations: Record<Language, TranslationSchema> = {
       phonePlaceholder: '4141234567',
       proceedToPaymentBtn: 'PROCEED TO CHECKOUT',
       requiredFieldsError: 'Please fill in all required fields.',
+      oneTimePayment: 'One-Time Payment - Full Course',
+      securePaymentTitle: 'Secure Payment',
     },
     certificateModal: {
       successTitlePart1: 'Payment completed ',
@@ -1207,7 +1213,7 @@ export const translations: Record<Language, TranslationSchema> = {
     enrollmentModal: {
       back: 'Voltar',
       close: 'Fechar',
-      courseTitle: 'Fade Mastery Elite',
+      courseTitle: 'Faded Mastery Elite',
       subtitle: 'Treinamento Presencial 2026',
       officialDateLabel: 'Data oficial do curso',
       officialDateValue: '15 de Outubro de 2026',
@@ -1236,6 +1242,8 @@ export const translations: Record<Language, TranslationSchema> = {
       phonePlaceholder: '4141234567',
       proceedToPaymentBtn: 'PROCEDER AO PAGAMENTO',
       requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios.',
+      oneTimePayment: 'Pagamento Único - Curso Completo',
+      securePaymentTitle: 'Pagamento Seguro',
     },
     certificateModal: {
       successTitlePart1: 'Pagamento realizado ',
@@ -1552,7 +1560,7 @@ export const translations: Record<Language, TranslationSchema> = {
     enrollmentModal: {
       back: 'Indietro',
       close: 'Chiudi',
-      courseTitle: 'Fade Mastery Elite',
+      courseTitle: 'Faded Mastery Elite',
       subtitle: 'Formazione Presenziale 2026',
       officialDateLabel: 'Data ufficiale del corso',
       officialDateValue: '15 Ottobre 2026',
@@ -1581,6 +1589,8 @@ export const translations: Record<Language, TranslationSchema> = {
       phonePlaceholder: '4141234567',
       proceedToPaymentBtn: 'PROCEDI AL PAGAMENTO',
       requiredFieldsError: 'Si prega di compilare tutti i campi obbligatori.',
+      oneTimePayment: 'Pagamento Unico - Corso Completo',
+      securePaymentTitle: 'Pagamento Sicuro',
     },
     certificateModal: {
       successTitlePart1: 'Pagamento effettuato ',
@@ -1897,7 +1907,7 @@ export const translations: Record<Language, TranslationSchema> = {
     enrollmentModal: {
       back: 'Retour',
       close: 'Fermer',
-      courseTitle: 'Fade Mastery Elite',
+      courseTitle: 'Faded Mastery Elite',
       subtitle: 'Formation En Présentiel 2026',
       officialDateLabel: 'Date officielle du cours',
       officialDateValue: '15 Octobre 2026',
@@ -1926,6 +1936,8 @@ export const translations: Record<Language, TranslationSchema> = {
       phonePlaceholder: '4141234567',
       proceedToPaymentBtn: 'PASSER À LA CAISSE',
       requiredFieldsError: 'Veuillez remplir tous les champs obligatoires.',
+      oneTimePayment: 'Paiement Unique - Cours Complet',
+      securePaymentTitle: 'Paiement Sécurisé',
     },
     certificateModal: {
       successTitlePart1: 'Paiement effectué ',
@@ -2239,7 +2251,7 @@ export const translations: Record<Language, TranslationSchema> = {
       enrollmentModal: {
         back: 'Zurück',
         close: 'Schließen',
-        courseTitle: 'Fade Mastery Elite',
+        courseTitle: 'Faded Mastery Elite',
         subtitle: 'Präsenz-Schulung 2026',
         officialDateLabel: 'Offizielles Kursdatum',
         officialDateValue: '15. Oktober 2026',
@@ -2257,6 +2269,19 @@ export const translations: Record<Language, TranslationSchema> = {
         },
         paymentNote: 'Wenn Sie fortfahren, werden Sie zur offiziellen und sicheren PayPal-Plattform weitergeleitet, auf der Sie mit Ihrem PayPal-Konto oder einer Kredit-/Debitkarte bezahlen können.',
         proceedToCheckout: 'ZUR KASSE GEHEN',
+        participantInfoTitle: 'TEILNEHMER-INFORMATIONEN',
+        fullNameLabel: 'Vollständiger Name für das digitale Zertifikat',
+        fullNamePlaceholder: 'Bsp. Francisco Silva',
+        emailLabel: 'E-Mail-Adresse',
+        emailPlaceholder: 'beispiel@email.com',
+        countryLabel: 'Land',
+        selectCountryPlaceholder: 'Wähle dein Land...',
+        phoneLabel: 'Telefonnummer',
+        phonePlaceholder: '4141234567',
+        proceedToPaymentBtn: 'ZUR KASSE GEHEN',
+        requiredFieldsError: 'Bitte füllen Sie alle Pflichtfelder aus.',
+        oneTimePayment: 'Einmalzahlung - Vollständiger Kurs',
+        securePaymentTitle: 'Sichere Zahlung',
       },
       certificateModal: {
         successTitlePart1: 'Zahlung erfolgreich ',

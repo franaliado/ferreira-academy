@@ -26,7 +26,7 @@ export interface CourseConfig {
 
 export const currentCourse: CourseConfig = {
   id: 'faded-mastery-elite-2026',
-  title: 'Seminario de Alta Barbería: Faded Mastery Elite 2026',
+  title: 'Faded Mastery Elite 2026',
   priceAmount: 95,
   currency: 'USD',
   displayPrice: '$95 USD',

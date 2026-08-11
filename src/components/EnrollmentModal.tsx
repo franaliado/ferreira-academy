@@ -4,9 +4,10 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Image from 'next/image';
 import { Language, translations } from '@/lib/translations';
 import { PayPalButtons } from '@paypal/react-paypal-js';
-import { ShieldCheck, X, ChevronRight, User, ChevronDown } from 'lucide-react';
+import { ShieldCheck, X, ChevronRight, ChevronLeft, User, ChevronDown } from 'lucide-react';
 import 'flag-icons/css/flag-icons.min.css';
 import type { PaymentCaptureData } from '@/components/CertificateModal';
+import { currentCourse } from '@/data/currentCourse';
 
 interface EnrollmentModalProps {
   isOpen: boolean;
@@ -222,14 +223,16 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       >
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-80" />
 
-        <button
-          ref={closeBtnRef}
-          onClick={onClose}
-          aria-label={t.close}
-          className="absolute top-3 right-3 p-1.5 sm:p-2 rounded-full bg-white/5 border border-[#D4AF37]/20 text-gray-300 hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4AF37] z-20"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        {step === 'details' && (
+          <button
+            ref={closeBtnRef}
+            onClick={onClose}
+            aria-label={t.close}
+            className="absolute top-3 right-3 p-1.5 sm:p-2 rounded-full bg-white/5 border border-[#D4AF37]/20 text-gray-300 hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4AF37] z-20"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
 
         {/* ── VISTA 1: DETALLES Y FORMULARIO DE PARTICIPANTE ── */}
         {step === 'details' && (
@@ -431,31 +434,42 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
         {/* ── VISTA 2: SEGUNDO MODAL (PAGO SEGURO) ── */}
         {step === 'checkout' && (
-          <div className="py-2">
-            <div className="flex items-center space-x-2 border-b border-white/10 pb-3 mb-4">
-              <ShieldCheck className="w-5 h-5 text-[#D4AF37]" />
-              <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
-                Pago Seguro
-              </h3>
+          <div className="py-3">
+            {/* Header: título + botón Regresar alineado a la derecha */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-3.5 mb-5">
+              <div className="flex items-center space-x-2.5">
+                <ShieldCheck className="w-6 h-6 text-[#D4AF37]" />
+                <h3 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider">
+                  {t.securePaymentTitle}
+                </h3>
+              </div>
+              <button
+                onClick={() => setStep('details')}
+                className="flex items-center space-x-1 text-gray-300 hover:text-[#D4AF37] text-sm font-bold transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>{t.back}</span>
+              </button>
             </div>
 
-            <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-3 mb-4 flex items-center justify-between">
+            {/* Course info card: dynamic name from currentCourse + oneTimePayment label */}
+            <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-4 mb-5 flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                  Plan Seleccionado
+                <p className="text-white font-bold text-sm sm:text-base">
+                  {currentCourse.title}
                 </p>
-                <p className="text-white font-bold text-xs sm:text-sm">
-                  Fade Mastery Elite
+                <p className="text-[11px] text-gray-400 mt-1 font-medium">
+                  {t.oneTimePayment}
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-[#D4AF37] font-black text-sm sm:text-base">
-                  95.00 USD
+                <span className="text-[#D4AF37] font-black text-base sm:text-lg">
+                  {currentCourse.displayPrice}
                 </span>
               </div>
             </div>
 
-            <p className="text-xs font-medium text-gray-300 mb-3 uppercase tracking-wider">
+            <p className="text-xs sm:text-sm font-medium text-gray-300 mb-4 uppercase tracking-wider">
               Método de Pago (PayPal Oficial)
             </p>
 
@@ -529,8 +543,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                         payerPhone: phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : (details.payerPhone || null),
                         payerCountry: country || details.payerCountry || 'N/A',
                         paymentMethod: isCard ? 'card' : 'paypal',
-                        amount: details.amount || '95.00',
-                        currency: details.currency || 'USD',
+                        amount: details.amount || String(currentCourse.priceAmount),
+                        currency: details.currency || currentCourse.currency,
                         payerID: details.payerID || data.payerID || '',
                       };
 
@@ -552,13 +566,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 }}
               />
             </div>
-
-            <button
-              onClick={() => setStep('details')}
-              className="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-xs font-bold rounded-lg transition-colors cursor-pointer uppercase tracking-wider mt-2"
-            >
-              ← Volver a los detalles
-            </button>
 
             <p className="text-[10px] text-gray-500 text-center mt-3">
               Pago seguro encriptado de nivel 256-bit procesado por PayPal
