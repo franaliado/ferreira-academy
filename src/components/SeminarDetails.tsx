@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Language, translations } from '@/lib/translations';
-import { currentCourse } from '@/data/currentCourse';
+import { currentCourse, getFormattedCourseDate } from '@/data/currentCourse';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { Calendar, Video, CheckCircle2, ChevronRight } from 'lucide-react';
 
@@ -13,6 +13,16 @@ interface SeminarDetailsProps {
 
 export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onOpenCheckout }) => {
   const t = translations[currentLang].seminar;
+  const modalT = translations[currentLang].enrollmentModal;
+
+  const formattedDate = getFormattedCourseDate(currentLang, currentCourse.startDate);
+
+  const checklistItems = [
+    currentCourse.isPresencial ? t.inPersonItem : t.zoomItem,
+    t.checklist[1] || 'Técnicas de fade y optimización de tiempos en función del sistema craneal',
+    t.checklist[2] || 'Certificación',
+    ...(currentCourse.isPresencial ? [modalT.includes.coffeeBreak] : []),
+  ];
 
   return (
     <section id="seminar" className="bg-black relative overflow-hidden">
@@ -44,7 +54,7 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
             <div className="inline-flex items-center space-x-2">
               <div className="w-8 h-px bg-[#D4AF37]" />
               <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em]">
-                {t.liveBadge}
+                {currentCourse.isPresencial ? (t.liveBadgePresencial || t.liveBadge) : (t.liveBadgeZoom || t.liveBadge)}
               </span>
             </div>
 
@@ -52,12 +62,12 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
             <h2 className="text-white text-2xl sm:text-3xl lg:text-4xl font-black uppercase leading-tight">
               <span>{t.courseTitleLine1}</span>
               <br />
-              <span>{t.courseTitleLine2}</span>
+              <span>{currentCourse.title}</span>
             </h2>
 
             {/* Checklist */}
             <ul className="space-y-2.5">
-              {t.checklist.map((item, i) => (
+              {checklistItems.map((item, i) => (
                 <li key={i} className="flex items-start space-x-3">
                   <CheckCircle2 className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
                   <span className="text-gray-200 text-sm font-medium">{item}</span>
@@ -76,7 +86,7 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
               </div>
               <div>
                 <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t.dateLabel}</p>
-                <p className="text-white text-xl font-black uppercase tracking-wide">{t.dateValue}</p>
+                <p className="text-white text-xl font-black uppercase tracking-wide">{formattedDate}</p>
               </div>
             </div>
 
@@ -90,7 +100,9 @@ export const SeminarDetails: React.FC<SeminarDetailsProps> = ({ currentLang, onO
               </div>
               <div>
                 <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t.modalityLabel}</p>
-                <p className="text-white text-xl font-black uppercase tracking-wide">{t.modalityValue}</p>
+                <p className="text-white text-xl font-black uppercase tracking-wide">
+                  {currentCourse.isPresencial ? (t.modalityPresencial || t.modalityValue) : (t.modalityZoom || t.modalityValue)}
+                </p>
               </div>
             </div>
 

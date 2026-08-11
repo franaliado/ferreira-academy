@@ -71,6 +71,8 @@ export interface TranslationSchema {
     dateValue: string;
     modalityLabel: string;
     modalityValue: string;
+    modalityPresencial: string;
+    modalityZoom: string;
     ctaButton: string;
     modulesTitle: string;
     modules: Array<{
@@ -79,9 +81,13 @@ export interface TranslationSchema {
       desc: string;
     }>;
     liveBadge: string;
+    liveBadgePresencial: string;
+    liveBadgeZoom: string;
     courseTitleLine1: string;
     courseTitleLine2: string;
     checklist: string[];
+    inPersonItem: string;
+    zoomItem: string;
   };
   certificate: {
     badge: string;
@@ -181,6 +187,8 @@ export interface TranslationSchema {
     close: string;
     courseTitle: string;
     subtitle: string;
+    subtitlePresencial: string;
+    subtitleZoom: string;
     officialDateLabel: string;
     officialDateValue: string;
     cityLabel: string;
@@ -194,6 +202,7 @@ export interface TranslationSchema {
       vipCommunity: string;
       courseMaterial: string;
       inPersonTraining: string;
+      zoomTraining: string;
     };
     paymentNote: string;
     proceedToCheckout: string;
@@ -349,6 +358,8 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: 'Domingo 9/08/2026',
       modalityLabel: 'Modalidad',
       modalityValue: 'Atención presencial',
+      modalityPresencial: 'Atención presencial',
+      modalityZoom: 'En vivo por Zoom',
       ctaButton: 'INSCRÍBETE AHORA',
       modulesTitle: 'Programa del Seminario',
       modules: [
@@ -374,6 +385,8 @@ export const translations: Record<Language, TranslationSchema> = {
         },
       ],
       liveBadge: 'PRÓXIMO SEMINARIO PRESENCIAL',
+      liveBadgePresencial: 'PRÓXIMO SEMINARIO PRESENCIAL',
+      liveBadgeZoom: 'PRÓXIMO SEMINARIO EN VIVO POR ZOOM',
       courseTitleLine1: 'SEMINARIO DE ALTA BARBERÍA:',
       courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
@@ -382,6 +395,8 @@ export const translations: Record<Language, TranslationSchema> = {
         'Certificación',
         'Coffee Break',
       ],
+      inPersonItem: 'Capacitación Presencial',
+      zoomItem: 'Capacitación en Vivo vía Zoom',
     },
     certificate: {
       badge: 'Validez Internacional',
@@ -527,6 +542,8 @@ export const translations: Record<Language, TranslationSchema> = {
       close: 'Cerrar',
       courseTitle: 'Faded Mastery Elite',
       subtitle: 'Capacitación Presencial 2026',
+      subtitlePresencial: 'Capacitación Presencial 2026',
+      subtitleZoom: 'Capacitación en Vivo por Zoom 2026',
       officialDateLabel: 'Fecha oficial del curso',
       officialDateValue: '15 de Octubre, 2026',
       cityLabel: 'Ciudad',
@@ -540,6 +557,7 @@ export const translations: Record<Language, TranslationSchema> = {
         vipCommunity: 'Acceso a la Comunidad VIP',
         courseMaterial: 'Material del Curso',
         inPersonTraining: 'Capacitación Presencial',
+        zoomTraining: 'Capacitación en Vivo por Zoom',
       },
       paymentNote: 'Al continuar, serás redirigido a la plataforma oficial y segura de PayPal, donde podrás pagar utilizando tu cuenta PayPal o una tarjeta de crédito o débito.',
       proceedToCheckout: 'PROCEDER AL PAGO',
@@ -694,6 +712,8 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: 'Sunday 9/08/2026',
       modalityLabel: 'Modality',
       modalityValue: 'In-person attendance',
+      modalityPresencial: 'In-person Training',
+      modalityZoom: 'Live via Zoom',
       ctaButton: 'ENROLL NOW',
       modulesTitle: 'Seminar Curriculum',
       modules: [
@@ -719,6 +739,8 @@ export const translations: Record<Language, TranslationSchema> = {
         },
       ],
       liveBadge: 'UPCOMING IN-PERSON SEMINAR',
+      liveBadgePresencial: 'UPCOMING IN-PERSON SEMINAR',
+      liveBadgeZoom: 'UPCOMING LIVE ZOOM SEMINAR',
       courseTitleLine1: 'HIGH-END BARBERING SEMINAR:',
       courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
@@ -727,6 +749,8 @@ export const translations: Record<Language, TranslationSchema> = {
         'Certification',
         'Coffee Break',
       ],
+      inPersonItem: 'In-Person Training',
+      zoomItem: 'Live Training via Zoom',
     },
     certificate: {
       badge: 'International Accreditation',
@@ -870,6 +894,8 @@ export const translations: Record<Language, TranslationSchema> = {
       close: 'Close',
       courseTitle: 'Faded Mastery Elite',
       subtitle: 'In-Person Training 2026',
+      subtitlePresencial: 'In-Person Training 2026',
+      subtitleZoom: 'Live Zoom Training 2026',
       officialDateLabel: 'Official course date',
       officialDateValue: 'October 15, 2026',
       cityLabel: 'City',
@@ -883,6 +909,7 @@ export const translations: Record<Language, TranslationSchema> = {
         vipCommunity: 'VIP Community Access',
         courseMaterial: 'Course Material',
         inPersonTraining: 'In-Person Training',
+        zoomTraining: 'Live Zoom Training',
       },
       paymentNote: 'By continuing, you will be redirected to PayPal\'s official secure platform, where you can pay using your PayPal account or a credit/debit card.',
       proceedToCheckout: 'PROCEED TO CHECKOUT',
@@ -1037,6 +1064,8 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: 'Domingo 9/08/2026',
       modalityLabel: 'Modalidade',
       modalityValue: 'Atendimento presencial',
+      modalityPresencial: 'Atendimento presencial',
+      modalityZoom: 'Ao vivo pelo Zoom',
       ctaButton: 'INSCREVA-SE AGORA',
       modulesTitle: 'Programa do Seminário',
       modules: [
@@ -1062,6 +1091,8 @@ export const translations: Record<Language, TranslationSchema> = {
         },
       ],
       liveBadge: 'PRÓXIMO SEMINÁRIO PRESENCIAL',
+      liveBadgePresencial: 'PRÓXIMO SEMINÁRIO PRESENCIAL',
+      liveBadgeZoom: 'PRÓXIMO SEMINÁRIO AO VIVO PELO ZOOM',
       courseTitleLine1: 'SEMINÁRIO DE ALTA BARBEARIA:',
       courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
@@ -1070,6 +1101,8 @@ export const translations: Record<Language, TranslationSchema> = {
         'Certificação',
         'Coffee Break',
       ],
+      inPersonItem: 'Treinamento Presencial',
+      zoomItem: 'Treinamento ao Vivo pelo Zoom',
     },
     certificate: {
       badge: 'Validade Internacional',
@@ -1215,6 +1248,8 @@ export const translations: Record<Language, TranslationSchema> = {
       close: 'Fechar',
       courseTitle: 'Faded Mastery Elite',
       subtitle: 'Treinamento Presencial 2026',
+      subtitlePresencial: 'Treinamento Presencial 2026',
+      subtitleZoom: 'Treinamento ao Vivo pelo Zoom 2026',
       officialDateLabel: 'Data oficial do curso',
       officialDateValue: '15 de Outubro de 2026',
       cityLabel: 'Cidade',
@@ -1228,6 +1263,7 @@ export const translations: Record<Language, TranslationSchema> = {
         vipCommunity: 'Acesso à Comunidade VIP',
         courseMaterial: 'Material do Curso',
         inPersonTraining: 'Treinamento Presencial',
+        zoomTraining: 'Treinamento ao Vivo pelo Zoom',
       },
       paymentNote: 'Ao continuar, você será redirecionado para a plataforma oficial e segura do PayPal, onde poderá pagar usando sua conta do PayPal ou cartão de crédito/débito.',
       proceedToCheckout: 'AVANÇAR PARA O PAGAMENTO',
@@ -1382,6 +1418,8 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: '15 Ottobre 2026',
       modalityLabel: 'Modalità',
       modalityValue: 'Dal Vivo via Zoom HD',
+      modalityPresencial: 'Corso in presenza',
+      modalityZoom: 'In diretta su Zoom',
       ctaButton: 'ISCRIVITI ORA',
       modulesTitle: 'Programma del Seminario',
       modules: [
@@ -1407,6 +1445,8 @@ export const translations: Record<Language, TranslationSchema> = {
         },
       ],
       liveBadge: 'PROSSIMO SEMINARIO IN PRESENZA',
+      liveBadgePresencial: 'PROSSIMO SEMINARIO IN PRESENZA',
+      liveBadgeZoom: 'PROSSIMO SEMINARIO IN DIRETTA SU ZOOM',
       courseTitleLine1: 'SEMINARIO DI ALTA BARBERIA:',
       courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
@@ -1417,6 +1457,8 @@ export const translations: Record<Language, TranslationSchema> = {
         'Sessioni dal vivo + accesso illimitato alle registrazioni',
         'Certificato digitale al completamento',
       ],
+      inPersonItem: 'Formazione in Presenza',
+      zoomItem: 'Formazione in Diretta su Zoom',
     },
     certificate: {
       badge: 'Validità Internazionale',
@@ -1562,6 +1604,8 @@ export const translations: Record<Language, TranslationSchema> = {
       close: 'Chiudi',
       courseTitle: 'Faded Mastery Elite',
       subtitle: 'Formazione Presenziale 2026',
+      subtitlePresencial: 'Formazione in Presenza 2026',
+      subtitleZoom: 'Formazione in Diretta su Zoom 2026',
       officialDateLabel: 'Data ufficiale del corso',
       officialDateValue: '15 Ottobre 2026',
       cityLabel: 'Città',
@@ -1575,6 +1619,7 @@ export const translations: Record<Language, TranslationSchema> = {
         vipCommunity: 'Accesso alla Community VIP',
         courseMaterial: 'Materiale del Corso',
         inPersonTraining: 'Formazione Presenziale',
+        zoomTraining: 'Formazione in Diretta su Zoom',
       },
       paymentNote: 'Continuando, verrai reindirizzato alla piattaforma ufficiale e sicura di PayPal, dove potrai pagare utilizzando il tuo conto PayPal o una carta di credito/debito.',
       proceedToCheckout: 'PROCEDI AL PAGAMENTO',
@@ -1729,6 +1774,8 @@ export const translations: Record<Language, TranslationSchema> = {
       dateValue: '15 Octobre 2026',
       modalityLabel: 'Modalité',
       modalityValue: 'En Direct via Zoom HD',
+      modalityPresencial: 'Formation en présentiel',
+      modalityZoom: 'En direct sur Zoom',
       ctaButton: 'S\'INSCRIRE MAINTENANT',
       modulesTitle: 'Programme du Séminaire',
       modules: [
@@ -1754,6 +1801,8 @@ export const translations: Record<Language, TranslationSchema> = {
         },
       ],
       liveBadge: 'PROCHAIN SÉMINAIRE PRÉSENTIEL',
+      liveBadgePresencial: 'PROCHAIN SÉMINAIRE PRÉSENTIEL',
+      liveBadgeZoom: 'PROCHAIN SÉMINAIRE EN DIRECT SUR ZOOM',
       courseTitleLine1: 'SÉMINAIRE DE HAUTE COIFFURE:',
       courseTitleLine2: 'FADED MASTERY ELITE 2026',
       checklist: [
@@ -1909,6 +1958,8 @@ export const translations: Record<Language, TranslationSchema> = {
       close: 'Fermer',
       courseTitle: 'Faded Mastery Elite',
       subtitle: 'Formation En Présentiel 2026',
+      subtitlePresencial: 'Formation Présentielle 2026',
+      subtitleZoom: 'Formation en Direct sur Zoom 2026',
       officialDateLabel: 'Date officielle du cours',
       officialDateValue: '15 Octobre 2026',
       cityLabel: 'Ville',
@@ -1922,6 +1973,7 @@ export const translations: Record<Language, TranslationSchema> = {
         vipCommunity: 'Accès à la Communauté VIP',
         courseMaterial: 'Matériel de Cours',
         inPersonTraining: 'Formation En Présentiel',
+        zoomTraining: 'Formation en Direct sur Zoom',
       },
       paymentNote: 'En continuant, vous serez redirigé vers la plateforme officielle et sécurisée de PayPal, où vous pourrez payer avec votre compte PayPal ou une carte de crédit/débit.',
       proceedToCheckout: 'PASSER À LA CAISSE',
@@ -2076,6 +2128,8 @@ export const translations: Record<Language, TranslationSchema> = {
         dateValue: 'Sonntag, 09.08.2026',
         modalityLabel: 'Format',
         modalityValue: 'Präsenzunterricht',
+        modalityPresencial: 'Präsenzunterricht',
+        modalityZoom: 'Live über Zoom',
         ctaButton: 'JETZT ANMELDEN',
         modulesTitle: 'Seminarprogramm',
         modules: [
@@ -2101,6 +2155,8 @@ export const translations: Record<Language, TranslationSchema> = {
           },
         ],
         liveBadge: 'NÄCHSTES PRÄSENZSEMINAR',
+        liveBadgePresencial: 'NÄCHSTES PRÄSENZSEMINAR',
+        liveBadgeZoom: 'NÄCHSTES LIVE-SEMINAR ÜBER ZOOM',
         courseTitleLine1: 'HIGH-END BARBER-SEMINAR:',
         courseTitleLine2: 'FADED MASTERY ELITE 2026',
         checklist: [
@@ -2109,6 +2165,8 @@ export const translations: Record<Language, TranslationSchema> = {
           'Zertifizierung',
           'Sonntag, 09.08.2026',
         ],
+        inPersonItem: 'Präsenz-Schulung',
+        zoomItem: 'Live-Schulung über Zoom',
       },
       certificate: {
         badge: 'Internationale Gültigkeit',
@@ -2253,6 +2311,8 @@ export const translations: Record<Language, TranslationSchema> = {
         close: 'Schließen',
         courseTitle: 'Faded Mastery Elite',
         subtitle: 'Präsenz-Schulung 2026',
+        subtitlePresencial: 'Präsenz-Schulung 2026',
+        subtitleZoom: 'Live-Schulung über Zoom 2026',
         officialDateLabel: 'Offizielles Kursdatum',
         officialDateValue: '15. Oktober 2026',
         cityLabel: 'Stadt',
@@ -2266,6 +2326,7 @@ export const translations: Record<Language, TranslationSchema> = {
           vipCommunity: 'Zugang zur VIP-Community',
           courseMaterial: 'Kursmaterialien',
           inPersonTraining: 'Präsenz-Schulung',
+          zoomTraining: 'Live-Schulung über Zoom',
         },
         paymentNote: 'Wenn Sie fortfahren, werden Sie zur offiziellen und sicheren PayPal-Plattform weitergeleitet, auf der Sie mit Ihrem PayPal-Konto oder einer Kredit-/Debitkarte bezahlen können.',
         proceedToCheckout: 'ZUR KASSE GEHEN',

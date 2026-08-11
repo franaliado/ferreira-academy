@@ -220,7 +220,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onOpenCheckout }) => {
                 </span>
               </div>
               <h2 className="text-white text-base sm:text-lg lg:text-xl font-extrabold uppercase tracking-wide leading-snug">
-                {t.courseFullTitle}
+                {currentCourse.title}
               </h2>
             </div>
 

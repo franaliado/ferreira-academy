@@ -7,7 +7,7 @@ import { PayPalButtons } from '@paypal/react-paypal-js';
 import { ShieldCheck, X, ChevronRight, ChevronLeft, User, ChevronDown } from 'lucide-react';
 import 'flag-icons/css/flag-icons.min.css';
 import type { PaymentCaptureData } from '@/components/CertificateModal';
-import { currentCourse } from '@/data/currentCourse';
+import { currentCourse, getFormattedCourseDate } from '@/data/currentCourse';
 
 interface EnrollmentModalProps {
   isOpen: boolean;
@@ -78,12 +78,16 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const t = (translations[currentLang] || translations.es).enrollmentModal;
 
   const includes = [
-    { icon: '📜', label: t.includes.certificate },
-    { icon: '☕', label: t.includes.coffeeBreak },
-    { icon: '👑', label: t.includes.vipCommunity },
-    { icon: '📚', label: t.includes.courseMaterial },
-    { icon: '✂️', label: t.includes.inPersonTraining },
-  ];
+    { icon: '📜', label: t.includes.certificate, show: true },
+    { icon: '📚', label: t.includes.courseMaterial, show: true },
+    { icon: '👑', label: t.includes.vipCommunity, show: true },
+    { icon: '☕', label: t.includes.coffeeBreak, show: currentCourse.isPresencial },
+    {
+      icon: currentCourse.isPresencial ? '✂️' : '💻',
+      label: currentCourse.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom'),
+      show: true,
+    },
+  ].filter((item) => item.show);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -253,10 +257,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   id="modal-course-title"
                   className="text-base sm:text-xl font-black uppercase tracking-wider gold-gradient-text font-cinzel leading-tight bg-black px-2 py-0.5"
                 >
-                  {t.courseTitle}
+                  {currentCourse.title}
                 </h2>
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-gray-400 mt-0.5 bg-black px-2 py-0.5 inline-block">
-                  {t.subtitle}
+                  {currentCourse.isPresencial ? (t.subtitlePresencial || t.subtitle) : (t.subtitleZoom || t.subtitle)}
                 </p>
               </div>
             </div>
@@ -270,12 +274,12 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   {t.officialPriceLabel}
                 </p>
                 <p className="text-white font-bold text-xs">
-                  {t.includes.inPersonTraining}
+                  {currentCourse.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom')}
                 </p>
               </div>
               <div className="text-right">
                 <span className="text-[#D4AF37] font-black text-sm sm:text-base tracking-tight">
-                  $95.00 USD
+                  {currentCourse.displayPrice}
                 </span>
               </div>
             </div>
@@ -425,7 +429,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 type="submit"
                 className="w-full group inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3 px-5 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-md hover:opacity-95 transition-all cursor-pointer mt-1"
               >
-                <span>{`${t.proceedToPaymentBtn} — $95.00 USD`}</span>
+                <span>{`${t.proceedToPaymentBtn} — ${currentCourse.displayPrice}`}</span>
                 <ChevronRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
