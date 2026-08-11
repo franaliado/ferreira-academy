@@ -179,7 +179,7 @@ export async function POST(request: Request) {
 
     // ── Insertar registro completo — solo cuando el pago fue confirmado ──
     const { error: insertError } = await admin.from('registrations').insert([{
-      full_name:      certName,
+      certificate_name: certName,
       email:          email,
       phone:          phone,
       country:        country,
@@ -187,9 +187,8 @@ export async function POST(request: Request) {
       course_name:    courseName,
       amount:         amount,
       currency:       currency,
-      status:         'completed',
       paypal_order_id: paypalOrderId,
-      payer_id:       payerId,
+      paypal_capture_id: (capture.id as string) || null,
       created_at:     new Date().toISOString(),
     }]);
 

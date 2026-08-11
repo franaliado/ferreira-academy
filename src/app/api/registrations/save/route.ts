@@ -3,16 +3,16 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 
 // POST /api/registrations/save
 export interface SaveRegistrationPayload {
-  paypal_order_id: string;
-  payer_id: string;
-  buyer_name: string;
-  email: string;
-  phone: string | null;
-  country: string;
-  payment_method: 'paypal' | 'card';
-  amount: string;
-  currency: string;
   certificate_name: string;
+  email: string;
+  phone?: string | null;
+  country?: string | null;
+  course_name?: string;
+  amount: number | string;
+  currency: string;
+  payment_method: string;
+  paypal_order_id: string;
+  paypal_capture_id?: string | null;
 }
 
 export async function POST(request: Request) {
@@ -20,93 +20,90 @@ export async function POST(request: Request) {
     const body = (await request.json()) as SaveRegistrationPayload;
 
     const {
-      paypal_order_id,
-      payer_id,
-      buyer_name,
+      certificate_name,
       email,
       phone,
       country,
-      payment_method,
+      course_name,
       amount,
       currency,
-      certificate_name,
+      payment_method,
+      paypal_order_id,
+      paypal_capture_id,
     } = body;
 
-    // ── Validación estricta: si certificate_name viene vacío, rechazamos la petición
+    // ── Validación estricta: si certificate_name o email están vacíos, rechazamos ──
     const trimmedCertName = (certificate_name || '').trim();
     if (!trimmedCertName) {
       return NextResponse.json(
-        { error: 'El nombre para el certificado es obligatorio. Por favor, escribe un nombre.' },
-        { status: 400 }
-      );
-    }
-    
-    if (trimmedCertName.length > 150) {
-      return NextResponse.json(
-        { error: 'El nombre excede el límite de 150 caracteres.' },
+        { error: 'El nombre completo es obligatorio.' },
         { status: 400 }
       );
     }
 
-    if (!paypal_order_id || !email) {
+    const trimmedEmail = (email || '').trim();
+    if (!trimmedEmail || !paypal_order_id) {
       return NextResponse.json(
-        { error: 'Datos de pago incompletos.' },
+        { error: 'Datos de pago o correo incompletos.' },
         { status: 400 }
       );
     }
 
     const supabaseAdmin = getSupabaseAdmin();
 
-    // ── Verificar si ya existe el registro ──
+    // ── Deduplicación / Actualización si ya existe por paypal_order_id ──
     const { data: existing, error: selectError } = await supabaseAdmin
       .from('registrations')
-      .select('id, paypal_order_id, buyer_name')
+      .select('id')
       .eq('paypal_order_id', paypal_order_id)
       .maybeSingle();
 
     if (selectError) {
       console.error('[save-registration] Error en select:', selectError);
-      return NextResponse.json({ error: selectError.message, details: selectError.details }, { status: 500 });
+      return NextResponse.json({ error: selectError.message }, { status: 500 });
     }
+
+    const numAmount = typeof amount === 'number' ? amount : parseFloat(String(amount)) || 95.0;
 
     if (existing) {
       const { error: updateError } = await supabaseAdmin
         .from('registrations')
         .update({
           certificate_name: trimmedCertName,
-          course_name: 'Fade Mastery Elite',
-          buyer_name: buyer_name || existing.buyer_name,
-          email: email,
+          email: trimmedEmail,
+          phone: phone ? phone.trim() : null,
+          country: country ? country.trim() : 'N/A',
+          course_name: course_name || 'Faded Mastery Elite 2026',
+          amount: numAmount,
+          currency: currency || 'USD',
+          payment_method: payment_method || 'paypal',
+          paypal_capture_id: paypal_capture_id || null,
         })
         .eq('paypal_order_id', paypal_order_id);
 
       if (updateError) {
         console.error('[save-registration] Error en update:', updateError);
-        return NextResponse.json({ error: updateError.message, details: updateError.details }, { status: 500 });
+        return NextResponse.json({ error: updateError.message }, { status: 500 });
       }
       return NextResponse.json({ success: true, updated: true }, { status: 200 });
     }
 
-    // ── Inserción limpia ──
+    // ── Inserción limpia con estructura exacta de la tabla registrations ──
     const { error: insertError } = await supabaseAdmin.from('registrations').insert({
-      paypal_order_id,
-      payer_id: payer_id || null,
-      buyer_name: buyer_name || null,
-      email,
-      phone: phone || null,
-      country: country || 'N/A',
-      payment_method,
-      amount: parseFloat(amount) || 95.0,
-      currency: currency || 'USD',
-      course_name: 'Fade Mastery Elite',
       certificate_name: trimmedCertName,
-      status: 'paid',
-      certificate_sent: false,
+      email: trimmedEmail,
+      phone: phone ? phone.trim() : null,
+      country: country ? country.trim() : 'N/A',
+      course_name: course_name || 'Faded Mastery Elite 2026',
+      amount: numAmount,
+      currency: currency || 'USD',
+      payment_method: payment_method || 'paypal',
+      paypal_order_id: paypal_order_id,
+      paypal_capture_id: paypal_capture_id || null,
     });
 
     if (insertError) {
       console.error('[save-registration] Error de inserción:', insertError);
-      // Retornamos el mensaje real y detalles de Supabase para depurar el error 500 al instante
       return NextResponse.json(
         { 
           error: 'db_error', 

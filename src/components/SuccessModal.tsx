@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { PartyPopper, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { Language, translations } from '@/lib/translations';
 import { currentCourse } from '@/data/currentCourse';
 
@@ -28,14 +28,16 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
 
   const lang = currentLang && translations[currentLang] ? currentLang : 'es';
   const t = translations[lang].successModal || {
-    title: '¡Inscripción completada!',
+    title: '¡Inscripción Exitosa!',
     participantLabel: 'Nombre del participante:',
-    enrolledIn: 'Has sido inscrito correctamente en:',
-    registrationSuccess: 'Tu inscripción ha sido registrada correctamente.',
-    emailNotice: 'Recibirás posteriormente la información correspondiente en tu correo electrónico.',
-    whatsappNotice: 'Serás dirigido a la comunidad VIP de WhatsApp.',
+    enrolledIn: 'Curso inscrito:',
+    registrationSuccess: 'se ha inscrito exitosamente en el curso',
+    emailNotice: 'Te enviaremos todos los datos y detalles de acceso por correo electrónico.',
+    whatsappNotice: 'Serás agregado a la comunidad VIP de WhatsApp.',
     acceptButton: 'Aceptar',
   };
+
+  const resolvedCourseName = courseName || currentCourse.title;
 
   const handleAccept = () => {
     onClose();
@@ -45,10 +47,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
       );
 
       if (isMobile) {
-        // Mobile: Abrir enlace oficial de invitación para que el SO abra la app de WhatsApp
         window.location.href = WHATSAPP_VIP_URL;
       } else {
-        // Desktop: Abrir WhatsApp en una nueva pestaña y la pestaña actual regresa/se mantiene en la landing page
         window.open(WHATSAPP_VIP_URL, '_blank', 'noopener,noreferrer');
       }
     }
@@ -119,7 +119,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
         {/* Radial background glow */}
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Logo */}
+        {/* Ferreira Academy Logo */}
         <div className="flex justify-center mb-3">
           <div className="relative w-48 sm:w-56 h-20 sm:h-24">
             <Image
@@ -147,14 +147,14 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
           {t.title}
         </h2>
 
-        {/* Summary box */}
+        {/* Summary box: [Nombre de la persona] se ha inscrito exitosamente en el curso [Nombre del curso] */}
         <div className="bg-[#111111] border border-[#D4AF37]/30 rounded-xl p-4 sm:p-5 mb-5 text-left space-y-3">
           <div>
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
               {t.participantLabel}
             </p>
             <p className="text-base sm:text-lg font-black text-white mt-0.5">
-              {certificateName}
+              {certificateName || 'Participante'}
             </p>
           </div>
 
@@ -165,7 +165,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
               {t.enrolledIn}
             </p>
             <p className="text-xs sm:text-sm font-bold text-amber-200 mt-0.5">
-              {courseName || currentCourse.name}
+              {resolvedCourseName}
             </p>
           </div>
         </div>
@@ -174,7 +174,10 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
         <div className="space-y-2 text-xs sm:text-sm text-gray-300 font-medium mb-6 leading-relaxed">
           <p className="text-white font-semibold flex items-center justify-center space-x-1.5">
             <span>✨</span>
-            <span>{t.registrationSuccess}</span>
+            <span>
+              <strong className="text-[#D4AF37]">{certificateName || 'Participante'}</strong> {t.registrationSuccess}{' '}
+              <strong className="text-amber-200">{resolvedCourseName}</strong>.
+            </span>
           </p>
           <p className="text-gray-400">
             {t.emailNotice}
@@ -199,3 +202,4 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
     </div>
   );
 };
+

@@ -8,9 +8,9 @@ import { Benefits } from '@/components/Benefits';
 import { SeminarDetails } from '@/components/SeminarDetails';
 import { Testimonials } from '@/components/Testimonials';
 import { Footer } from '@/components/Footer';
-import { EnrollmentModal } from '@/components/EnrollmentModal';
-import { CertificateModal } from '@/components/CertificateModal';
-import type { PaymentCaptureData } from '@/components/CertificateModal';
+import { EnrollmentModal, type RegistrationSuccessData } from '@/components/EnrollmentModal';
+import { SuccessModal } from '@/components/SuccessModal';
+import { currentCourse } from '@/data/currentCourse';
 
 import { ChevronRight, AlertCircle } from 'lucide-react';
 
@@ -97,9 +97,9 @@ export default function Home() {
     text: string;
   } | null>(null);
 
-  // Certificate modal state — opened after a COMPLETED PayPal payment
-  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
-  const [captureData, setCaptureData] = useState<PaymentCaptureData | null>(null);
+  // Success modal state — opened after a COMPLETED PayPal payment & saved DB registration
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successData, setSuccessData] = useState<RegistrationSuccessData | null>(null);
 
   useEffect(() => {
     setCurrentLang(detectLanguage());
@@ -129,21 +129,31 @@ export default function Home() {
             console.log('--- PAGO APROBADO EXITOSAMENTE (redirect flow) ---');
             console.log('Order ID:', captureResult.orderID);
 
-            const data: PaymentCaptureData = {
-              orderID: captureResult.orderID || token,
-              captureID: captureResult.captureID,
-              payerName: captureResult.payerName || '',
-              payerEmail: captureResult.payerEmail || '',
-              payerPhone: captureResult.payerPhone || null,
-              payerCountry: captureResult.payerCountry || 'N/A',
-              // In redirect flow we cannot detect card vs paypal reliably, default to paypal
-              paymentMethod: 'paypal',
-              amount: captureResult.amount || '95.00',
-              currency: captureResult.currency || 'USD',
-              payerID: captureResult.payerID || '',
-            };
-            setCaptureData(data);
-            setIsCertModalOpen(true);
+            const certName = captureResult.payerName || 'Participante';
+            const cName = currentCourse.title;
+
+            fetch('/api/registrations/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                certificate_name: certName,
+                email: captureResult.payerEmail || '',
+                phone: captureResult.payerPhone || null,
+                country: captureResult.payerCountry || 'N/A',
+                course_name: cName,
+                amount: captureResult.amount || 95.0,
+                currency: captureResult.currency || 'USD',
+                payment_method: 'paypal',
+                paypal_order_id: captureResult.orderID || token,
+                paypal_capture_id: captureResult.captureID || null,
+              }),
+            }).catch(console.error);
+
+            setSuccessData({
+              certificateName: certName,
+              courseName: cName,
+            });
+            setIsSuccessModalOpen(true);
           } else {
             console.error('Error al capturar la orden:', captureResult);
             setNotification({
@@ -180,15 +190,15 @@ export default function Home() {
   const handleOpenCheckout = () => setIsCheckoutOpen(true);
   const handleCloseCheckout = () => setIsCheckoutOpen(false);
 
-  /** Called by EnrollmentModal when PayPal payment is COMPLETED */
-  const handlePaymentCompleted = (data: PaymentCaptureData) => {
-    setCaptureData(data);
-    setIsCertModalOpen(true);
+  /** Called by EnrollmentModal when PayPal payment is COMPLETED & registration saved in DB */
+  const handlePaymentCompleted = (data: RegistrationSuccessData) => {
+    setSuccessData(data);
+    setIsSuccessModalOpen(true);
   };
 
-  const handleCloseCertModal = () => {
-    setIsCertModalOpen(false);
-    setCaptureData(null);
+  const handleCloseSuccessModal = () => {
+    setIsSuccessModalOpen(false);
+    setSuccessData(null);
   };
 
   const t = translations[currentLang];
@@ -308,14 +318,22 @@ export default function Home() {
         isOpen={isCheckoutOpen}
         onClose={handleCloseCheckout}
         currentLang={currentLang}
+        currentCourse={{
+          title: currentCourse.title,
+          displayPrice: currentCourse.displayPrice,
+          priceAmount: String(currentCourse.priceAmount),
+          currency: currentCourse.currency,
+          isPresencial: currentCourse.isPresencial,
+        }}
         onPaymentCompleted={handlePaymentCompleted}
       />
 
-      {/* Certificate Modal (post-payment: certificate name + Supabase save + WhatsApp redirect) */}
-      <CertificateModal
-        isOpen={isCertModalOpen}
-        captureData={captureData}
-        onClose={handleCloseCertModal}
+      {/* Success Modal (post-payment: participant registration confirmation + WhatsApp redirect) */}
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        certificateName={successData?.certificateName || ''}
+        courseName={successData?.courseName || currentCourse.title}
+        onClose={handleCloseSuccessModal}
         currentLang={currentLang}
       />
     </div>

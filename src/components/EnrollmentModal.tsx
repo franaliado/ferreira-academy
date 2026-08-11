@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Image from 'next/image';
@@ -6,15 +6,27 @@ import { Language, translations } from '@/lib/translations';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { ShieldCheck, X, ChevronRight, ChevronLeft, User, ChevronDown } from 'lucide-react';
 import 'flag-icons/css/flag-icons.min.css';
-import type { PaymentCaptureData } from '@/components/CertificateModal';
-import { currentCourse, getFormattedCourseDate } from '@/data/currentCourse';
+
+export interface RegistrationSuccessData {
+  certificateName: string;
+  courseName: string;
+}
+
+export interface CourseInfo {
+  title: string;
+  displayPrice: string;
+  priceAmount: string;
+  currency: string;
+  isPresencial: boolean;
+}
 
 interface EnrollmentModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentLang?: Language;
-  /** Called when a PayPal payment is captured with status COMPLETED */
-  onPaymentCompleted?: (data: PaymentCaptureData) => void;
+  currentCourse?: CourseInfo;
+  /** Called when a PayPal payment is captured with status COMPLETED and registration saved in DB */
+  onPaymentCompleted?: (data: RegistrationSuccessData) => void;
 }
 
 interface CountryOption {
@@ -57,6 +69,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
   onClose,
   currentLang = 'es',
+  currentCourse,
   onPaymentCompleted,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -77,14 +90,23 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
   const t = (translations[currentLang] || translations.es).enrollmentModal;
 
+  // Safe fallback if currentCourse is momentarily undefined
+  const course = currentCourse || {
+    title: '',
+    displayPrice: '$0.00',
+    priceAmount: '0',
+    currency: 'USD',
+    isPresencial: false,
+  };
+
   const includes = [
     { icon: '📜', label: t.includes.certificate, show: true },
     { icon: '📚', label: t.includes.courseMaterial, show: true },
     { icon: '👑', label: t.includes.vipCommunity, show: true },
-    { icon: '☕', label: t.includes.coffeeBreak, show: currentCourse.isPresencial },
+    { icon: '☕', label: t.includes.coffeeBreak, show: course.isPresencial },
     {
-      icon: currentCourse.isPresencial ? '✂️' : '💻',
-      label: currentCourse.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom'),
+      icon: course.isPresencial ? '✂️' : '💻',
+      label: course.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom'),
       show: true,
     },
   ].filter((item) => item.show);
@@ -257,29 +279,29 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   id="modal-course-title"
                   className="text-base sm:text-xl font-black uppercase tracking-wider gold-gradient-text font-cinzel leading-tight bg-black px-2 py-0.5"
                 >
-                  {currentCourse.title}
+                  {course.title}
                 </h2>
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-gray-400 mt-0.5 bg-black px-2 py-0.5 inline-block">
-                  {currentCourse.isPresencial ? (t.subtitlePresencial || t.subtitle) : (t.subtitleZoom || t.subtitle)}
+                  {course.isPresencial ? (t.subtitlePresencial || t.subtitle) : (t.subtitleZoom || t.subtitle)}
                 </p>
               </div>
             </div>
 
             <div className="mt-2.5"></div>
 
-            {/* Price Box - Compact & Elegant Font Size */}
+            {/* Price Box */}
             <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-2.5 sm:p-3 mb-2.5 shadow-inner flex items-center justify-between">
               <div>
                 <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
                   {t.officialPriceLabel}
                 </p>
                 <p className="text-white font-bold text-xs">
-                  {currentCourse.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom')}
+                  {course.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom')}
                 </p>
               </div>
               <div className="text-right">
                 <span className="text-[#D4AF37] font-black text-sm sm:text-base tracking-tight">
-                  {currentCourse.displayPrice}
+                  {course.displayPrice}
                 </span>
               </div>
             </div>
@@ -324,7 +346,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   />
                 </div>
 
-                {/* Country Dropdown with Flag Icons */}
+                {/* Country Dropdown */}
                 <div>
                   <label className="text-[11px] sm:text-xs font-semibold text-gray-300 mb-0.5 block">
                     {t.countryLabel} <span className="text-[#D4AF37]">*</span>
@@ -429,7 +451,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 type="submit"
                 className="w-full group inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3 px-5 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-md hover:opacity-95 transition-all cursor-pointer mt-1"
               >
-                <span>{`${t.proceedToPaymentBtn} — ${currentCourse.displayPrice}`}</span>
+                <span>{`${t.proceedToPaymentBtn} — ${course.displayPrice}`}</span>
                 <ChevronRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
@@ -439,7 +461,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
         {/* ── VISTA 2: SEGUNDO MODAL (PAGO SEGURO) ── */}
         {step === 'checkout' && (
           <div className="py-3">
-            {/* Header: título + botón Regresar alineado a la derecha */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3.5 mb-5">
               <div className="flex items-center space-x-2.5">
                 <ShieldCheck className="w-6 h-6 text-[#D4AF37]" />
@@ -456,11 +477,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               </button>
             </div>
 
-            {/* Course info card: dynamic name from currentCourse + oneTimePayment label */}
             <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-4 mb-5 flex items-center justify-between">
               <div>
                 <p className="text-white font-bold text-sm sm:text-base">
-                  {currentCourse.title}
+                  {course.title}
                 </p>
                 <p className="text-[11px] text-gray-400 mt-1 font-medium">
                   {t.oneTimePayment}
@@ -468,7 +488,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               </div>
               <div className="text-right">
                 <span className="text-[#D4AF37] font-black text-base sm:text-lg">
-                  {currentCourse.displayPrice}
+                  {course.displayPrice}
                 </span>
               </div>
             </div>
@@ -539,22 +559,36 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                           ? paymentSource === 'card'
                           : fundingSource === 'card' || fundingSource === 'credit_card' || fundingSource === 'debit_card';
 
-                      const captureData: PaymentCaptureData = {
-                        orderID: details.orderID || data.orderID,
-                        captureID: details.captureID,
-                        payerName: fullName.trim() || details.payerName || '',
-                        payerEmail: email.trim() || details.payerEmail || '',
-                        payerPhone: phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : (details.payerPhone || null),
-                        payerCountry: country || details.payerCountry || 'N/A',
-                        paymentMethod: isCard ? 'card' : 'paypal',
-                        amount: details.amount || String(currentCourse.priceAmount),
-                        currency: details.currency || currentCourse.currency,
-                        payerID: details.payerID || data.payerID || '',
-                      };
+                      const formattedPhone = phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : null;
+                      const certName = fullName.trim() || details.payerName || 'Participante';
+
+                      try {
+                        await fetch('/api/registrations/save', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            certificate_name: certName,
+                            email: email.trim() || details.payerEmail || '',
+                            phone: formattedPhone,
+                            country: country || details.payerCountry || 'Venezuela',
+                            course_name: course.title,
+                            amount: details.amount || course.priceAmount,
+                            currency: details.currency || course.currency,
+                            payment_method: isCard ? 'card' : 'paypal',
+                            paypal_order_id: details.orderID || data.orderID,
+                            paypal_capture_id: details.captureID || null,
+                          }),
+                        });
+                      } catch (saveErr) {
+                        console.error('Error al guardar la inscripción en la base de datos:', saveErr);
+                      }
 
                       onClose();
                       if (onPaymentCompleted) {
-                        onPaymentCompleted(captureData);
+                        onPaymentCompleted({
+                          certificateName: certName,
+                          courseName: course.title,
+                        });
                       }
                     } else {
                       throw new Error('El pago no fue completado correctamente.');
