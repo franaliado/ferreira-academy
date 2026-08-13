@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import { currentCourse } from '@/data/currentCourse';
 
 export const runtime = 'nodejs';
 
@@ -125,36 +126,45 @@ export async function POST(request: Request) {
     const payerId    = ((verifiedOrder?.payer as Record<string, unknown>)?.payer_id as string) ||
                        ((resource.payer as Record<string, unknown>)?.payer_id as string) || '';
 
+    const paymentSource = (verifiedOrder?.payment_source as Record<string, any>) || (resource.payment_source as Record<string, any>) || {};
+    const cardInfo      = paymentSource.card as Record<string, any> | undefined;
+    const paypalInfo    = paymentSource.paypal as Record<string, any> | undefined;
+
     const payerInfo  = (verifiedOrder?.payer as Record<string, unknown>) ||
                        (resource.payer as Record<string, unknown>) || {};
 
     const payerName  = payerInfo.name as Record<string, string> | undefined;
-    const fullName   = `${payerName?.given_name || ''} ${payerName?.surname || ''}`.trim() || 'Desconocido';
-    const email      = ((payerInfo.email_address as string) || '').trim().toLowerCase();
+    const rawFullName = `${payerName?.given_name || ''} ${payerName?.surname || ''}`.trim() || cardInfo?.name || '';
+    const rawEmail    = ((payerInfo.email_address as string) || cardInfo?.email_address || paypalInfo?.email_address || '').trim().toLowerCase();
 
     const amountObj  = (capture.amount as Record<string, string>) ||
                        (firstUnit.amount as Record<string, string>) || {};
-    const amount     = parseFloat(amountObj.value || '0');
-    const currency   = (amountObj.currency_code || 'USD').toUpperCase();
+    const amount     = parseFloat(amountObj.value || String(currentCourse.priceAmount));
+    const currency   = (amountObj.currency_code || currentCourse.currency || 'USD').toUpperCase();
 
-    // Metadatos del alumno desde custom_id (pasamos esto desde el checkout)
+    // Metadatos del alumno desde custom_id
     const customId   = (firstUnit.custom_id as string) || '';
-    const courseName = 'Fade Mastery Elite';
+    const courseName = currentCourse.title;
 
-    // Parsear custom_id si lo enviamos como JSON
-    let phone   = 'N/A';
-    let country = 'N/A';
-    let certName = fullName;
+    let phone    = 'N/A';
+    let country  = 'N/A';
+    let certName = rawFullName || 'Participante';
+    let email    = rawEmail || 'cliente@ferreiraacademy.com';
+
     try {
       if (customId.startsWith('{')) {
         const meta = JSON.parse(customId) as Record<string, string>;
-        phone    = meta.phone    || phone;
-        country  = meta.country  || country;
-        certName = meta.full_name || certName;
+        if (meta.phone) phone = meta.phone;
+        if (meta.country) country = meta.country;
+        if (meta.full_name) certName = meta.full_name;
+        if (meta.email) email = meta.email.trim().toLowerCase();
       }
     } catch {
-      // custom_id no es JSON, usar como texto
+      // custom_id no es JSON
     }
+
+    const isCard = !!cardInfo || (resource.funding_option as string) === 'card';
+    const paymentMethod = isCard ? 'credit_card' : 'paypal';
 
     console.log(`[Webhook PayPal] Procesando orden ${paypalOrderId} — ${certName} (${email}) — ${currency} ${amount}`);
 
@@ -183,7 +193,7 @@ export async function POST(request: Request) {
       email:          email,
       phone:          phone,
       country:        country,
-      payment_method: 'paypal',
+      payment_method: paymentMethod,
       course_name:    courseName,
       amount:         amount,
       currency:       currency,

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getCourseById } from '@/data/currentCourse';
 
 // POST /api/paypal/create-order
 // Creates a PayPal order and returns its ID
@@ -36,23 +37,43 @@ async function getPayPalAccessToken(): Promise<string> {
 
 export async function POST(request: Request) {
   try {
+    const body = (await request.json().catch(() => ({}))) as { courseId?: string; id?: string };
+    const courseId = body.courseId || body.id;
+
+    // Servidor determina los datos oficiales del curso
+    const course = getCourseById(courseId);
+    if (!course) {
+      return NextResponse.json({ error: 'El curso especificado no existe.' }, { status: 400 });
+    }
+
+    if (typeof course.priceAmount !== 'number' || isNaN(course.priceAmount) || course.priceAmount <= 0) {
+      return NextResponse.json({ error: 'El precio del curso no es válido.' }, { status: 400 });
+    }
+
+    const priceValue = course.priceAmount.toFixed(2);
+    const currencyCode = (course.currency || 'USD').toUpperCase();
+    const courseTitle = course.title || course.name || 'Inscripción a Curso';
+
     const accessToken = await getPayPalAccessToken();
     const mode = process.env.PAYPAL_MODE || 'sandbox';
     const paypalBase =
       mode === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
 
-    // Payload simplificado y limpio para evitar errores de desglose (breakdown)
     const orderPayload = {
       intent: 'CAPTURE',
       purchase_units: [
         {
           amount: {
-            currency_code: 'USD',
-            value: '95.00',
+            currency_code: currencyCode,
+            value: priceValue,
           },
-          description: 'Capacitación Presencial Fade Mastery Elite',
+          description: courseTitle,
         },
       ],
+      application_context: {
+        shipping_preference: 'NO_SHIPPING',
+        user_action: 'PAY_NOW',
+      },
     };
 
     const orderResponse = await fetch(`${paypalBase}/v2/checkout/orders`, {

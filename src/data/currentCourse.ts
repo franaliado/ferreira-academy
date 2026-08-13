@@ -88,3 +88,15 @@ export function getFormattedCourseDate(lang: Language = 'es', dateStr: string = 
       return `${dayName}, ${dayNum} de ${monthName} de ${year}`;
   }
 }
+
+/**
+ * Retorna la configuración del curso a partir de su identificador.
+ * Si no se provee courseId, retorna el curso activo por defecto.
+ * Si el ID no existe en el catálogo, retorna null.
+ */
+export function getCourseById(courseId?: string): CourseConfig | null {
+  if (!courseId) return currentCourse;
+  if (courseId === currentCourse.id) return currentCourse;
+  return null;
+}
+

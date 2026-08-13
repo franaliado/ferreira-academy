@@ -1863,6 +1863,8 @@ export const translations: Record<Language, TranslationSchema> = {
         'Sessions en direct + accès illimité aux enregistrements',
         'Certificat numérique à la fin',
       ],
+      inPersonItem: 'Formation en présentiel',
+      zoomItem: 'Formation en direct via Zoom',
     },
     certificate: {
       badge: 'Validité Internationale',
