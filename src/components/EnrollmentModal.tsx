@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Image from 'next/image';
@@ -88,6 +88,34 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
+  // ── Real-time input handlers ──────────────────────────────────────────────
+
+  /** Nombre completo: solo letras (con tildes), espacios y guiones. Máx 100. Title-case. */
+  const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    // Bloquear caracteres no permitidos: quitar todo lo que no sea letra, espacio o guion
+    const filtered = raw.replace(/[^a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜàèìòùÀÈÌÒÙñÑ\s-]/g, '');
+    // Aplicar Title Case automático
+    const titled = filtered.replace(/(^|[\s-])([a-záéíóúäëïöüàèìòùñ])/g,
+      (_match: string, sep: string, char: string) => sep + char.toUpperCase()
+    );
+    // Limitar a 100 caracteres
+    setFullName(titled.slice(0, 100));
+  };
+
+  /** Email: forzar minúsculas en tiempo real. Máx 254. */
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value.toLowerCase().slice(0, 254));
+  };
+
+  /** Teléfono: solo dígitos. Máx 10. */
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setPhoneNumber(digits);
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+
   const t = (translations[currentLang] || translations.es).enrollmentModal;
 
   // Safe fallback if currentCourse is momentarily undefined
@@ -127,11 +155,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     (e: KeyboardEvent) => {
       if (!isOpen) return;
 
-      if (e.key === 'Escape') {
-        onClose();
-        return;
-      }
-
       if (e.key === 'Tab') {
         const focusableElements = modalRef.current?.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -155,7 +178,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
         }
       }
     },
-    [isOpen, onClose]
+    [isOpen]
   );
 
   useEffect(() => {
@@ -198,10 +221,32 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
   const handleProceedToCheckout = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!fullName.trim() || !email.trim() || !phoneNumber.trim()) {
-      setValidationError(t.requiredFieldsError);
+
+    // Nombre: obligatorio, mín 3 chars
+    if (!fullName.trim() || fullName.trim().length < 3) {
+      setValidationError('El nombre completo debe tener al menos 3 caracteres.');
       return;
     }
+
+    // Email: obligatorio + formato básico
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!email.trim() || !emailRegex.test(email.trim())) {
+      setValidationError('Ingresa un correo electrónico válido (ej: nombre@dominio.com).');
+      return;
+    }
+
+    // País: obligatorio
+    if (!country) {
+      setValidationError('Selecciona un país.');
+      return;
+    }
+
+    // Teléfono: obligatorio, mín 8 dígitos
+    if (!phoneNumber || phoneNumber.length < 8) {
+      setValidationError('El número de teléfono debe tener entre 8 y 10 dígitos.');
+      return;
+    }
+
     setValidationError(null);
     setStep('checkout');
   };
@@ -213,9 +258,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-course-title"
@@ -324,8 +366,9 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   <input
                     type="text"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={handleFullNameChange}
                     placeholder={t.fullNamePlaceholder}
+                    maxLength={100}
                     className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
                     required
                   />
@@ -339,8 +382,9 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     placeholder={t.emailPlaceholder}
+                    maxLength={254}
                     className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
                     required
                   />
@@ -412,8 +456,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     <input
                       type="tel"
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      onChange={handlePhoneChange}
                       placeholder={t.phonePlaceholder}
+                      maxLength={10}
+                      inputMode="numeric"
                       className="flex-1 bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
                       required
                     />
