@@ -58,63 +58,36 @@ export async function POST(request: Request) {
     );
 
     if (check.isDuplicate) {
-      let message = '';
+      const emailDuplicate =
+        check.field === 'email' ||
+        check.field === 'both' ||
+        !!check.emailDuplicate;
 
-      /*
-       * CORREO Y TELÉFONO DUPLICADOS
-       */
-      if (check.emailDuplicate && check.phoneDuplicate) {
-        message =
-          'El correo electrónico y el número de teléfono ingresados ya están registrados para este curso.';
-      }
+      const phoneDuplicate =
+        check.field === 'phone' ||
+        check.field === 'both' ||
+        !!check.phoneDuplicate;
 
-      /*
-       * SOLO CORREO DUPLICADO
-       */
-      else if (check.emailDuplicate) {
-        message =
-          'El correo electrónico ingresado ya está registrado para este curso.';
-      }
-
-      /*
-       * SOLO TELÉFONO DUPLICADO
-       */
-      else if (check.phoneDuplicate) {
-        message =
-          'El número de teléfono ingresado ya está registrado para este curso.';
-      }
-
-      /*
-       * Compatibilidad con la respuesta anterior,
-       * por si la función todavía devuelve únicamente field/message.
-       */
-      else if (check.field === 'email') {
-        message =
-          'El correo electrónico ingresado ya está registrado para este curso.';
-      }
-
-      else if (check.field === 'phone') {
-        message =
-          'El número de teléfono ingresado ya está registrado para este curso.';
-      }
-
-      else if (check.field === 'both') {
-        message =
-          'El correo electrónico y el número de teléfono ingresados ya están registrados para este curso.';
-      }
-
-      else {
-        message =
-          'El correo electrónico o número de teléfono ingresado ya está registrado para este curso.';
-      }
+      const field: 'email' | 'phone' | 'both' =
+        check.field ||
+        (emailDuplicate && phoneDuplicate
+          ? 'both'
+          : emailDuplicate
+          ? 'email'
+          : 'phone');
 
       return NextResponse.json(
         {
           isDuplicate: true,
-          emailDuplicate: !!check.emailDuplicate,
-          phoneDuplicate: !!check.phoneDuplicate,
-          field: check.field,
-          error: message,
+          emailDuplicate,
+          phoneDuplicate,
+          field,
+          error:
+            field === 'both'
+              ? 'El correo electrónico y el número de teléfono ingresados ya están registrados para este curso.'
+              : field === 'email'
+              ? 'El correo electrónico ingresado ya está registrado para este curso.'
+              : 'El número de teléfono ingresado ya está registrado para este curso.',
         },
         { status: 409 }
       );

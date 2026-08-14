@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Image from 'next/image';
@@ -315,7 +315,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       icon: course.isPresencial ? '✂️' : '💻',
       label: course.isPresencial
         ? t.includes.inPersonTraining
-        : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom'),
+        : t.includes.zoomTraining,
       show: true,
     },
   ].filter((item) => item.show);
@@ -434,23 +434,17 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     // ── NOMBRE ───────────────────────────────────────────────────────────────
 
     if (!normalizedName) {
-      setValidationError(
-        'Ingresa el nombre completo que aparecerá en el certificado.'
-      );
+      setValidationError(t.validation.nameRequired);
       return;
     }
 
     if (normalizedName.length < 3) {
-      setValidationError(
-        'El nombre completo debe tener al menos 3 caracteres.'
-      );
+      setValidationError(t.validation.nameMinLength);
       return;
     }
 
     if (normalizedName.length > 100) {
-      setValidationError(
-        'El nombre completo no puede superar los 100 caracteres.'
-      );
+      setValidationError(t.validation.nameMaxLength);
       return;
     }
 
@@ -458,9 +452,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       /^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜàèìòùÀÈÌÒÙñÑ\s-]+$/;
 
     if (!nameRegex.test(normalizedName)) {
-      setValidationError(
-        'El nombre solo puede contener letras, espacios y guiones.'
-      );
+      setValidationError(t.validation.nameInvalidChars);
       return;
     }
 
@@ -470,55 +462,41 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
 
     if (!normalizedEmail) {
-      setValidationError(
-        'Ingresa tu correo electrónico.'
-      );
+      setValidationError(t.validation.emailRequired);
       return;
     }
 
     if (normalizedEmail.length > 254) {
-      setValidationError(
-        'El correo electrónico no puede superar los 254 caracteres.'
-      );
+      setValidationError(t.validation.emailMaxLength);
       return;
     }
 
     if (!emailRegex.test(normalizedEmail)) {
-      setValidationError(
-        'Ingresa un correo electrónico válido, por ejemplo: nombre@dominio.com.'
-      );
+      setValidationError(t.validation.emailInvalid);
       return;
     }
 
     // ── PAÍS ─────────────────────────────────────────────────────────────────
 
     if (!country) {
-      setValidationError(
-        'Selecciona un país.'
-      );
+      setValidationError(t.validation.countryRequired);
       return;
     }
 
     // ── TELÉFONO ─────────────────────────────────────────────────────────────
 
     if (!phoneNumber) {
-      setValidationError(
-        'Ingresa tu número de teléfono.'
-      );
+      setValidationError(t.validation.phoneRequired);
       return;
     }
 
     if (phoneNumber.length < 8 || phoneNumber.length > 10) {
-      setValidationError(
-        'El número de teléfono debe tener entre 8 y 10 dígitos.'
-      );
+      setValidationError(t.validation.phoneLength);
       return;
     }
 
     if (!/^\d+$/.test(phoneNumber)) {
-      setValidationError(
-        'El número de teléfono solo puede contener números.'
-      );
+      setValidationError(t.validation.phoneOnlyDigits);
       return;
     }
 
@@ -552,66 +530,72 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
           data
         );
 
-        setValidationError(
-          data.error ||
-            'No se pudo verificar la información de inscripción. Inténtalo nuevamente.'
-        );
+        if (res.status === 409 || data.isDuplicate) {
+          const isBoth =
+            data.field === 'both' ||
+            ((data.emailDuplicate || data.isEmailDuplicate) &&
+              (data.phoneDuplicate || data.isPhoneDuplicate));
 
+          const isEmailOnly =
+            data.field === 'email' ||
+            data.emailDuplicate === true ||
+            data.isEmailDuplicate === true;
+
+          const isPhoneOnly =
+            data.field === 'phone' ||
+            data.phoneDuplicate === true ||
+            data.isPhoneDuplicate === true;
+
+          if (isBoth) {
+            setValidationError(t.validation.duplicateEmailPhone);
+          } else if (isEmailOnly) {
+            setValidationError(t.validation.duplicateEmail);
+          } else if (isPhoneOnly) {
+            setValidationError(t.validation.duplicatePhone);
+          } else {
+            setValidationError(t.validation.duplicateGeneric);
+          }
+          return;
+        }
+
+        setValidationError(t.validation.verifyError);
         return;
       }
 
-      /*
-       * El endpoint debe devolver:
-       *
-       * isEmailDuplicate: true/false
-       * isPhoneDuplicate: true/false
-       *
-       * También se aceptan emailExists / phoneExists
-       * como nombres alternativos para facilitar compatibilidad.
-       */
+      const isBoth =
+        data.field === 'both' ||
+        ((data.emailDuplicate || data.isEmailDuplicate || data.emailExists) &&
+          (data.phoneDuplicate || data.isPhoneDuplicate || data.phoneExists));
 
-      const isEmailDuplicate =
+      const isEmailOnly =
+        data.field === 'email' ||
+        data.emailDuplicate === true ||
         data.isEmailDuplicate === true ||
         data.emailExists === true;
 
-      const isPhoneDuplicate =
+      const isPhoneOnly =
+        data.field === 'phone' ||
+        data.phoneDuplicate === true ||
         data.isPhoneDuplicate === true ||
         data.phoneExists === true;
 
-      if (isEmailDuplicate && isPhoneDuplicate) {
-        setValidationError(
-          'El correo electrónico y el número de teléfono ingresados ya están registrados para este curso.'
-        );
+      if (isBoth) {
+        setValidationError(t.validation.duplicateEmailPhone);
         return;
       }
 
-      if (isEmailDuplicate) {
-        setValidationError(
-          'El correo electrónico ingresado ya está registrado para este curso.'
-        );
+      if (isEmailOnly) {
+        setValidationError(t.validation.duplicateEmail);
         return;
       }
 
-      if (isPhoneDuplicate) {
-        setValidationError(
-          'El número de teléfono ingresado ya está registrado para este curso.'
-        );
+      if (isPhoneOnly) {
+        setValidationError(t.validation.duplicatePhone);
         return;
       }
 
-      /*
-       * Compatibilidad con un endpoint antiguo que solo devuelva
-       * isDuplicate=true sin indicar cuál de los dos datos coincide.
-       */
-      if (
-        data.isDuplicate === true &&
-        !isEmailDuplicate &&
-        !isPhoneDuplicate
-      ) {
-        setValidationError(
-          data.error ||
-            'El correo electrónico o número de teléfono ingresado ya está registrado para este curso.'
-        );
+      if (data.isDuplicate === true) {
+        setValidationError(t.validation.duplicateGeneric);
         return;
       }
 
@@ -622,9 +606,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
         err
       );
 
-      setValidationError(
-        'No se pudo verificar la información de inscripción. Inténtalo nuevamente.'
-      );
+      setValidationError(t.validation.verifyError);
     } finally {
       setIsCheckingDuplicate(false);
     }
@@ -747,8 +729,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 <p className="text-white font-bold text-xs">
                   {course.isPresencial
                     ? t.includes.inPersonTraining
-                    : (t.includes.zoomTraining ||
-                        'Capacitación en Vivo por Zoom')}
+                    : t.includes.zoomTraining}
                 </p>
               </div>
 
@@ -975,7 +956,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               >
                 <span>
                   {isCheckingDuplicate
-                    ? 'Verificando datos...'
+                    ? t.validation.verifyingData
                     : `${t.proceedToPaymentBtn} — ${course.displayPrice}`}
                 </span>
 
@@ -1031,7 +1012,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
             </div>
 
             <p className="text-xs sm:text-sm font-medium text-gray-300 mb-4 uppercase tracking-wider">
-              Método de Pago (PayPal Oficial)
+              {t.paymentMethodLabel}
             </p>
 
             {errorMessage && (
@@ -1087,7 +1068,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     if (!res.ok || !data.id) {
                       const msg =
                         data.error ||
-                        'No se pudo generar la orden de PayPal';
+                        t.validation.paypalOrderError;
 
                       setErrorMessage(msg);
                       throw new Error(msg);
@@ -1102,7 +1083,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
                     setErrorMessage(
                       err?.message ||
-                        'Ocurrió un error al conectar con PayPal.'
+                        t.validation.paypalConnectionError
                     );
 
                     throw err;
@@ -1189,7 +1170,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     if (!res.ok) {
                       const errMsg =
                         details.error ||
-                        'Error al capturar el pago';
+                        t.validation.paymentCaptureError;
 
                       throw new Error(errMsg);
                     }
@@ -1338,7 +1319,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       }
                     } else {
                       throw new Error(
-                        'El pago no fue completado correctamente.'
+                        t.validation.paymentIncomplete
                       );
                     }
                   } catch (err) {
@@ -1350,7 +1331,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     setErrorMessage(
                       err instanceof Error
                         ? err.message
-                        : 'Error al procesar la aprobación del pago.'
+                        : t.validation.paymentCaptureError
                     );
                   }
                 }}
@@ -1361,14 +1342,14 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   );
 
                   setErrorMessage(
-                    'Ocurrió un error con la pasarela de PayPal.'
+                    t.validation.paypalGatewayError
                   );
                 }}
               />
             </div>
 
             <p className="text-[10px] text-gray-500 text-center mt-3">
-              Pago seguro encriptado de nivel 256-bit procesado por PayPal
+              {t.paymentFooterNote}
             </p>
           </div>
         )}

@@ -219,6 +219,32 @@ export interface TranslationSchema {
     requiredFieldsError: string;
     oneTimePayment: string;
     securePaymentTitle: string;
+    paymentMethodLabel: string;
+    paymentFooterNote: string;
+    validation: {
+      nameRequired: string;
+      nameMinLength: string;
+      nameMaxLength: string;
+      nameInvalidChars: string;
+      emailRequired: string;
+      emailMaxLength: string;
+      emailInvalid: string;
+      countryRequired: string;
+      phoneRequired: string;
+      phoneLength: string;
+      phoneOnlyDigits: string;
+      verifyingData: string;
+      verifyError: string;
+      duplicateEmail: string;
+      duplicatePhone: string;
+      duplicateEmailPhone: string;
+      duplicateGeneric: string;
+      paypalOrderError: string;
+      paypalConnectionError: string;
+      paymentCaptureError: string;
+      paymentIncomplete: string;
+      paypalGatewayError: string;
+    };
   };
   certificateModal: {
     successTitlePart1: string;
@@ -584,6 +610,32 @@ export const translations: Record<Language, TranslationSchema> = {
       requiredFieldsError: 'Por favor completa todos los campos obligatorios.',
       oneTimePayment: 'Pago Único - Curso Completo',
       securePaymentTitle: 'Pago Seguro',
+      paymentMethodLabel: 'Método de Pago (PayPal Oficial)',
+      paymentFooterNote: 'Pago seguro encriptado de nivel 256-bit procesado por PayPal',
+      validation: {
+        nameRequired: 'Ingresa el nombre completo que aparecerá en el certificado.',
+        nameMinLength: 'El nombre completo debe tener al menos 3 caracteres.',
+        nameMaxLength: 'El nombre completo no puede superar los 100 caracteres.',
+        nameInvalidChars: 'El nombre solo puede contener letras, espacios y guiones.',
+        emailRequired: 'Ingresa tu correo electrónico.',
+        emailMaxLength: 'El correo electrónico no puede superar los 254 caracteres.',
+        emailInvalid: 'Ingresa un correo electrónico válido, por ejemplo: nombre@dominio.com.',
+        countryRequired: 'Selecciona un país.',
+        phoneRequired: 'Ingresa tu número de teléfono.',
+        phoneLength: 'El número de teléfono debe tener entre 8 y 10 dígitos.',
+        phoneOnlyDigits: 'El número de teléfono solo puede contener números.',
+        verifyingData: 'Verificando datos...',
+        verifyError: 'No se pudo verificar la información de inscripción. Inténtalo nuevamente.',
+        duplicateEmail: 'El correo electrónico ingresado ya está registrado para este curso.',
+        duplicatePhone: 'El número de teléfono ingresado ya está registrado para este curso.',
+        duplicateEmailPhone: 'El correo electrónico y el número de teléfono ingresados ya están registrados para este curso.',
+        duplicateGeneric: 'El correo electrónico o número de teléfono ingresado ya está registrado para este curso.',
+        paypalOrderError: 'No se pudo generar la orden de PayPal.',
+        paypalConnectionError: 'Ocurrió un error al conectar con PayPal.',
+        paymentCaptureError: 'Error al capturar el pago.',
+        paymentIncomplete: 'El pago no fue completado correctamente.',
+        paypalGatewayError: 'Ocurrió un error con la pasarela de PayPal.',
+      },
     },
     certificateModal: {
       successTitlePart1: '¡Pago realizado ',
@@ -946,6 +998,32 @@ export const translations: Record<Language, TranslationSchema> = {
       requiredFieldsError: 'Please fill in all required fields.',
       oneTimePayment: 'One-Time Payment - Full Course',
       securePaymentTitle: 'Secure Payment',
+      paymentMethodLabel: 'Payment Method (Official PayPal)',
+      paymentFooterNote: '256-bit encrypted secure payment processed by PayPal',
+      validation: {
+        nameRequired: 'Please enter the full name that will appear on the certificate.',
+        nameMinLength: 'Full name must be at least 3 characters long.',
+        nameMaxLength: 'Full name cannot exceed 100 characters.',
+        nameInvalidChars: 'Name can only contain letters, spaces, and hyphens.',
+        emailRequired: 'Please enter your email address.',
+        emailMaxLength: 'Email address cannot exceed 254 characters.',
+        emailInvalid: 'Please enter a valid email address, e.g. name@domain.com.',
+        countryRequired: 'Please select a country.',
+        phoneRequired: 'Please enter your phone number.',
+        phoneLength: 'Phone number must be between 8 and 10 digits.',
+        phoneOnlyDigits: 'Phone number can only contain digits.',
+        verifyingData: 'Verifying data...',
+        verifyError: 'Could not verify registration information. Please try again.',
+        duplicateEmail: 'The email address entered is already registered for this course.',
+        duplicatePhone: 'The phone number entered is already registered for this course.',
+        duplicateEmailPhone: 'The email address and phone number entered are already registered for this course.',
+        duplicateGeneric: 'The email address or phone number entered is already registered for this course.',
+        paypalOrderError: 'Could not generate the PayPal order.',
+        paypalConnectionError: 'An error occurred while connecting to PayPal.',
+        paymentCaptureError: 'Error capturing payment.',
+        paymentIncomplete: 'The payment was not completed successfully.',
+        paypalGatewayError: 'An error occurred with the PayPal gateway.',
+      },
     },
     certificateModal: {
       successTitlePart1: 'Payment completed ',
@@ -1310,6 +1388,32 @@ export const translations: Record<Language, TranslationSchema> = {
       requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios.',
       oneTimePayment: 'Pagamento Único - Curso Completo',
       securePaymentTitle: 'Pagamento Seguro',
+      paymentMethodLabel: 'Método de Pagamento (PayPal Oficial)',
+      paymentFooterNote: 'Pagamento seguro com criptografia de 256 bits processado pelo PayPal',
+      validation: {
+        nameRequired: 'Insira o nome completo que aparecerá no certificado.',
+        nameMinLength: 'O nome completo deve ter pelo menos 3 caracteres.',
+        nameMaxLength: 'O nome completo não pode ultrapassar 100 caracteres.',
+        nameInvalidChars: 'O nome só pode conter letras, espaços e hífens.',
+        emailRequired: 'Insira seu endereço de e-mail.',
+        emailMaxLength: 'O endereço de e-mail não pode ultrapassar 254 caracteres.',
+        emailInvalid: 'Insira um endereço de e-mail válido, por exemplo: nome@dominio.com.',
+        countryRequired: 'Selecione um país.',
+        phoneRequired: 'Insira seu número de telefone.',
+        phoneLength: 'O número de telefone deve ter entre 8 e 10 dígitos.',
+        phoneOnlyDigits: 'O número de telefone só pode conter dígitos.',
+        verifyingData: 'Verificando dados...',
+        verifyError: 'Não foi possível verificar as informações de inscrição. Tente novamente.',
+        duplicateEmail: 'O endereço de e-mail informado já está cadastrado para este curso.',
+        duplicatePhone: 'O número de telefone informado já está cadastrado para este curso.',
+        duplicateEmailPhone: 'O endereço de e-mail e o número de telefone informados já estão cadastrados para este curso.',
+        duplicateGeneric: 'O endereço de e-mail ou número de telefone informado já está cadastrado para este curso.',
+        paypalOrderError: 'Não foi possível gerar o pedido no PayPal.',
+        paypalConnectionError: 'Ocorreu um erro ao conectar ao PayPal.',
+        paymentCaptureError: 'Erro ao capturar o pagamento.',
+        paymentIncomplete: 'O pagamento não foi concluído com sucesso.',
+        paypalGatewayError: 'Ocorreu um erro com o gateway do PayPal.',
+      },
     },
     certificateModal: {
       successTitlePart1: 'Pagamento realizado ',
@@ -1676,6 +1780,32 @@ export const translations: Record<Language, TranslationSchema> = {
       requiredFieldsError: 'Si prega di compilare tutti i campi obbligatori.',
       oneTimePayment: 'Pagamento Unico - Corso Completo',
       securePaymentTitle: 'Pagamento Sicuro',
+      paymentMethodLabel: 'Metodo di Pagamento (PayPal Ufficiale)',
+      paymentFooterNote: 'Pagamento sicuro con crittografia a 256 bit elaborato da PayPal',
+      validation: {
+        nameRequired: 'Inserisci il nome completo che apparirà sul certificato.',
+        nameMinLength: 'Il nome completo deve contenere almeno 3 caratteri.',
+        nameMaxLength: 'Il nome completo non può superare i 100 caratteri.',
+        nameInvalidChars: 'Il nome può contenere solo lettere, spazi e trattini.',
+        emailRequired: "Inserisci il tuo indirizzo email.",
+        emailMaxLength: "L'indirizzo email non può superare i 254 caratteri.",
+        emailInvalid: 'Inserisci un indirizzo email valido, ad esempio: nome@dominio.com.',
+        countryRequired: 'Seleziona un paese.',
+        phoneRequired: 'Inserisci il tuo numero di telefono.',
+        phoneLength: 'Il numero di telefono deve contenere tra 8 e 10 cifre.',
+        phoneOnlyDigits: 'Il numero di telefono può contenere solo cifre.',
+        verifyingData: 'Verifica in corso...',
+        verifyError: 'Impossibile verificare le informazioni di iscrizione. Riprova.',
+        duplicateEmail: "L'indirizzo email inserito è già registrato per questo corso.",
+        duplicatePhone: 'Il numero di telefono inserito è già registrato per questo corso.',
+        duplicateEmailPhone: "L'indirizzo email e il numero di telefono inseriti sono già registrati per questo corso.",
+        duplicateGeneric: "L'indirizzo email o il numero di telefono inserito è già registrato per questo corso.",
+        paypalOrderError: 'Impossibile generare l\'ordine PayPal.',
+        paypalConnectionError: 'Si è verificato un errore durante la connessione a PayPal.',
+        paymentCaptureError: 'Errore durante l\'acquisizione del pagamento.',
+        paymentIncomplete: 'Il pagamento non è stato completato correttamente.',
+        paypalGatewayError: 'Si è verificato un errore con il gateway PayPal.',
+      },
     },
     certificateModal: {
       successTitlePart1: 'Pagamento effettuato ',
@@ -2042,6 +2172,32 @@ export const translations: Record<Language, TranslationSchema> = {
       requiredFieldsError: 'Veuillez remplir tous les champs obligatoires.',
       oneTimePayment: 'Paiement Unique - Cours Complet',
       securePaymentTitle: 'Paiement Sécurisé',
+      paymentMethodLabel: 'Mode de Paiement (PayPal Officiel)',
+      paymentFooterNote: 'Paiement sécurisé par chiffrement 256 bits traité par PayPal',
+      validation: {
+        nameRequired: 'Veuillez entrer le nom complet qui apparaîtra sur le certificat.',
+        nameMinLength: 'Le nom complet doit comporter au moins 3 caractères.',
+        nameMaxLength: 'Le nom complet ne peut pas dépasser 100 caractères.',
+        nameInvalidChars: 'Le nom ne peut contenir que des lettres, des espaces et des tirets.',
+        emailRequired: 'Veuillez entrer votre adresse e-mail.',
+        emailMaxLength: "L'adresse e-mail ne peut pas dépasser 254 caractères.",
+        emailInvalid: 'Veuillez entrer une adresse e-mail valide, par exemple : nom@domaine.com.',
+        countryRequired: 'Veuillez sélectionner un pays.',
+        phoneRequired: 'Veuillez entrer votre numéro de téléphone.',
+        phoneLength: 'Le numéro de téléphone doit comporter entre 8 et 10 chiffres.',
+        phoneOnlyDigits: 'Le numéro de téléphone ne peut contenir que des chiffres.',
+        verifyingData: 'Vérification des données...',
+        verifyError: "Impossible de vérifier les informations d'inscription. Veuillez réessayer.",
+        duplicateEmail: "L'adresse e-mail saisie est déjà enregistrée pour ce cours.",
+        duplicatePhone: 'Le numéro de téléphone saisi est déjà enregistré pour ce cours.',
+        duplicateEmailPhone: "L'adresse e-mail et le numéro de téléphone saisis sont déjà enregistrés pour ce cours.",
+        duplicateGeneric: "L'adresse e-mail ou le numéro de téléphone saisi est déjà enregistré pour ce cours.",
+        paypalOrderError: "Impossible de générer la commande PayPal.",
+        paypalConnectionError: "Une erreur s'est produite lors de la connexion à PayPal.",
+        paymentCaptureError: "Erreur lors de la capture du paiement.",
+        paymentIncomplete: "Le paiement n'a pas été effectué correctement.",
+        paypalGatewayError: "Une erreur s'est produite avec la passerelle PayPal.",
+      },
     },
     certificateModal: {
       successTitlePart1: 'Paiement effectué ',
@@ -2405,6 +2561,32 @@ export const translations: Record<Language, TranslationSchema> = {
         requiredFieldsError: 'Bitte füllen Sie alle Pflichtfelder aus.',
         oneTimePayment: 'Einmalzahlung - Vollständiger Kurs',
         securePaymentTitle: 'Sichere Zahlung',
+        paymentMethodLabel: 'Zahlungsmethode (Offizielles PayPal)',
+        paymentFooterNote: '256-Bit verschlüsselte, sichere Zahlung verarbeitet durch PayPal',
+        validation: {
+          nameRequired: 'Bitte geben Sie den vollständigen Namen ein, der auf dem Zertifikat erscheinen soll.',
+          nameMinLength: 'Der vollständige Name muss mindestens 3 Zeichen lang sein.',
+          nameMaxLength: 'Der vollständige Name darf 100 Zeichen nicht überschreiten.',
+          nameInvalidChars: 'Der Name darf nur Buchstaben, Leerzeichen und Bindestriche enthalten.',
+          emailRequired: 'Bitte geben Sie Ihre E-Mail-Adresse ein.',
+          emailMaxLength: 'Die E-Mail-Adresse darf 254 Zeichen nicht überschreiten.',
+          emailInvalid: 'Bitte geben Sie eine gültige E-Mail-Adresse ein, z.B. name@domain.com.',
+          countryRequired: 'Bitte wählen Sie ein Land aus.',
+          phoneRequired: 'Bitte geben Sie Ihre Telefonnummer ein.',
+          phoneLength: 'Die Telefonnummer muss zwischen 8 und 10 Ziffern lang sein.',
+          phoneOnlyDigits: 'Die Telefonnummer darf nur Ziffern enthalten.',
+          verifyingData: 'Daten werden überprüft...',
+          verifyError: 'Die Anmeldedaten konnten nicht überprüft werden. Bitte versuchen Sie es erneut.',
+          duplicateEmail: 'Die eingegebene E-Mail-Adresse ist für diesen Kurs bereits registriert.',
+          duplicatePhone: 'Die eingegebene Telefonnummer ist für diesen Kurs bereits registriert.',
+          duplicateEmailPhone: 'Die eingegebene E-Mail-Adresse und Telefonnummer sind für diesen Kurs bereits registriert.',
+          duplicateGeneric: 'Die eingegebene E-Mail-Adresse oder Telefonnummer ist für diesen Kurs bereits registriert.',
+          paypalOrderError: 'Die PayPal-Bestellung konnte nicht erstellt werden.',
+          paypalConnectionError: 'Bei der Verbindung mit PayPal ist ein Fehler aufgetreten.',
+          paymentCaptureError: 'Fehler bei der Erfassung der Zahlung.',
+          paymentIncomplete: 'Die Zahlung wurde nicht erfolgreich abgeschlossen.',
+          paypalGatewayError: 'Bei der PayPal-Zahlungsschnittstelle ist ein Fehler aufgetreten.',
+        },
       },
       certificateModal: {
         successTitlePart1: 'Zahlung erfolgreich ',
