@@ -11,6 +11,7 @@ import { Footer } from '@/components/Footer';
 import { EnrollmentModal, type RegistrationSuccessData } from '@/components/EnrollmentModal';
 import { SuccessModal } from '@/components/SuccessModal';
 import { currentCourse } from '@/data/currentCourse';
+import { sendRegistrationEmail } from '@/lib/web3forms';
 
 import { ChevronRight, AlertCircle } from 'lucide-react';
 
@@ -132,14 +133,18 @@ export default function Home() {
             const certName = captureResult.payerName || 'Participante';
             const cName = currentCourse.title;
 
+            const certEmail = captureResult.payerEmail || '';
+            const certPhone = captureResult.payerPhone || null;
+            const certCountry = captureResult.payerCountry || 'N/A';
+
             fetch('/api/registrations/save', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 certificate_name: certName,
-                email: captureResult.payerEmail || '',
-                phone: captureResult.payerPhone || null,
-                country: captureResult.payerCountry || 'N/A',
+                email: certEmail,
+                phone: certPhone,
+                country: certCountry,
                 course_name: cName,
                 amount: captureResult.amount || 95.0,
                 currency: captureResult.currency || 'USD',
@@ -148,6 +153,21 @@ export default function Home() {
                 paypal_capture_id: captureResult.captureID || null,
               }),
             }).catch(console.error);
+
+            // Enviar confirmación via Web3Forms (Client-Side)
+            sendRegistrationEmail({
+              certificateName: certName,
+              email: certEmail,
+              phone: certPhone,
+              country: certCountry,
+              courseName: cName,
+              amount: captureResult.amount || 95.0,
+              currency: captureResult.currency || 'USD',
+              paymentMethod: 'paypal',
+              orderId: captureResult.orderID || token,
+            }).catch((emailErr) => {
+              console.error('[Page] Error enviando correo Web3Forms en redirect flow:', emailErr);
+            });
 
             setSuccessData({
               certificateName: certName,

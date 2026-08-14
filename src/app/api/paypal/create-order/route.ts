@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCourseById } from '@/data/currentCourse';
+import { checkDuplicateRegistration } from '@/lib/supabase';
 
 // POST /api/paypal/create-order
 // Creates a PayPal order and returns its ID
@@ -56,6 +57,20 @@ export async function POST(request: Request) {
 
     if (typeof course.priceAmount !== 'number' || isNaN(course.priceAmount) || course.priceAmount <= 0) {
       return NextResponse.json({ error: 'El precio del curso no es válido.' }, { status: 400 });
+    }
+
+    // ── Verificar si el usuario ya está registrado antes de crear orden ──
+    if (body.email || body.phone) {
+      const duplicateCheck = await checkDuplicateRegistration(body.email || '', body.phone);
+      if (duplicateCheck.isDuplicate) {
+        return NextResponse.json(
+          {
+            error: duplicateCheck.message || 'Ya te encuentras registrado/a en este curso con este correo electrónico o número de teléfono.',
+            isDuplicate: true,
+          },
+          { status: 409 }
+        );
+      }
     }
 
     const priceValue = course.priceAmount.toFixed(2);

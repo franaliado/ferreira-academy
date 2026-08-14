@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import { getSupabaseAdmin, isSupabaseConfigured, checkDuplicateRegistration } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
+import { sendRegistrationEmail } from '@/lib/web3forms';
 
 function normalizePaymentMethod(method?: string, isCardFlag?: boolean): 'paypal' | 'credit_card' | 'debit_card' {
   if (method) {
@@ -267,6 +268,26 @@ export async function POST(request: Request) {
             console.log(`[capture-order] Supabase UPDATED for orderID=${orderID}`);
           }
         } else {
+          // ── VALIDAR DUPLICADOS ANTES DE INSERTAR ──
+          const duplicateCheck = await checkDuplicateRegistration(
+            finalEmail,
+            finalPhone,
+            orderID
+          );
+
+          if (duplicateCheck.isDuplicate) {
+            console.warn(`[capture-order] Registro duplicado detectado para ${finalEmail} / ${finalPhone}. Omitiendo inserción.`);
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'duplicate_registration',
+                message: duplicateCheck.message || 'Ya te encuentras registrado/a en este curso con este correo o número de teléfono.',
+                field: duplicateCheck.field,
+              },
+              { status: 409 }
+            );
+          }
+
           const { error: insErr } = await admin.from('registrations').insert({
             certificate_name: finalCertName,
             email: finalEmail,
@@ -294,6 +315,21 @@ export async function POST(request: Request) {
     }
 
     console.log(`[capture-order] *** DONE *** orderID=${data.id} captureID=${captureID} savedInDb=${savedInDb}`);
+
+    // ── STEP 6: Enviar correo de confirmación automático via Web3Forms ──
+    sendRegistrationEmail({
+      certificateName: finalCertName,
+      email: finalEmail,
+      phone: finalPhone,
+      country: finalCountry,
+      courseName: finalCourseName,
+      amount: amountVal,
+      currency: currencyCode,
+      paymentMethod: finalPaymentMethod,
+      orderId: data.id || orderID,
+    }).catch((emailErr) => {
+      console.error('[capture-order] Error no bloqueante al enviar correo Web3Forms:', emailErr);
+    });
 
     return NextResponse.json(
       {

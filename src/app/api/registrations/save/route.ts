@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin, checkDuplicateRegistration } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
+import { sendRegistrationEmail } from '@/lib/web3forms';
 
 // POST /api/registrations/save
 export interface SaveRegistrationPayload {
@@ -102,7 +103,42 @@ export async function POST(request: Request) {
         console.error('[save-registration] Error en update:', updateError);
         return NextResponse.json({ error: updateError.message }, { status: 500 });
       }
+
+      // Enviar correo de confirmación via Web3Forms en segundo plano
+      sendRegistrationEmail({
+        certificateName: trimmedCertName,
+        email: trimmedEmail,
+        phone: trimmedPhone,
+        country: trimmedCountry,
+        courseName: finalCourseName,
+        amount: numAmount,
+        currency: finalCurrency,
+        paymentMethod: finalPaymentMethod,
+        orderId: paypal_order_id,
+      }).catch((emailErr) => {
+        console.error('[save-registration] Error no bloqueante enviando correo Web3Forms:', emailErr);
+      });
+
       return NextResponse.json({ success: true, updated: true }, { status: 200 });
+    }
+
+    // ── VALIDACIÓN ESTRICTA DE DUPLICADOS ANTES DE INSERTAR (POR EMAIL O TELÉFONO) ──
+    const duplicateCheck = await checkDuplicateRegistration(
+      trimmedEmail,
+      trimmedPhone,
+      paypal_order_id
+    );
+
+    if (duplicateCheck.isDuplicate) {
+      console.warn(`[save-registration] Inserción cancelada por duplicado: ${trimmedEmail} / ${trimmedPhone}`);
+      return NextResponse.json(
+        {
+          error: 'duplicate_registration',
+          message: duplicateCheck.message || 'Ya te encuentras registrado/a en este curso con este correo electrónico o número de teléfono.',
+          field: duplicateCheck.field,
+        },
+        { status: 409 }
+      );
     }
 
     // ── Inserción limpia con estructura exacta de la tabla registrations ──
@@ -131,6 +167,21 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    // Enviar correo de confirmación via Web3Forms tras inserción exitosa
+    sendRegistrationEmail({
+      certificateName: trimmedCertName,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+      country: trimmedCountry,
+      courseName: finalCourseName,
+      amount: numAmount,
+      currency: finalCurrency,
+      paymentMethod: finalPaymentMethod,
+      orderId: paypal_order_id,
+    }).catch((emailErr) => {
+      console.error('[save-registration] Error no bloqueante enviando correo Web3Forms:', emailErr);
+    });
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error: unknown) {

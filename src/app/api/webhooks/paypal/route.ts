@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import { getSupabaseAdmin, isSupabaseConfigured, checkDuplicateRegistration } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
+import { sendRegistrationEmail } from '@/lib/web3forms';
 
 export const runtime = 'nodejs';
 
@@ -187,6 +188,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true, message: 'Orden ya procesada' }, { status: 200 });
     }
 
+    // ── Validar duplicados por correo o teléfono antes de insertar ──
+    const duplicateCheck = await checkDuplicateRegistration(email, phone, paypalOrderId);
+    if (duplicateCheck.isDuplicate) {
+      console.warn(`[Webhook PayPal] ⚠️ Registro omitido: el usuario ya existe (${duplicateCheck.field}).`);
+      return NextResponse.json({ received: true, message: 'Usuario ya registrado' }, { status: 200 });
+    }
+
     // ── Insertar registro completo — solo cuando el pago fue confirmado ──
     const { error: insertError } = await admin.from('registrations').insert([{
       certificate_name: certName,
@@ -208,6 +216,22 @@ export async function POST(request: Request) {
     }
 
     console.log(`[Webhook PayPal] ✅ Registro guardado — Orden: ${paypalOrderId} | Cliente: ${email}`);
+
+    // Enviar correo de confirmación via Web3Forms en segundo plano
+    sendRegistrationEmail({
+      certificateName: certName,
+      email: email,
+      phone: phone,
+      country: country,
+      courseName: courseName,
+      amount: amount,
+      currency: currency,
+      paymentMethod: paymentMethod,
+      orderId: paypalOrderId,
+    }).catch((emailErr) => {
+      console.error('[Webhook PayPal] Error no bloqueante al enviar correo Web3Forms:', emailErr);
+    });
+
     return NextResponse.json({ received: true, paypalOrderId }, { status: 200 });
 
   } catch (error: unknown) {
