@@ -37,7 +37,15 @@ async function getPayPalAccessToken(): Promise<string> {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json().catch(() => ({}))) as { courseId?: string; id?: string };
+    const body = (await request.json().catch(() => ({}))) as {
+      courseId?: string;
+      id?: string;
+      countryCode?: string;
+      country?: string;
+      fullName?: string;
+      email?: string;
+      phone?: string;
+    };
     const courseId = body.courseId || body.id;
 
     // Servidor determina los datos oficiales del curso
@@ -59,7 +67,45 @@ export async function POST(request: Request) {
     const paypalBase =
       mode === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
 
-    const orderPayload = {
+    // Construir metadatos personalizados para webhook y captura
+    const customMetadata = JSON.stringify({
+      course_id: course.id,
+      full_name: body.fullName || '',
+      email: body.email || '',
+      phone: body.phone || '',
+      country: body.country || body.countryCode || '',
+    });
+
+    // Construir datos del pagador (payer) para que PayPal inicialice el país de facturación
+    // con el país seleccionado por el usuario en lugar de forzar España (ES) por defecto
+    const payer: Record<string, any> = {};
+
+    if (body.email && typeof body.email === 'string' && body.email.includes('@')) {
+      payer.email_address = body.email.trim().toLowerCase();
+    }
+
+    if (body.fullName && typeof body.fullName === 'string' && body.fullName.trim()) {
+      const parts = body.fullName.trim().split(/\s+/);
+      if (parts.length > 1) {
+        payer.name = {
+          given_name: parts.slice(0, -1).join(' ').slice(0, 140),
+          surname: parts[parts.length - 1].slice(0, 140),
+        };
+      } else if (parts.length === 1 && parts[0]) {
+        payer.name = {
+          given_name: parts[0].slice(0, 140),
+        };
+      }
+    }
+
+    // Código de país ISO 3166-1 alpha-2 (ej: VE, US, MX, CO, ES, etc.)
+    if (body.countryCode && typeof body.countryCode === 'string' && /^[a-zA-Z]{2}$/.test(body.countryCode.trim())) {
+      payer.address = {
+        country_code: body.countryCode.trim().toUpperCase(),
+      };
+    }
+
+    const orderPayload: Record<string, any> = {
       intent: 'CAPTURE',
       purchase_units: [
         {
@@ -68,6 +114,7 @@ export async function POST(request: Request) {
             value: priceValue,
           },
           description: courseTitle,
+          custom_id: customMetadata.slice(0, 127),
         },
       ],
       application_context: {
@@ -75,6 +122,10 @@ export async function POST(request: Request) {
         user_action: 'PAY_NOW',
       },
     };
+
+    if (Object.keys(payer).length > 0) {
+      orderPayload.payer = payer;
+    }
 
     const orderResponse = await fetch(`${paypalBase}/v2/checkout/orders`, {
       method: 'POST',

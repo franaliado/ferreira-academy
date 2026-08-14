@@ -66,6 +66,25 @@ const COUNTRIES: CountryOption[] = [
   { code: 'ni', name: 'Nicaragua', dial: '+505' },
 ];
 
+/** Determina el país inicial configurable según el idioma de la aplicación */
+const getDefaultCountryForLang = (lang: Language): CountryOption => {
+  switch (lang) {
+    case 'en':
+      return COUNTRIES.find((c) => c.code === 'us') || COUNTRIES[0];
+    case 'pt':
+      return COUNTRIES.find((c) => c.code === 'br') || COUNTRIES[0];
+    case 'it':
+      return COUNTRIES.find((c) => c.code === 'it') || COUNTRIES[0];
+    case 'fr':
+      return COUNTRIES.find((c) => c.code === 'fr') || COUNTRIES[0];
+    case 'de':
+      return COUNTRIES.find((c) => c.code === 'de') || COUNTRIES[0];
+    case 'es':
+    default:
+      return COUNTRIES.find((c) => c.code === 've') || COUNTRIES[0];
+  }
+};
+
 export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
   onClose,
@@ -77,14 +96,16 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const countryDropdownRef = useRef<HTMLDivElement>(null);
 
+  const defaultCountryObj = getDefaultCountryForLang(currentLang);
+
   const [step, setStep] = useState<'details' | 'checkout'>('details');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Participant Information form state
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [country, setCountry] = useState('Venezuela');
-  const [phonePrefix, setPhonePrefix] = useState('+58');
+  const [country, setCountry] = useState(defaultCountryObj.name);
+  const [phonePrefix, setPhonePrefix] = useState(defaultCountryObj.dial);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -200,8 +221,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       setErrorMessage(null);
       setFullName('');
       setEmail('');
-      setCountry('Venezuela');
-      setPhonePrefix('+58');
+      setCountry(defaultCountryObj.name);
+      setPhonePrefix(defaultCountryObj.dial);
       setPhoneNumber('');
       setCountryDropdownOpen(false);
       setValidationError(null);
@@ -559,11 +580,17 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 }}
                 createOrder={async () => {
                   try {
+                    const currentCountryObj = COUNTRIES.find((c) => c.name === country) || selectedCountryObj;
                     const res = await fetch('/api/paypal/create-order', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({
                         courseId: course.id || 'faded-mastery-elite-2026',
+                        countryCode: currentCountryObj?.code?.toUpperCase() || 'VE',
+                        country: currentCountryObj?.name || country || 'Venezuela',
+                        fullName: fullName.trim(),
+                        email: email.trim(),
+                        phone: phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : undefined,
                       }),
                     });
                     const data = await res.json();
