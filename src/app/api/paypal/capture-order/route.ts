@@ -14,6 +14,18 @@ function normalizePaymentMethod(method?: string, isCardFlag?: boolean): 'paypal'
   return 'paypal';
 }
 
+/** Validación básica de email server-side */
+function isValidEmailServer(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
+/** Extrae solo los dígitos locales de un teléfono con prefijo (ej: "+58 4141234567" → "4141234567") */
+function extractLocalPhoneDigits(phone: string): string {
+  const match = phone.match(/^\+\d+\s+(\d+)$/);
+  if (match) return match[1];
+  return phone.replace(/\D/g, '');
+}
+
 async function getPayPalAccessToken(): Promise<string> {
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
@@ -205,14 +217,24 @@ export async function POST(request: Request) {
     const surname = data?.payer?.name?.surname || paypalInfo?.name?.surname || '';
     const paypalName = `${givenName} ${surname}`.trim();
 
-    const finalCertName =
+    const rawCertName =
       certificateName || customMeta.full_name || paypalName || cardName ||
       firstPurchaseUnit?.shipping?.name?.full_name || 'Participante';
+    const trimmedCertName = rawCertName.trim();
+    const finalCertName =
+      trimmedCertName.length >= 3 && trimmedCertName.length <= 100
+        ? trimmedCertName
+        : 'Participante';
 
+    // Email: siempre en minúsculas, sin espacios
     const rawPayerEmail =
       email || customMeta.email || data?.payer?.email_address ||
       cardEmail || paypalInfo?.email_address || '';
-    const finalEmail = rawPayerEmail.trim() || 'cliente@ferreiraacademy.com';
+    const normalizedEmail = rawPayerEmail.trim().toLowerCase().replace(/\s/g, '');
+    const finalEmail =
+      normalizedEmail && isValidEmailServer(normalizedEmail)
+        ? normalizedEmail
+        : 'cliente@ferreiraacademy.com';
 
     const finalPhone = (phone || customMeta.phone || data?.payer?.phone?.phone_number?.national_number || '').trim();
     const finalCountry = (country || customMeta.country || data?.payer?.address?.country_code ||
@@ -229,6 +251,13 @@ export async function POST(request: Request) {
         { success: false, error: 'Se requieren teléfono y país válidos para registrar la inscripción.' },
         { status: 400 }
       );
+    }
+
+    // Validar longitud de la parte local del teléfono (8-10 dígitos)
+    const localDigits = extractLocalPhoneDigits(finalPhone);
+    if (localDigits.length < 8 || localDigits.length > 10) {
+      console.warn(`[capture-order] Phone local digits out of range: "${localDigits}" (${localDigits.length} digits) — proceeding anyway`);
+      // No bloqueamos el flujo ya que el pago ya fue capturado; solo registramos la advertencia
     }
 
     console.log(`[capture-order] Payment confirmed. captureID=${captureID} amount=${amountVal} currency=${currencyCode} method=${finalPaymentMethod}`);

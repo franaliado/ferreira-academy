@@ -66,6 +66,90 @@ const COUNTRIES: CountryOption[] = [
   { code: 'ni', name: 'Nicaragua', dial: '+505' },
 ];
 
+// ─── Helpers de validación y sanitización ──────────────────────────────────
+
+/** Comprueba si un carácter es una letra (incluye acentuados, ñ, etc.) */
+function isUnicodeLetter(char: string): boolean {
+  // Rango Latin-Extended compatible con cualquier target de TypeScript
+  return /^[A-Za-zÀ-ÖØ-öø-ÿ]$/.test(char);
+}
+
+/** Comprueba si un carácter es letra Unicode o espacio */
+function isLetterOrSpace(char: string): boolean {
+  return char === ' ' || isUnicodeLetter(char);
+}
+
+/** Sanitiza un string manteniendo solo letras Unicode y espacios */
+function sanitizeName(raw: string): string {
+  return Array.from(raw).filter(isLetterOrSpace).join('');
+}
+
+/** Title case Unicode: primera letra de cada palabra en mayúscula, resto en minúscula */
+function toTitleCase(str: string): string {
+  return str
+    .split(' ')
+    .map((word) => {
+      if (word.length === 0) return word;
+      const chars = Array.from(word);
+      const first = chars[0].toLocaleUpperCase();
+      const rest = chars.slice(1).map((c) => c.toLocaleLowerCase()).join('');
+      return first + rest;
+    })
+    .join(' ');
+}
+
+/** Sanitiza el nombre: elimina caracteres inválidos y aplica title case */
+function sanitizeAndCapitalizeName(raw: string): string {
+  const clean = sanitizeName(raw);
+  return toTitleCase(clean);
+}
+
+/** Sanitiza el teléfono: solo dígitos 0-9 */
+function sanitizePhone(raw: string): string {
+  return raw.replace(/\D/g, '');
+}
+
+/** Validación de email con estructura usuario@dominio.extension */
+function isValidEmail(email: string): boolean {
+  // Requiere: parte-local (sin espacios ni @), @, dominio (sin @, punto, extensión >= 2 chars)
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
+/** Validación completa del nombre */
+function validateName(name: string): string | null {
+  const trimmed = name.trim();
+  if (!trimmed) return 'El nombre es obligatorio.';
+  if (trimmed.length < 3) return 'El nombre debe tener al menos 3 caracteres.';
+  if (trimmed.length > 100) return 'El nombre no puede superar 100 caracteres.';
+  // Verificar que todos los caracteres sean letras o espacios
+  if (!Array.from(trimmed).every(isLetterOrSpace)) {
+    return 'El nombre solo puede contener letras y espacios.';
+  }
+  return null;
+}
+
+/** Validación completa del teléfono (parte local, solo dígitos) */
+function validatePhone(phone: string): string | null {
+  const trimmed = phone.trim();
+  if (!trimmed) return 'El teléfono es obligatorio.';
+  if (/\D/.test(trimmed)) return 'El teléfono solo puede contener dígitos.';
+  if (trimmed.length < 8) return 'El número debe tener al menos 8 dígitos.';
+  if (trimmed.length > 10) return 'El número no puede tener más de 10 dígitos.';
+  return null;
+}
+
+/** Validación completa del email */
+function validateEmail(email: string): string | null {
+  const trimmed = email.trim();
+  if (!trimmed) return 'El correo electrónico es obligatorio.';
+  if (trimmed !== trimmed.toLowerCase()) return 'El correo debe estar en minúsculas.';
+  if (/\s/.test(trimmed)) return 'El correo no debe contener espacios.';
+  if (!isValidEmail(trimmed)) return 'Ingresa un correo electrónico válido (ej: usuario@dominio.com).';
+  return null;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+
 export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
   onClose,
@@ -88,6 +172,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
 
   const t = (translations[currentLang] || translations.es).enrollmentModal;
 
@@ -113,7 +198,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     },
   ].filter((item) => item.show);
 
-  // Close dropdown on click outside
+  // Close dropdown on click outside (but NOT close the modal)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (countryDropdownRef.current && !countryDropdownRef.current.contains(e.target as Node)) {
@@ -124,15 +209,13 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close on ESC and trap focus
+  // Trap focus — ESC does NOT close the modal
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!isOpen) return;
 
-      if (e.key === 'Escape') {
-        onClose();
-        return;
-      }
+      // ESC deliberately does NOT close the modal
+      // Users must use the X button or Back button
 
       if (e.key === 'Tab') {
         const focusableElements = modalRef.current?.querySelectorAll<HTMLElement>(
@@ -157,7 +240,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
         }
       }
     },
-    [isOpen, onClose]
+    [isOpen]
   );
 
   useEffect(() => {
@@ -198,13 +281,151 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     }
   }, [isOpen]);
 
-  const handleProceedToCheckout = (e?: React.FormEvent) => {
+  // ─── Handlers: Nombre ─────────────────────────────────────────────────────
+
+  const handleNameBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const event = e as unknown as InputEvent;
+    // Only filter insertions (not deletions, formatting, etc.)
+    if (event.inputType && !event.inputType.startsWith('insert')) return;
+    const data = event.data;
+    if (!data) return;
+    // Block each character that is not a letter or space
+    const allValid = Array.from(data).every(isLetterOrSpace);
+    if (!allValid) {
+      e.preventDefault();
+    }
+  };
+
+  const handleNamePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const raw = e.clipboardData.getData('text');
+    const clean = sanitizeName(raw);
+    if (!clean) return;
+    const input = e.currentTarget;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const newRaw = input.value.slice(0, start) + clean + input.value.slice(end);
+    const sanitized = sanitizeAndCapitalizeName(newRaw.slice(0, 100));
+    setFullName(sanitized);
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Final safety net: sanitize + capitalize
+    const raw = e.target.value;
+    const sanitized = sanitizeAndCapitalizeName(raw.slice(0, 100));
+    setFullName(sanitized);
+  };
+
+  // ─── Handlers: Teléfono ───────────────────────────────────────────────────
+
+  const handlePhoneBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const event = e as unknown as InputEvent;
+    if (event.inputType && !event.inputType.startsWith('insert')) return;
+    const data = event.data;
+    if (!data) return;
+    // Block any non-digit character
+    if (!/^\d+$/.test(data)) {
+      e.preventDefault();
+    }
+  };
+
+  const handlePhonePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const raw = e.clipboardData.getData('text');
+    const clean = sanitizePhone(raw);
+    if (!clean) return;
+    const input = e.currentTarget;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const newValue = (input.value.slice(0, start) + clean + input.value.slice(end)).slice(0, 10);
+    setPhoneNumber(newValue);
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Final safety net: strip non-digits
+    const clean = sanitizePhone(e.target.value).slice(0, 10);
+    setPhoneNumber(clean);
+  };
+
+  // ─── Handlers: Email ──────────────────────────────────────────────────────
+
+  const handleEmailBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const event = e as unknown as InputEvent;
+    if (event.inputType && !event.inputType.startsWith('insert')) return;
+    const data = event.data;
+    if (!data) return;
+    // Block spaces
+    if (/\s/.test(data)) {
+      e.preventDefault();
+    }
+  };
+
+  const handleEmailPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const raw = e.clipboardData.getData('text');
+    // Remove spaces and convert to lowercase
+    const clean = raw.replace(/\s/g, '').toLowerCase();
+    if (!clean) return;
+    const input = e.currentTarget;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const newValue = input.value.slice(0, start) + clean + input.value.slice(end);
+    setEmail(newValue);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Remove spaces and convert to lowercase
+    const clean = e.target.value.replace(/\s/g, '').toLowerCase();
+    setEmail(clean);
+  };
+
+  // ─── Proceed to Checkout ──────────────────────────────────────────────────
+
+  const handleProceedToCheckout = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!fullName.trim() || !email.trim() || !country.trim() || !phoneNumber.trim()) {
-      setValidationError(t.requiredFieldsError);
+
+    // ── 1. Validación completa de todos los campos ──
+    const nameError = validateName(fullName);
+    if (nameError) { setValidationError(nameError); return; }
+
+    const emailError = validateEmail(email);
+    if (emailError) { setValidationError(emailError); return; }
+
+    if (!country.trim()) {
+      setValidationError('El país es obligatorio.');
       return;
     }
+
+    const phoneError = validatePhone(phoneNumber);
+    if (phoneError) { setValidationError(phoneError); return; }
+
     setValidationError(null);
+
+    // ── 2. Verificación de duplicados ──
+    setIsCheckingDuplicate(true);
+    try {
+      const formattedPhone = `${phonePrefix} ${phoneNumber.trim()}`;
+      const res = await fetch('/api/registrations/check-duplicate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          phone: formattedPhone,
+          courseName: course.title,
+        }),
+      });
+      const result = await res.json() as { duplicate: boolean; message?: string };
+      if (result.duplicate) {
+        setValidationError(result.message || 'Ya existe un registro con este correo o teléfono para este curso.');
+        return;
+      }
+    } catch (err) {
+      console.warn('[EnrollmentModal] Error al verificar duplicados (se permite continuar):', err);
+      // Si falla la verificación de duplicados, dejamos pasar y dejamos que el backend lo maneje
+    } finally {
+      setIsCheckingDuplicate(false);
+    }
+
     setStep('checkout');
   };
 
@@ -215,9 +436,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      // Click outside intentionally does NOT close the modal
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-course-title"
@@ -325,9 +544,14 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   </label>
                   <input
                     type="text"
+                    id="enrollment-full-name"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onBeforeInput={handleNameBeforeInput}
+                    onPaste={handleNamePaste}
+                    onChange={handleNameChange}
                     placeholder={t.fullNamePlaceholder}
+                    maxLength={100}
+                    autoComplete="name"
                     className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
                     required
                   />
@@ -340,9 +564,13 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   </label>
                   <input
                     type="email"
+                    id="enrollment-email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onBeforeInput={handleEmailBeforeInput}
+                    onPaste={handleEmailPaste}
+                    onChange={handleEmailChange}
                     placeholder={t.emailPlaceholder}
+                    autoComplete="email"
                     className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
                     required
                   />
@@ -356,6 +584,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   <div className="relative" ref={countryDropdownRef}>
                     <button
                       type="button"
+                      id="enrollment-country"
                       onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
                       className="w-full flex items-center justify-between bg-[#121212] border border-white/10 hover:border-[#D4AF37]/50 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm focus:outline-none transition-all cursor-pointer"
                     >
@@ -413,9 +642,15 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     </div>
                     <input
                       type="tel"
+                      id="enrollment-phone"
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      onBeforeInput={handlePhoneBeforeInput}
+                      onPaste={handlePhonePaste}
+                      onChange={handlePhoneChange}
                       placeholder={t.phonePlaceholder}
+                      inputMode="numeric"
+                      maxLength={10}
+                      autoComplete="tel-national"
                       className="flex-1 bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
                       required
                     />
@@ -451,10 +686,11 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
               <button
                 type="submit"
-                className="w-full group inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3 px-5 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-md hover:opacity-95 transition-all cursor-pointer mt-1"
+                disabled={isCheckingDuplicate}
+                className="w-full group inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3 px-5 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-md hover:opacity-95 transition-all cursor-pointer mt-1 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <span>{`${t.proceedToPaymentBtn} — ${course.displayPrice}`}</span>
-                <ChevronRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
+                <span>{isCheckingDuplicate ? 'Verificando...' : `${t.proceedToPaymentBtn} — ${course.displayPrice}`}</span>
+                {!isCheckingDuplicate && <ChevronRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />}
               </button>
             </form>
           </>
@@ -600,7 +836,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                               phone: formattedPhone,
                               country: country || details.payerCountry || 'Venezuela',
                               course_name: course.title,
-                              amount: details.amount ?? 95.00,
+                              amount: details.amount,
                               currency: details.currency ?? 'USD',
                               payment_method: isCard ? 'credit_card' : 'paypal',
                               paypal_order_id: details.orderID ?? data.orderID,

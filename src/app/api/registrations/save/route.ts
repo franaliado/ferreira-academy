@@ -27,6 +27,20 @@ function normalizePaymentMethod(method?: string): 'paypal' | 'credit_card' | 'de
   return 'paypal';
 }
 
+/** Validación básica de email server-side */
+function isValidEmailServer(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
+/** Extrae solo los dígitos de un teléfono con prefijo (ej: "+58 4141234567" → "4141234567") */
+function extractLocalPhoneDigits(phone: string): string {
+  // Si el teléfono incluye prefijo internacional (+XX), extraemos los dígitos después del prefijo
+  const match = phone.match(/^\+\d+\s+(\d+)$/);
+  if (match) return match[1];
+  // Si no tiene prefijo, retornamos solo los dígitos
+  return phone.replace(/\D/g, '');
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as SaveRegistrationPayload;
@@ -51,14 +65,37 @@ export async function POST(request: Request) {
       );
     }
 
+    // ── Validaciones server-side ──────────────────────────────────────────────
+
     const trimmedCertName = (certificate_name || '').trim() || 'Participante';
-    const trimmedEmail = (email || '').trim() || 'cliente@ferreiraacademy.com';
+    // Solo guardar si tiene entre 3 y 100 caracteres (fallback a 'Participante' si es inválido)
+    const safeCertName =
+      trimmedCertName.length >= 3 && trimmedCertName.length <= 100
+        ? trimmedCertName
+        : 'Participante';
+
+    // Email: normalizar a minúsculas, eliminar espacios
+    const rawEmail = (email || '').trim().toLowerCase().replace(/\s/g, '');
+    const trimmedEmail =
+      rawEmail && isValidEmailServer(rawEmail)
+        ? rawEmail
+        : 'cliente@ferreiraacademy.com';
+
     const trimmedPhone = (phone || '').trim();
     const trimmedCountry = (country || '').trim();
 
     if (!trimmedPhone || !trimmedCountry) {
       return NextResponse.json(
         { error: 'Teléfono y país son obligatorios.' },
+        { status: 400 }
+      );
+    }
+
+    // Validar que la parte local del teléfono tenga entre 8 y 10 dígitos
+    const localDigits = extractLocalPhoneDigits(trimmedPhone);
+    if (localDigits.length < 8 || localDigits.length > 10) {
+      return NextResponse.json(
+        { error: 'El número telefónico local debe tener entre 8 y 10 dígitos.' },
         { status: 400 }
       );
     }
@@ -86,7 +123,7 @@ export async function POST(request: Request) {
       const { error: updateError } = await supabaseAdmin
         .from('registrations')
         .update({
-          certificate_name: trimmedCertName,
+          certificate_name: safeCertName,
           email: trimmedEmail,
           phone: trimmedPhone,
           country: trimmedCountry,
@@ -107,7 +144,7 @@ export async function POST(request: Request) {
 
     // ── Inserción limpia con estructura exacta de la tabla registrations ──
     const { error: insertError } = await supabaseAdmin.from('registrations').insert({
-      certificate_name: trimmedCertName,
+      certificate_name: safeCertName,
       email: trimmedEmail,
       phone: trimmedPhone,
       country: trimmedCountry,
