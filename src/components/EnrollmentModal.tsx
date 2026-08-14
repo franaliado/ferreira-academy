@@ -222,16 +222,9 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   }, [isOpen]);
 
   const handleProceedToCheckout = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-<<<<<<< HEAD
-
     // Nombre: obligatorio, mín 3 chars
     if (!fullName.trim() || fullName.trim().length < 3) {
       setValidationError('El nombre completo debe tener al menos 3 caracteres.');
-=======
-    if (!fullName.trim() || !email.trim() || !country.trim() || !phoneNumber.trim()) {
-      setValidationError(t.requiredFieldsError);
->>>>>>> f9eea4377660f11ea8ef699a50ecea3b6f4f0ffe
       return;
     }
 
