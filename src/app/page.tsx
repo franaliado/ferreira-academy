@@ -319,6 +319,7 @@ export default function Home() {
         onClose={handleCloseCheckout}
         currentLang={currentLang}
         currentCourse={{
+          id: currentCourse.id,
           title: currentCourse.title,
           displayPrice: currentCourse.displayPrice,
           priceAmount: String(currentCourse.priceAmount),

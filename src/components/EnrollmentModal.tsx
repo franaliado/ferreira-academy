@@ -13,6 +13,7 @@ export interface RegistrationSuccessData {
 }
 
 export interface CourseInfo {
+  id?: string;
   title: string;
   displayPrice: string;
   priceAmount: string;
@@ -120,6 +121,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
   // Safe fallback if currentCourse is momentarily undefined
   const course = currentCourse || {
+    id: 'faded-mastery-elite-2026',
     title: '',
     displayPrice: '$0.00',
     priceAmount: '0',
@@ -221,10 +223,15 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
   const handleProceedToCheckout = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+<<<<<<< HEAD
 
     // Nombre: obligatorio, mín 3 chars
     if (!fullName.trim() || fullName.trim().length < 3) {
       setValidationError('El nombre completo debe tener al menos 3 caracteres.');
+=======
+    if (!fullName.trim() || !email.trim() || !country.trim() || !phoneNumber.trim()) {
+      setValidationError(t.requiredFieldsError);
+>>>>>>> f9eea4377660f11ea8ef699a50ecea3b6f4f0ffe
       return;
     }
 
@@ -561,6 +568,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   try {
                     const res = await fetch('/api/paypal/create-order', {
                       method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        courseId: course.id || 'faded-mastery-elite-2026',
+                      }),
                     });
                     const data = await res.json();
                     if (!res.ok || !data.id) {
@@ -575,12 +586,32 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 }}
                 onApprove={async (data) => {
                   try {
+                    const paymentSourceObj = (data as unknown as Record<string, unknown>).paymentSource as any;
+                    const isCard =
+                      paymentSourceObj === 'card' ||
+                      !!paymentSourceObj?.card ||
+                      (data as any).fundingSource === 'card' ||
+                      (data as any).fundingSource === 'credit_card';
+
+                    const formattedPhone = phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : null;
+                    const certName = fullName.trim() || 'Participante';
+                    const userEmail = email.trim();
+
                     const res = await fetch('/api/paypal/capture-order', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ orderID: data.orderID }),
+                      body: JSON.stringify({
+                        orderID: data.orderID,
+                        certificateName: certName,
+                        email: userEmail,
+                        phone: formattedPhone,
+                        country: country || 'Venezuela',
+                        courseName: course.title,
+                        paymentMethod: isCard ? 'credit_card' : 'paypal',
+                      }),
                     });
                     const details = await res.json() as {
+                      success?: boolean;
                       status?: string;
                       orderID?: string;
                       captureID?: string;
@@ -588,51 +619,60 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       payerName?: string;
                       payerPhone?: string | null;
                       payerCountry?: string;
-                      amount?: string;
+                      amount?: string | number;
                       currency?: string;
                       payerID?: string;
-                      fundingSource?: string;
+                      paymentMethod?: string;
+                      savedInDb?: boolean;
                       error?: string;
+                      paypal?: { name?: string; message?: string; debug_id?: string; details?: unknown[] };
                     };
                     if (!res.ok) {
-                      throw new Error(details.error || 'Error al capturar el pago');
+                      // Show the real PayPal error if available
+                      const errMsg = details.error || 'Error al capturar el pago';
+                      throw new Error(errMsg);
                     }
                     if (details.status === 'COMPLETED') {
-                      const paymentSource = (data as unknown as Record<string, unknown>).paymentSource as string | undefined;
-                      const fundingSource = details.fundingSource || '';
-                      const isCard =
-                        typeof paymentSource === 'string'
-                          ? paymentSource === 'card'
-                          : fundingSource === 'card' || fundingSource === 'credit_card' || fundingSource === 'debit_card';
+                      const finalCertName = certName || details.payerName || 'Participante';
 
-                      const formattedPhone = phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : null;
-                      const certName = fullName.trim() || details.payerName || 'Participante';
-
-                      try {
-                        await fetch('/api/registrations/save', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            certificate_name: certName,
-                            email: email.trim() || details.payerEmail || '',
-                            phone: formattedPhone,
-                            country: country || details.payerCountry || 'Venezuela',
-                            course_name: course.title,
-                            amount: details.amount || course.priceAmount,
-                            currency: details.currency || course.currency,
-                            payment_method: isCard ? 'card' : 'paypal',
-                            paypal_order_id: details.orderID || data.orderID,
-                            paypal_capture_id: details.captureID || null,
-                          }),
-                        });
-                      } catch (saveErr) {
-                        console.error('Error al guardar la inscripción en la base de datos:', saveErr);
+                      // ── Garantizar persistencia en Supabase ──────────────────────
+                      // Si capture-order no pudo guardar en DB (savedInDb !== true),
+                      // usamos /api/registrations/save como mecanismo de respaldo.
+                      // Esto aplica especialmente al flujo de tarjeta de crédito/débito.
+                      if (!details.savedInDb) {
+                        console.warn('[onApprove] savedInDb=false — ejecutando respaldo via /api/registrations/save');
+                        try {
+                          const saveRes = await fetch('/api/registrations/save', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              certificate_name: finalCertName,
+                              email: userEmail || details.payerEmail || 'cliente@ferreiraacademy.com',
+                              phone: formattedPhone,
+                              country: country || details.payerCountry || 'Venezuela',
+                              course_name: course.title,
+                              amount: details.amount ?? 95.00,
+                              currency: details.currency ?? 'USD',
+                              payment_method: isCard ? 'credit_card' : 'paypal',
+                              paypal_order_id: details.orderID ?? data.orderID,
+                              paypal_capture_id: details.captureID ?? null,
+                            }),
+                          });
+                          const saveData = await saveRes.json();
+                          if (!saveRes.ok) {
+                            console.error('[onApprove] Error en respaldo /api/registrations/save:', saveData);
+                          } else {
+                            console.log('[onApprove] Registro guardado via respaldo:', saveData);
+                          }
+                        } catch (saveErr) {
+                          console.error('[onApprove] Excepción en respaldo /api/registrations/save:', saveErr);
+                        }
                       }
 
                       onClose();
                       if (onPaymentCompleted) {
                         onPaymentCompleted({
-                          certificateName: certName,
+                          certificateName: finalCertName,
                           courseName: course.title,
                         });
                       }
@@ -641,7 +681,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     }
                   } catch (err) {
                     console.error('Error al capturar pago:', err);
-                    setErrorMessage('Error al procesar la aprobación del pago.');
+                    setErrorMessage(err instanceof Error ? err.message : 'Error al procesar la aprobación del pago.');
                   }
                 }}
                 onError={(err) => {
@@ -649,6 +689,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   setErrorMessage('Ocurrió un error con la pasarela de PayPal.');
                 }}
               />
+
             </div>
 
             <p className="text-[10px] text-gray-500 text-center mt-3">

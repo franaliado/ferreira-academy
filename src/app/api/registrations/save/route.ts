@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { currentCourse } from '@/data/currentCourse';
 
 // POST /api/registrations/save
 export interface SaveRegistrationPayload {
@@ -13,6 +14,17 @@ export interface SaveRegistrationPayload {
   payment_method: string;
   paypal_order_id: string;
   paypal_capture_id?: string | null;
+}
+
+function normalizePaymentMethod(method?: string): 'paypal' | 'credit_card' | 'debit_card' {
+  if (method) {
+    const m = method.trim().toLowerCase();
+    if (m === 'paypal') return 'paypal';
+    if (m === 'credit_card') return 'credit_card';
+    if (m === 'debit_card') return 'debit_card';
+    if (m === 'card') return 'credit_card';
+  }
+  return 'paypal';
 }
 
 export async function POST(request: Request) {
@@ -32,22 +44,29 @@ export async function POST(request: Request) {
       paypal_capture_id,
     } = body;
 
-    // ── Validación estricta: si certificate_name o email están vacíos, rechazamos ──
-    const trimmedCertName = (certificate_name || '').trim();
-    if (!trimmedCertName) {
+    if (!paypal_order_id) {
       return NextResponse.json(
-        { error: 'El nombre completo es obligatorio.' },
+        { error: 'ID de orden de PayPal obligatorio.' },
         { status: 400 }
       );
     }
 
-    const trimmedEmail = (email || '').trim();
-    if (!trimmedEmail || !paypal_order_id) {
+    const trimmedCertName = (certificate_name || '').trim() || 'Participante';
+    const trimmedEmail = (email || '').trim() || 'cliente@ferreiraacademy.com';
+    const trimmedPhone = (phone || '').trim();
+    const trimmedCountry = (country || '').trim();
+
+    if (!trimmedPhone || !trimmedCountry) {
       return NextResponse.json(
-        { error: 'Datos de pago o correo incompletos.' },
+        { error: 'Teléfono y país son obligatorios.' },
         { status: 400 }
       );
     }
+
+    const finalPaymentMethod = normalizePaymentMethod(payment_method);
+    const finalCourseName = (course_name || '').trim() || currentCourse.title;
+    const numAmount = typeof amount === 'number' ? amount : parseFloat(String(amount)) || currentCourse.priceAmount;
+    const finalCurrency = (currency || currentCourse.currency || 'USD').toUpperCase();
 
     const supabaseAdmin = getSupabaseAdmin();
 
@@ -63,20 +82,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: selectError.message }, { status: 500 });
     }
 
-    const numAmount = typeof amount === 'number' ? amount : parseFloat(String(amount)) || 95.0;
-
     if (existing) {
       const { error: updateError } = await supabaseAdmin
         .from('registrations')
         .update({
           certificate_name: trimmedCertName,
           email: trimmedEmail,
-          phone: phone ? phone.trim() : null,
-          country: country ? country.trim() : 'N/A',
-          course_name: course_name || 'Faded Mastery Elite 2026',
+          phone: trimmedPhone,
+          country: trimmedCountry,
+          course_name: finalCourseName,
           amount: numAmount,
-          currency: currency || 'USD',
-          payment_method: payment_method || 'paypal',
+          currency: finalCurrency,
+          payment_method: finalPaymentMethod,
           paypal_capture_id: paypal_capture_id || null,
         })
         .eq('paypal_order_id', paypal_order_id);
@@ -92,12 +109,12 @@ export async function POST(request: Request) {
     const { error: insertError } = await supabaseAdmin.from('registrations').insert({
       certificate_name: trimmedCertName,
       email: trimmedEmail,
-      phone: phone ? phone.trim() : null,
-      country: country ? country.trim() : 'N/A',
-      course_name: course_name || 'Faded Mastery Elite 2026',
+      phone: trimmedPhone,
+      country: trimmedCountry,
+      course_name: finalCourseName,
       amount: numAmount,
-      currency: currency || 'USD',
-      payment_method: payment_method || 'paypal',
+      currency: finalCurrency,
+      payment_method: finalPaymentMethod,
       paypal_order_id: paypal_order_id,
       paypal_capture_id: paypal_capture_id || null,
     });
