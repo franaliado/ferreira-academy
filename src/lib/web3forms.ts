@@ -22,10 +22,6 @@ export interface SendRegistrationEmailParams {
   orderId?: string;
 }
 
-/**
- * Genera un texto estructurado optimizado para que Web3Forms lo procese
- * correctamente sin rechazar la petición por exceso de código HTML.
- */
 function generateRegistrationEmailBody(params: {
   participantName: string;
   courseTitle: string;
@@ -74,9 +70,6 @@ Si requieres asistencia personalizada, puedes escribirnos a ${ACADEMY_EMAIL}.
   `.trim();
 }
 
-/**
- * Envía la confirmación de inscripción mediante Web3Forms.
- */
 export async function sendRegistrationEmail(
   params: SendRegistrationEmailParams
 ): Promise<{
@@ -144,15 +137,15 @@ export async function sendRegistrationEmail(
 
     const payload = {
       access_key: accessKey,
-      name: participantName,
-      email: recipientEmail,
-      subject: '¡Inscripción Exitosa - Ferreira Academy!',
+      subject: `¡Inscripción Exitosa - ${courseTitle}!`,
       from_name: 'Ferreira Academy',
+      // Forzamos el correo del cliente como destinatario principal y de respuesta
+      email: recipientEmail,
       replyto: recipientEmail,
       message: textBody,
+      name: participantName,
       curso: courseTitle,
       participante: participantName,
-      email_participante: recipientEmail,
       telefono: params.phone || 'No especificado',
       pais: params.country || 'No especificado',
       monto:
@@ -168,7 +161,7 @@ export async function sendRegistrationEmail(
     };
 
     console.log(
-      `[Web3Forms] Enviando confirmación para: ${recipientEmail} (${participantName})`
+      `[Web3Forms] Enviando confirmación directa para: ${recipientEmail} (${participantName})`
     );
 
     const response = await fetch(
@@ -201,7 +194,7 @@ export async function sendRegistrationEmail(
       responseData.success === true
     ) {
       console.log(
-        `[Web3Forms] ✅ Formulario enviado correctamente para: ${recipientEmail}`
+        `[Web3Forms] ✅ Correo de confirmación enviado exitosamente a: ${recipientEmail}`
       );
 
       return {
