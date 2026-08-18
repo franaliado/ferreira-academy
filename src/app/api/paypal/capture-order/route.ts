@@ -136,21 +136,15 @@ export async function POST(request: Request) {
       }
     }
 
-    // ── Resend (Seguro) ──
+    // ── Email (Seguro) ──
     try {
-      if (process.env.RESEND_API_KEY) {
-        const { sendCourseRegistrationEmail } = await import('@/lib/resend');
-        await sendCourseRegistrationEmail({
-          certificateName: finalCertName,
-          email: finalEmail,
-          courseName: finalCourseName,
-          country: finalCountry,
-          lang: lang || 'es',
-        });
-        console.log(`[capture-order] ✅ Email enviado exitosamente a ${finalEmail}`);
-      } else {
-        console.error('[capture-order] ❌ ERROR: RESEND_API_KEY no definida en Vercel.');
-      }
+      const { sendEmail } = await import('@/lib/email');
+      await sendEmail({
+        to: finalEmail,
+        subject: `Confirmación de inscripción - ${finalCourseName}`,
+        html: `<p>Hola ${finalCertName}, gracias por inscribirte en ${finalCourseName}.</p>`,
+      });
+      console.log(`[capture-order] ✅ Email enviado exitosamente a ${finalEmail}`);
     } catch (emailErr: any) {
       console.error('[capture-order] ❌ ERROR enviando correo:', emailErr?.message);
     }
