@@ -221,6 +221,14 @@ export interface TranslationSchema {
     securePaymentTitle: string;
     paymentMethodLabel: string;
     paymentFooterNote: string;
+    duplicateError?: string;
+    defaultParticipant: string;
+    errors?: {
+      nameInvalid: string;
+      emailInvalid: string;
+      countryInvalid: string;
+      phoneInvalid: string;
+    };
     validation: {
       nameRequired: string;
       nameMinLength: string;
@@ -242,6 +250,7 @@ export interface TranslationSchema {
       paypalOrderError: string;
       paypalConnectionError: string;
       paymentCaptureError: string;
+      paymentApprovalError: string;
       paymentIncomplete: string;
       paypalGatewayError: string;
     };
@@ -612,6 +621,14 @@ export const translations: Record<Language, TranslationSchema> = {
       securePaymentTitle: 'Pago Seguro',
       paymentMethodLabel: 'Método de Pago (PayPal Oficial)',
       paymentFooterNote: 'Pago seguro encriptado de nivel 256-bit procesado por PayPal',
+      duplicateError: 'Los datos de contacto proporcionados ya se encuentran registrados para este curso.',
+      defaultParticipant: 'Participante',
+      errors: {
+        nameInvalid: 'El nombre completo debe tener al menos 3 caracteres.',
+        emailInvalid: 'Ingresa un correo electrónico válido.',
+        countryInvalid: 'Selecciona un país.',
+        phoneInvalid: 'El número de teléfono debe tener entre 8 y 10 dígitos.',
+      },
       validation: {
         nameRequired: 'Ingresa el nombre completo que aparecerá en el certificado.',
         nameMinLength: 'El nombre completo debe tener al menos 3 caracteres.',
@@ -633,6 +650,7 @@ export const translations: Record<Language, TranslationSchema> = {
         paypalOrderError: 'No se pudo generar la orden de PayPal.',
         paypalConnectionError: 'Ocurrió un error al conectar con PayPal.',
         paymentCaptureError: 'Error al capturar el pago.',
+        paymentApprovalError: 'Error al procesar la aprobación del pago.',
         paymentIncomplete: 'El pago no fue completado correctamente.',
         paypalGatewayError: 'Ocurrió un error con la pasarela de PayPal.',
       },
@@ -1000,6 +1018,14 @@ export const translations: Record<Language, TranslationSchema> = {
       securePaymentTitle: 'Secure Payment',
       paymentMethodLabel: 'Payment Method (Official PayPal)',
       paymentFooterNote: '256-bit encrypted secure payment processed by PayPal',
+      duplicateError: 'The contact information provided is already registered for this course.',
+      defaultParticipant: 'Participant',
+      errors: {
+        nameInvalid: 'Full name must be at least 3 characters.',
+        emailInvalid: 'Please enter a valid email address.',
+        countryInvalid: 'Please select a country.',
+        phoneInvalid: 'Phone number must be between 8 and 10 digits.',
+      },
       validation: {
         nameRequired: 'Please enter the full name that will appear on the certificate.',
         nameMinLength: 'Full name must be at least 3 characters long.',
@@ -1021,6 +1047,7 @@ export const translations: Record<Language, TranslationSchema> = {
         paypalOrderError: 'Could not generate the PayPal order.',
         paypalConnectionError: 'An error occurred while connecting to PayPal.',
         paymentCaptureError: 'Error capturing payment.',
+        paymentApprovalError: 'Error processing payment approval.',
         paymentIncomplete: 'The payment was not completed successfully.',
         paypalGatewayError: 'An error occurred with the PayPal gateway.',
       },
@@ -1390,6 +1417,14 @@ export const translations: Record<Language, TranslationSchema> = {
       securePaymentTitle: 'Pagamento Seguro',
       paymentMethodLabel: 'Método de Pagamento (PayPal Oficial)',
       paymentFooterNote: 'Pagamento seguro com criptografia de 256 bits processado pelo PayPal',
+      duplicateError: 'Os dados de contato informados já estão cadastrados para este curso.',
+      defaultParticipant: 'Participante',
+      errors: {
+        nameInvalid: 'O nome completo deve ter pelo menos 3 caracteres.',
+        emailInvalid: 'Insira um endereço de e-mail válido.',
+        countryInvalid: 'Selecione um país.',
+        phoneInvalid: 'O número de telefone deve ter entre 8 e 10 dígitos.',
+      },
       validation: {
         nameRequired: 'Insira o nome completo que aparecerá no certificado.',
         nameMinLength: 'O nome completo deve ter pelo menos 3 caracteres.',
@@ -1411,6 +1446,7 @@ export const translations: Record<Language, TranslationSchema> = {
         paypalOrderError: 'Não foi possível gerar o pedido no PayPal.',
         paypalConnectionError: 'Ocorreu um erro ao conectar ao PayPal.',
         paymentCaptureError: 'Erro ao capturar o pagamento.',
+        paymentApprovalError: 'Erro ao processar a aprovação do pagamento.',
         paymentIncomplete: 'O pagamento não foi concluído com sucesso.',
         paypalGatewayError: 'Ocorreu um erro com o gateway do PayPal.',
       },
@@ -1782,6 +1818,14 @@ export const translations: Record<Language, TranslationSchema> = {
       securePaymentTitle: 'Pagamento Sicuro',
       paymentMethodLabel: 'Metodo di Pagamento (PayPal Ufficiale)',
       paymentFooterNote: 'Pagamento sicuro con crittografia a 256 bit elaborato da PayPal',
+      duplicateError: 'I dati di contatto forniti sono già registrati per questo corso.',
+      defaultParticipant: 'Partecipante',
+      errors: {
+        nameInvalid: 'Il nome completo deve contenere almeno 3 caratteri.',
+        emailInvalid: 'Inserisci un indirizzo email valido.',
+        countryInvalid: 'Seleziona un paese.',
+        phoneInvalid: 'Il numero di telefono deve contenere tra 8 e 10 cifre.',
+      },
       validation: {
         nameRequired: 'Inserisci il nome completo che apparirà sul certificato.',
         nameMinLength: 'Il nome completo deve contenere almeno 3 caratteri.',
@@ -1803,6 +1847,7 @@ export const translations: Record<Language, TranslationSchema> = {
         paypalOrderError: 'Impossibile generare l\'ordine PayPal.',
         paypalConnectionError: 'Si è verificato un errore durante la connessione a PayPal.',
         paymentCaptureError: 'Errore durante l\'acquisizione del pagamento.',
+        paymentApprovalError: 'Errore durante l\'elaborazione dell\'approvazione del pagamento.',
         paymentIncomplete: 'Il pagamento non è stato completato correttamente.',
         paypalGatewayError: 'Si è verificato un errore con il gateway PayPal.',
       },
@@ -2174,6 +2219,14 @@ export const translations: Record<Language, TranslationSchema> = {
       securePaymentTitle: 'Paiement Sécurisé',
       paymentMethodLabel: 'Mode de Paiement (PayPal Officiel)',
       paymentFooterNote: 'Paiement sécurisé par chiffrement 256 bits traité par PayPal',
+      duplicateError: 'Les coordonnées fournies sont déjà enregistrées pour ce cours.',
+      defaultParticipant: 'Participant',
+      errors: {
+        nameInvalid: 'Le nom complet doit comporter au moins 3 caractères.',
+        emailInvalid: 'Veuillez entrer une adresse e-mail valide.',
+        countryInvalid: 'Veuillez sélectionner un pays.',
+        phoneInvalid: 'Le numéro de téléphone doit comporter entre 8 et 10 chiffres.',
+      },
       validation: {
         nameRequired: 'Veuillez entrer le nom complet qui apparaîtra sur le certificat.',
         nameMinLength: 'Le nom complet doit comporter au moins 3 caractères.',
@@ -2195,6 +2248,7 @@ export const translations: Record<Language, TranslationSchema> = {
         paypalOrderError: "Impossible de générer la commande PayPal.",
         paypalConnectionError: "Une erreur s'est produite lors de la connexion à PayPal.",
         paymentCaptureError: "Erreur lors de la capture du paiement.",
+        paymentApprovalError: "Erreur lors du traitement de l'approbation du paiement.",
         paymentIncomplete: "Le paiement n'a pas été effectué correctement.",
         paypalGatewayError: "Une erreur s'est produite avec la passerelle PayPal.",
       },
@@ -2563,6 +2617,14 @@ export const translations: Record<Language, TranslationSchema> = {
         securePaymentTitle: 'Sichere Zahlung',
         paymentMethodLabel: 'Zahlungsmethode (Offizielles PayPal)',
         paymentFooterNote: '256-Bit verschlüsselte, sichere Zahlung verarbeitet durch PayPal',
+        duplicateError: 'Die angegebenen Kontaktdaten sind für diesen Kurs bereits registriert.',
+        defaultParticipant: 'Teilnehmer',
+        errors: {
+          nameInvalid: 'Der vollständige Name muss mindestens 3 Zeichen lang sein.',
+          emailInvalid: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+          countryInvalid: 'Bitte wählen Sie ein Land aus.',
+          phoneInvalid: 'Die Telefonnummer muss zwischen 8 und 10 Ziffern lang sein.',
+        },
         validation: {
           nameRequired: 'Bitte geben Sie den vollständigen Namen ein, der auf dem Zertifikat erscheinen soll.',
           nameMinLength: 'Der vollständige Name muss mindestens 3 Zeichen lang sein.',
@@ -2584,6 +2646,7 @@ export const translations: Record<Language, TranslationSchema> = {
           paypalOrderError: 'Die PayPal-Bestellung konnte nicht erstellt werden.',
           paypalConnectionError: 'Bei der Verbindung mit PayPal ist ein Fehler aufgetreten.',
           paymentCaptureError: 'Fehler bei der Erfassung der Zahlung.',
+          paymentApprovalError: 'Fehler bei der Verarbeitung der Zahlungsfreigabe.',
           paymentIncomplete: 'Die Zahlung wurde nicht erfolgreich abgeschlossen.',
           paypalGatewayError: 'Bei der PayPal-Zahlungsschnittstelle ist ein Fehler aufgetreten.',
         },

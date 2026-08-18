@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Image from 'next/image';
@@ -120,7 +120,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
           const res = await fetch('https://ipapi.co/json/');
           const data = await res.json();
           if (data && data.country_name) {
-            // Buscamos si el país detectado está en nuestra lista de COUNTRIES
             const matchedCountry = COUNTRIES.find(
               (c) => c.name.toLowerCase() === data.country_name.toLowerCase() || c.code.toLowerCase() === data.country_code?.toLowerCase()
             );
@@ -174,7 +173,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     { icon: '☕', label: t.includes.coffeeBreak, show: course.isPresencial },
     {
       icon: course.isPresencial ? '✂️' : '💻',
-      label: course.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom'),
+      label: course.isPresencial ? t.includes.inPersonTraining : t.includes.zoomTraining,
       show: true,
     },
   ].filter((item) => item.show);
@@ -257,24 +256,39 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const handleProceedToCheckout = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
-    if (!fullName.trim() || fullName.trim().length < 3) {
-      setValidationError('El nombre completo debe tener al menos 3 caracteres.');
+    if (!fullName.trim()) {
+      setValidationError(t.validation.nameRequired || t.errors?.nameInvalid);
+      return;
+    }
+
+    if (fullName.trim().length < 3) {
+      setValidationError(t.errors?.nameInvalid || t.validation.nameMinLength);
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    if (!email.trim() || !emailRegex.test(email.trim())) {
-      setValidationError('Ingresa un correo electrónico válido (ej: nombre@dominio.com).');
+    if (!email.trim()) {
+      setValidationError(t.validation.emailRequired || t.errors?.emailInvalid);
+      return;
+    }
+
+    if (!emailRegex.test(email.trim())) {
+      setValidationError(t.errors?.emailInvalid || t.validation.emailInvalid);
       return;
     }
 
     if (!country) {
-      setValidationError('Selecciona un país.');
+      setValidationError(t.errors?.countryInvalid || t.validation.countryRequired);
       return;
     }
 
-    if (!phoneNumber || phoneNumber.length < 8 || phoneNumber.length > 10) {
-      setValidationError('El número de teléfono debe tener entre 8 y 10 dígitos.');
+    if (!phoneNumber.trim()) {
+      setValidationError(t.validation.phoneRequired || t.errors?.phoneInvalid);
+      return;
+    }
+
+    if (phoneNumber.trim().length < 8 || phoneNumber.trim().length > 10) {
+      setValidationError(t.errors?.phoneInvalid || t.validation.phoneLength);
       return;
     }
 
@@ -297,7 +311,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       const data = await res.json();
       if (data.isDuplicate) {
         setValidationError(
-          data.error || translations[currentLang]?.enrollmentModal?.duplicateError || 'Los datos de contacto proporcionados ya se encuentran registrados para este curso.'
+          data.error || t.duplicateError || t.validation.duplicateGeneric
         );
         setIsCheckingDuplicate(false);
         return;
@@ -381,7 +395,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   {t.officialPriceLabel}
                 </p>
                 <p className="text-white font-bold text-xs">
-                  {course.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom')}
+                  {course.isPresencial ? t.includes.inPersonTraining : t.includes.zoomTraining}
                 </p>
               </div>
               <div className="text-right">
@@ -391,7 +405,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               </div>
             </div>
 
-            <form onSubmit={handleProceedToCheckout} className="mb-1">
+            <form noValidate onSubmit={handleProceedToCheckout} className="mb-1">
               <div className="flex items-center space-x-2 border-b border-[#D4AF37]/20 pb-1.5 mb-2.5">
                 <User className="w-3.5 h-3.5 text-[#D4AF37]" />
                 <h3 className="text-xs font-extrabold text-[#D4AF37] uppercase tracking-wider">
@@ -547,7 +561,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 className="w-full group inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3 px-5 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-md hover:opacity-95 transition-all cursor-pointer mt-1 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <span>
-                  {isCheckingDuplicate ? 'Verificando datos...' : `${t.proceedToPaymentBtn} — ${course.displayPrice}`}
+                  {isCheckingDuplicate ? t.validation.verifyingData : `${t.proceedToPaymentBtn} — ${course.displayPrice}`}
                 </span>
                 {!isCheckingDuplicate && (
                   <ChevronRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
@@ -589,7 +603,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
             </div>
 
             <p className="text-xs sm:text-sm font-medium text-gray-300 mb-4 uppercase tracking-wider">
-              Método de Pago (PayPal Oficial)
+              {t.paymentMethodLabel}
             </p>
 
             {errorMessage && (
@@ -628,14 +642,14 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
                     const data = await res.json();
                     if (!res.ok || !data.id) {
-                      const msg = data.error || 'No se pudo generar la orden de PayPal';
+                      const msg = data.error || t.validation.paypalOrderError;
                       setErrorMessage(msg);
                       throw new Error(msg);
                     }
                     return data.id;
                   } catch (err: any) {
                     console.error('Error al crear orden:', err);
-                    setErrorMessage(err?.message || 'Ocurrió un error al conectar con PayPal.');
+                    setErrorMessage(err?.message || t.validation.paypalConnectionError);
                     throw err;
                   }
                 }}
@@ -649,7 +663,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       (data as any).fundingSource === 'credit_card';
 
                     const formattedPhone = phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : null;
-                    const certName = fullName.trim() || 'Participante';
+                    const certName = fullName.trim() || t.defaultParticipant;
                     const userEmail = email.trim();
 
                     const res = await fetch('/api/paypal/capture-order', {
@@ -683,11 +697,11 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     };
 
                     if (!res.ok) {
-                      throw new Error(details.error || 'Error al capturar el pago');
+                      throw new Error(details.error || t.validation.paymentCaptureError);
                     }
 
                     if (details.status === 'COMPLETED') {
-                      const finalCertName = certName || details.payerName || 'Participante';
+                      const finalCertName = certName || details.payerName || t.defaultParticipant;
                       const targetEmail = userEmail || details.payerEmail || 'cliente@ferreiraacademy.com';
                       const targetPhone = formattedPhone || details.payerPhone || null;
                       const targetCountry = country || details.payerCountry || 'Venezuela';
@@ -704,24 +718,24 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                         });
                       }
                     } else {
-                      throw new Error('El pago no fue completado correctamente.');
+                      throw new Error(t.validation.paymentIncomplete);
                     }
                   } catch (err) {
                     console.error('Error al capturar pago:', err);
                     setErrorMessage(
-                      err instanceof Error ? err.message : 'Error al procesar la aprobación del pago.'
+                      err instanceof Error ? err.message : t.validation.paymentApprovalError
                     );
                   }
                 }}
                 onError={(err) => {
                   console.error('PayPal Buttons Error:', err);
-                  setErrorMessage('Ocurrió un error con la pasarela de PayPal.');
+                  setErrorMessage(t.validation.paypalGatewayError);
                 }}
               />
             </div>
 
             <p className="text-[10px] text-gray-500 text-center mt-3">
-              Pago seguro encriptado de nivel 256-bit procesado por PayPal
+              {t.paymentFooterNote}
             </p>
           </div>
         )}
