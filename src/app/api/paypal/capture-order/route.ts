@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
 import { Language } from '@/lib/translations';
+import { sendEmail } from '@/lib/email';
 
 function normalizePaymentMethod(method?: string, isCardFlag?: boolean): 'paypal' | 'credit_card' | 'debit_card' {
   if (method) {
@@ -136,23 +137,18 @@ export async function POST(request: Request) {
       }
     }
 
-    // ── Email (Seguro) ──
-    try {
-      const { sendEmail } = await import('@/lib/email');
-      await sendEmail({
-        to: finalEmail,
-        subject: `Confirmación de inscripción - ${finalCourseName}`,
-        html: `<p>Hola ${finalCertName}, gracias por inscribirte en ${finalCourseName}.</p>`,
-      });
-      console.log(`[capture-order] ✅ Email enviado exitosamente a ${finalEmail}`);
-    } catch (emailErr: any) {
-      console.error('[capture-order] ❌ ERROR enviando correo completo:', emailErr);
-    }
+    // ── Email ──
+    await sendEmail({
+      to: finalEmail,
+      subject: `Confirmación de inscripción - ${finalCourseName}`,
+      html: `<p>Hola ${finalCertName}, gracias por inscribirte en ${finalCourseName}.</p>`,
+    });
+    console.log(`[capture-order] ✅ Email enviado exitosamente a ${finalEmail}`);
 
     return NextResponse.json({ success: true, status: 'COMPLETED', savedInDb }, { status: 200 });
   } catch (error: any) {
-    console.error('[capture-order] Error fatal:', error?.message);
-    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+    console.error('[capture-order] Error fatal:', error?.message, error?.stack);
+    return NextResponse.json({ success: false, error: error?.message || 'Internal server error' }, { status: 500 });
   }
 }
 
