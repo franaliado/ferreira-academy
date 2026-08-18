@@ -607,7 +607,7 @@ export const translations: Record<Language, TranslationSchema> = {
       cityLabel: 'Ciudad',
       cityValue: 'Por confirmar',
       officialPriceLabel: 'Precio oficial',
-      officialPriceValue: '95 USD',
+      officialPriceValue: '1 USD',
       includesTitle: 'Incluye',
       includes: {
         certificate: 'Certificado Digital',
@@ -1017,7 +1017,7 @@ export const translations: Record<Language, TranslationSchema> = {
       cityLabel: 'City',
       cityValue: 'To be confirmed',
       officialPriceLabel: 'Official price',
-      officialPriceValue: '95 USD',
+      officialPriceValue: '1 USD',
       includesTitle: 'Includes',
       includes: {
         certificate: 'Digital Certificate',
@@ -1429,7 +1429,7 @@ export const translations: Record<Language, TranslationSchema> = {
       cityLabel: 'Cidade',
       cityValue: 'A confirmar',
       officialPriceLabel: 'Preço oficial',
-      officialPriceValue: '95 USD',
+      officialPriceValue: '1 USD',
       includesTitle: 'Inclui',
       includes: {
         certificate: 'Certificado Digital',
@@ -1843,7 +1843,7 @@ export const translations: Record<Language, TranslationSchema> = {
       cityLabel: 'Città',
       cityValue: 'Da confermare',
       officialPriceLabel: 'Prezzo ufficiale',
-      officialPriceValue: '95 USD',
+      officialPriceValue: '1 USD',
       includesTitle: 'Include',
       includes: {
         certificate: 'Certificato Digitale',
@@ -2257,7 +2257,7 @@ export const translations: Record<Language, TranslationSchema> = {
       cityLabel: 'Ville',
       cityValue: 'À confirmer',
       officialPriceLabel: 'Prix officiel',
-      officialPriceValue: '95 USD',
+      officialPriceValue: '1 USD',
       includesTitle: 'Inclus',
       includes: {
         certificate: 'Certificat Numérique',
@@ -2668,7 +2668,7 @@ export const translations: Record<Language, TranslationSchema> = {
         cityLabel: 'Stadt',
         cityValue: 'Wird noch bestätigt',
         officialPriceLabel: 'Offizieller Preis',
-        officialPriceValue: '95 USD',
+        officialPriceValue: '1 USD',
         includesTitle: 'Enthält',
         includes: {
           certificate: 'Digitales Zertifikat',

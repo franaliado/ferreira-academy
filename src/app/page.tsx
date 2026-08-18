@@ -145,7 +145,7 @@ export default function Home() {
                 phone: certPhone,
                 country: certCountry,
                 course_name: cName,
-                amount: captureResult.amount || 95.0,
+                amount: captureResult.amount || 1.0,
                 currency: captureResult.currency || 'USD',
                 payment_method: 'paypal',
                 paypal_order_id: captureResult.orderID || token,
