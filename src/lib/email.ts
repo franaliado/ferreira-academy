@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 
 export async function sendEmail({ to, subject, html }: { to: string, subject: string, html: string }) {
-  // Configuración usando variables de entorno con fallback a los valores que me diste
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || "live.smtp.mailtrap.io",
     port: Number(process.env.SMTP_PORT) || 2525,
@@ -13,7 +12,8 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
 
   try {
     const info = await transporter.sendMail({
-      from: '"Ferreira Academy" <no-reply@demomailtrap.co>',
+      // Usamos un remitente válido o el dominio que Mailtrap te haya autorizado para producción
+      from: '"Ferreira Academy" <info@ferreira-academy.com>',
       to,
       subject,
       html,
@@ -22,7 +22,6 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
     console.log("Correo enviado con éxito. MessageId: %s", info.messageId);
     return info;
   } catch (error: any) {
-    // Esto mostrará el error real en los logs de Vercel
     console.error("ERROR DETALLADO DE NODEMAILER:", {
       message: error.message,
       code: error.code,
