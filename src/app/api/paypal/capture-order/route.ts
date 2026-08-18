@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, isSupabaseConfigured, checkDuplicateRegistration } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
-import { sendCourseRegistrationEmail } from '@/lib/resend';
 import { Language } from '@/lib/translations';
 
 function normalizePaymentMethod(method?: string, isCardFlag?: boolean): 'paypal' | 'credit_card' | 'debit_card' {
@@ -277,16 +276,21 @@ export async function POST(request: Request) {
       console.error('[capture-order] Unexpected DB error:', dbErr);
     }
 
-    // ── STEP 6: Enviar correo de confirmación traducido con Resend ──
+    // ── STEP 6: Enviar correo de confirmación con Resend (de forma segura) ──
     try {
-      await sendCourseRegistrationEmail({
-        certificateName: finalCertName,
-        email: finalEmail,
-        courseName: finalCourseName,
-        country: finalCountry,
-        lang: lang || 'es',
-      });
-      console.log(`[capture-order] Email sent successfully via Resend to ${finalEmail} (lang: ${lang || 'es'})`);
+      if (process.env.RESEND_API_KEY) {
+        const { sendCourseRegistrationEmail } = await import('@/lib/resend');
+        await sendCourseRegistrationEmail({
+          certificateName: finalCertName,
+          email: finalEmail,
+          courseName: finalCourseName,
+          country: finalCountry,
+          lang: lang || 'es',
+        });
+        console.log(`[capture-order] Email sent successfully via Resend to ${finalEmail} (lang: ${lang || 'es'})`);
+      } else {
+        console.warn('[capture-order] RESEND_API_KEY no configurado — se omite el envío de correo.');
+      }
     } catch (emailErr) {
       console.error('[capture-order] Error sending email via Resend:', emailErr);
     }
