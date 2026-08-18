@@ -12,7 +12,7 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
 
   try {
     const info = await transporter.sendMail({
-      from: '"Ferreira Academy" <no-reply@mailtrap.email>',
+      from: '"Ferreira Academy" <ferreiraacademy.oficial@gmail.com>',
       to,
       subject,
       html,
