@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, isSupabaseConfigured, checkDuplicateRegistration } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendCourseRegistrationEmail } from '@/lib/resend';
+import { Language } from '@/lib/translations';
 
 function normalizePaymentMethod(method?: string, isCardFlag?: boolean): 'paypal' | 'credit_card' | 'debit_card' {
   if (method) {
@@ -54,9 +53,10 @@ export async function POST(request: Request) {
       country?: string | null;
       courseName?: string;
       paymentMethod?: string;
+      lang?: Language;
     };
 
-    const { orderID, certificateName, email, phone, country, courseName, paymentMethod } = body;
+    const { orderID, certificateName, email, phone, country, courseName, paymentMethod, lang = 'es' } = body;
 
     if (!orderID) {
       return NextResponse.json({ error: 'Missing orderID' }, { status: 400 });
@@ -277,77 +277,16 @@ export async function POST(request: Request) {
       console.error('[capture-order] Unexpected DB error:', dbErr);
     }
 
-    // ── Formatear la fecha de inicio del curso (startDate) para que se vea legible en el correo ──
-    let formattedCourseDate = 'Próximamente';
-    if (currentCourse.startDate) {
-      try {
-        const dateObj = new Date(currentCourse.startDate);
-        if (!isNaN(dateObj.getTime())) {
-          formattedCourseDate = dateObj.toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-        }
-      } catch {
-        formattedCourseDate = currentCourse.startDate;
-      }
-    }
-
-    const modalidadTexto = currentCourse.isPresencial 
-      ? 'Presencial (Coffee Break + Capacitación Presencial)' 
-      : 'Online';
-
-    // Obtener la URL del dominio base para el logo en producción/desarrollo
-    const baseUrlApp = process.env.NEXT_PUBLIC_SITE_URL || 'https://ferreira-academy.vercel.app';
-    const logoUrl = `${baseUrlApp}/Logo_Oficial_Negro.png`;
-
-    // ── STEP 6: Enviar correo de confirmación con Resend ──
+    // ── STEP 6: Enviar correo de confirmación traducido con Resend ──
     try {
-      await resend.emails.send({
-        from: 'Ferreira Academy <onboarding@resend.dev>',
-        to: [finalEmail],
-        subject: `¡Inscripción exitosa a ${finalCourseName}! - Ferreira Academy`,
-        html: `
-          <div style="font-family: 'Montserrat', Arial, sans-serif; background-color: #000000; color: #ffffff; padding: 40px; border-radius: 8px;">
-            <div style="max-width: 600px; margin: 0 auto; background-color: #111111; border: 1px solid #333333; border-radius: 8px; padding: 30px;">
-              
-              <!-- Logo Oficial en Negro de la Academy -->
-              <div style="text-align: center; margin-bottom: 30px;">
-                <img src="${logoUrl}" alt="Ferreira Academy" style="max-width: 180px; height: auto; display: block; margin: 0 auto;" />
-              </div>
-
-              <!-- Saludo y Mensaje Principal -->
-              <h2 style="color: #ffffff; font-size: 20px; margin-bottom: 20px;">¡Hola, ${finalCertName}!</h2>
-              <p style="color: #cccccc; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
-                Tu inscripción al curso <strong style="color: #D4AF37;">${finalCourseName}</strong> se ha completado con éxito. Nos alegra mucho contar contigo.
-              </p>
-
-              <!-- Detalles del Curso desde currentCourse -->
-              <div style="background-color: #1a1a1a; border-left: 4px solid #D4AF37; padding: 15px 20px; margin-bottom: 30px; border-radius: 4px;">
-                <p style="margin: 6px 0; color: #dddddd; font-size: 14px;">📅 <strong>Fecha de inicio:</strong> ${formattedCourseDate}</p>
-                <p style="margin: 6px 0; color: #dddddd; font-size: 14px;">📍 <strong>Modalidad:</strong> ${modalidadTexto}</p>
-                <p style="margin: 6px 0; color: #dddddd; font-size: 14px;">🌍 <strong>País registrado:</strong> ${finalCountry}</p>
-              </div>
-
-              <!-- Botón de WhatsApp -->
-              <div style="text-align: center; margin-bottom: 30px;">
-                <p style="color: #cccccc; font-size: 14px; margin-bottom: 15px;">Únete a nuestra comunidad exclusiva de WhatsApp para estar al tanto de todos los detalles:</p>
-                <a href="https://chat.whatsapp.com/DYZZgiY5rm4Imls1wGIZzy?s=cl&p=a&ilr=1" target="_blank" style="background-color: #25D366; color: #ffffff; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block; font-size: 14px;">Unirme a la Comunidad de WhatsApp</a>
-              </div>
-
-              <!-- Pie de página -->
-              <hr style="border: none; border-top: 1px solid #333333; margin: 30px 0;" />
-              <p style="text-align: center; color: #777777; font-size: 12px; margin: 0;">
-                © ${new Date().getFullYear()} Ferreira Academy. Todos los derechos reservados.
-              </p>
-            </div>
-          </div>
-        `,
+      await sendCourseRegistrationEmail({
+        certificateName: finalCertName,
+        email: finalEmail,
+        courseName: finalCourseName,
+        country: finalCountry,
+        lang: lang || 'es',
       });
-      console.log(`[capture-order] Email sent successfully via Resend to ${finalEmail}`);
+      console.log(`[capture-order] Email sent successfully via Resend to ${finalEmail} (lang: ${lang || 'es'})`);
     } catch (emailErr) {
       console.error('[capture-order] Error sending email via Resend:', emailErr);
     }

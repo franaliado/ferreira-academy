@@ -68,23 +68,8 @@ const COUNTRIES: CountryOption[] = [
   { code: 'ni', name: 'Nicaragua', dial: '+505' },
 ];
 
-const getDefaultCountryForLang = (lang: Language): CountryOption => {
-  switch (lang) {
-    case 'en':
-      return COUNTRIES.find((c) => c.code === 'us') || COUNTRIES[0];
-    case 'pt':
-      return COUNTRIES.find((c) => c.code === 'br') || COUNTRIES[0];
-    case 'it':
-      return COUNTRIES.find((c) => c.code === 'it') || COUNTRIES[0];
-    case 'fr':
-      return COUNTRIES.find((c) => c.code === 'fr') || COUNTRIES[0];
-    case 'de':
-      return COUNTRIES.find((c) => c.code === 'de') || COUNTRIES[0];
-    case 'es':
-    default:
-      return COUNTRIES.find((c) => c.code === 've') || COUNTRIES[0];
-  }
-};
+const DEFAULT_FALLBACK_COUNTRY: CountryOption =
+  COUNTRIES.find((c) => c.code === 've') || COUNTRIES[0];
 
 export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
@@ -96,45 +81,79 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const countryDropdownRef = useRef<HTMLDivElement>(null);
-
-  const defaultCountryObj = getDefaultCountryForLang(currentLang);
+  const isCountrySetByUserRef = useRef<boolean>(false);
 
   const [step, setStep] = useState<'details' | 'checkout'>('details');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Form state
+  // Form state - Inicializado con fallback neutral (Venezuela) independiente del idioma
+  const [detectedCountry, setDetectedCountry] = useState<CountryOption | null>(null);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [country, setCountry] = useState(defaultCountryObj.name);
-  const [phonePrefix, setPhonePrefix] = useState(defaultCountryObj.dial);
+  const [country, setCountry] = useState<string>(DEFAULT_FALLBACK_COUNTRY.name);
+  const [phonePrefix, setPhonePrefix] = useState<string>(DEFAULT_FALLBACK_COUNTRY.dial);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
 
-  // Geolocalización automática por IP para ignorar el idioma al abrir el modal
+  // Geolocalización por IP y por Timezone (100% independiente del idioma de la UI)
   useEffect(() => {
-    if (isOpen) {
-      async function detectUserCountry() {
-        try {
-          const res = await fetch('https://ipapi.co/json/');
-          const data = await res.json();
-          if (data && data.country_name) {
-            const matchedCountry = COUNTRIES.find(
-              (c) => c.name.toLowerCase() === data.country_name.toLowerCase() || c.code.toLowerCase() === data.country_code?.toLowerCase()
-            );
-            if (matchedCountry) {
+    async function detectUserCountry() {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data && (data.country_name || data.country_code)) {
+          const matchedCountry = COUNTRIES.find(
+            (c) =>
+              c.name.toLowerCase() === data.country_name?.toLowerCase() ||
+              c.code.toLowerCase() === data.country_code?.toLowerCase()
+          );
+          if (matchedCountry) {
+            setDetectedCountry(matchedCountry);
+            if (!isCountrySetByUserRef.current) {
               setCountry(matchedCountry.name);
               setPhonePrefix(matchedCountry.dial);
             }
+            return;
           }
-        } catch (err) {
-          console.error('No se pudo detectar el país por IP:', err);
         }
+      } catch (err) {
+        console.error('No se pudo detectar el país por IP:', err);
       }
-      detectUserCountry();
+
+      // Fallback por la zona horaria del sistema del usuario si la API falla
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (tz) {
+          let matched: CountryOption | undefined;
+          if (tz.includes('Caracas')) matched = COUNTRIES.find((c) => c.code === 've');
+          else if (tz.includes('New_York') || tz.includes('Los_Angeles') || tz.includes('Chicago'))
+            matched = COUNTRIES.find((c) => c.code === 'us');
+          else if (tz.includes('Madrid')) matched = COUNTRIES.find((c) => c.code === 'es');
+          else if (tz.includes('Mexico')) matched = COUNTRIES.find((c) => c.code === 'mx');
+          else if (tz.includes('Bogota')) matched = COUNTRIES.find((c) => c.code === 'co');
+          else if (tz.includes('Buenos_Aires')) matched = COUNTRIES.find((c) => c.code === 'ar');
+          else if (tz.includes('Santiago')) matched = COUNTRIES.find((c) => c.code === 'cl');
+          else if (tz.includes('Lima')) matched = COUNTRIES.find((c) => c.code === 'pe');
+          else if (tz.includes('Rome')) matched = COUNTRIES.find((c) => c.code === 'it');
+          else if (tz.includes('Paris')) matched = COUNTRIES.find((c) => c.code === 'fr');
+          else if (tz.includes('Berlin')) matched = COUNTRIES.find((c) => c.code === 'de');
+          else if (tz.includes('Sao_Paulo')) matched = COUNTRIES.find((c) => c.code === 'br');
+
+          if (matched) {
+            setDetectedCountry(matched);
+            if (!isCountrySetByUserRef.current) {
+              setCountry(matched.name);
+              setPhonePrefix(matched.dial);
+            }
+          }
+        }
+      } catch (e) {}
     }
-  }, [isOpen]);
+
+    detectUserCountry();
+  }, []);
 
   const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -232,8 +251,14 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       setErrorMessage(null);
       setFullName('');
       setEmail('');
-      setCountry(defaultCountryObj.name);
-      setPhonePrefix(defaultCountryObj.dial);
+
+      // Si el usuario no ha seleccionado manualmente un país, mantener el país detectado por IP o fallback neutral
+      if (!isCountrySetByUserRef.current) {
+        const targetCountry = detectedCountry || DEFAULT_FALLBACK_COUNTRY;
+        setCountry(targetCountry.name);
+        setPhonePrefix(targetCountry.dial);
+      }
+
       setPhoneNumber('');
       setCountryDropdownOpen(false);
       setValidationError(null);
@@ -251,7 +276,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
         window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
       }
     }
-  }, [isOpen]);
+  }, [isOpen, detectedCountry]);
 
   const handleProceedToCheckout = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -427,7 +452,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     minLength={3}
                     autoComplete="name"
                     className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
-                    required
                   />
                 </div>
 
@@ -443,7 +467,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     maxLength={254}
                     autoComplete="email"
                     className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
-                    required
                   />
                 </div>
 
@@ -478,6 +501,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                               setCountry(c.name);
                               setPhonePrefix(c.dial);
                               setCountryDropdownOpen(false);
+                              isCountrySetByUserRef.current = true;
                             }}
                             className={`w-full flex items-center space-x-2.5 px-3 py-1.5 text-xs text-left transition-all ${
                               country === c.name
@@ -502,7 +526,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     <div className="relative w-22 sm:w-24">
                       <select
                         value={phonePrefix}
-                        onChange={(e) => setPhonePrefix(e.target.value)}
+                        onChange={(e) => {
+                          setPhonePrefix(e.target.value);
+                          isCountrySetByUserRef.current = true;
+                        }}
                         className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-2 py-1.5 text-white text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all appearance-none cursor-pointer text-center"
                       >
                         {Array.from(new Set(COUNTRIES.map((c) => c.dial))).map((dial) => (
@@ -524,7 +551,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       pattern="[0-9]{8,10}"
                       autoComplete="tel-national"
                       className="flex-1 bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all"
-                      required
                     />
                   </div>
                 </div>
@@ -679,6 +705,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                         amount: course.priceAmount,
                         currency: course.currency,
                         paymentMethod: isCard ? 'credit_card' : 'paypal',
+                        lang: currentLang,
                       }),
                     });
 
