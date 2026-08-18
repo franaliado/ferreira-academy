@@ -12,8 +12,8 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
 
   try {
     const info = await transporter.sendMail({
-      // Usamos un remitente válido o el dominio que Mailtrap te haya autorizado para producción
-      from: '"Ferreira Academy" <info@ferreira-academy.com>',
+      // Usamos el dominio genérico permitido por Mailtrap para evitar el bloqueo de dominio
+      from: '"Ferreira Academy" <no-reply@demomailtrap.co>',
       to,
       subject,
       html,
