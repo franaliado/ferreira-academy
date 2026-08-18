@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin, isSupabaseConfigured, checkDuplicateRegistration } from '@/lib/supabase';
+import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
 import { Language } from '@/lib/translations';
 
@@ -146,7 +146,7 @@ export async function POST(request: Request) {
       });
       console.log(`[capture-order] ✅ Email enviado exitosamente a ${finalEmail}`);
     } catch (emailErr: any) {
-      console.error('[capture-order] ❌ ERROR enviando correo:', emailErr?.message);
+      console.error('[capture-order] ❌ ERROR enviando correo completo:', emailErr);
     }
 
     return NextResponse.json({ success: true, status: 'COMPLETED', savedInDb }, { status: 200 });
