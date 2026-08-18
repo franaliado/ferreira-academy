@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, isSupabaseConfigured, checkDuplicateRegistration } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
-import { sendRegistrationEmail } from '@/lib/web3forms';
 
 export const runtime = 'nodejs';
 
@@ -198,13 +197,13 @@ export async function POST(request: Request) {
     // ── Insertar registro completo — solo cuando el pago fue confirmado ──
     const { error: insertError } = await admin.from('registrations').insert([{
       certificate_name: certName,
-      email:          email,
-      phone:          phone,
-      country:        country,
+      email:              email,
+      phone:              phone,
+      country:            country,
       payment_method: paymentMethod,
       course_name:    courseName,
-      amount:         amount,
-      currency:       currency,
+      amount:             amount,
+      currency:           currency,
       paypal_order_id: paypalOrderId,
       paypal_capture_id: (capture.id as string) || null,
       created_at:     new Date().toISOString(),
@@ -216,21 +215,6 @@ export async function POST(request: Request) {
     }
 
     console.log(`[Webhook PayPal] ✅ Registro guardado — Orden: ${paypalOrderId} | Cliente: ${email}`);
-
-    // Enviar correo de confirmación via Web3Forms en segundo plano
-    sendRegistrationEmail({
-      certificateName: certName,
-      email: email,
-      phone: phone,
-      country: country,
-      courseName: courseName,
-      amount: amount,
-      currency: currency,
-      paymentMethod: paymentMethod,
-      orderId: paypalOrderId,
-    }).catch((emailErr) => {
-      console.error('[Webhook PayPal] Error no bloqueante al enviar correo Web3Forms:', emailErr);
-    });
 
     return NextResponse.json({ received: true, paypalOrderId }, { status: 200 });
 
