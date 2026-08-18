@@ -11,7 +11,6 @@ import { Footer } from '@/components/Footer';
 import { EnrollmentModal, type RegistrationSuccessData } from '@/components/EnrollmentModal';
 import { SuccessModal } from '@/components/SuccessModal';
 import { currentCourse } from '@/data/currentCourse';
-import { sendRegistrationEmail } from '@/lib/web3forms';
 
 import { ChevronRight, AlertCircle } from 'lucide-react';
 
@@ -154,21 +153,6 @@ export default function Home() {
               }),
             }).catch(console.error);
 
-            // Enviar confirmación via Web3Forms (Client-Side)
-            sendRegistrationEmail({
-              certificateName: certName,
-              email: certEmail,
-              phone: certPhone,
-              country: certCountry,
-              courseName: cName,
-              amount: captureResult.amount || 95.0,
-              currency: captureResult.currency || 'USD',
-              paymentMethod: 'paypal',
-              orderId: captureResult.orderID || token,
-            }).catch((emailErr) => {
-              console.error('[Page] Error enviando correo Web3Forms en redirect flow:', emailErr);
-            });
-
             setSuccessData({
               certificateName: certName,
               courseName: cName,
@@ -263,7 +247,7 @@ export default function Home() {
         <section className="relative overflow-hidden">
           <div
             className="parallax-bg absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px]
-                        bg-amber-900/8 rounded-full blur-3xl pointer-events-none"
+                       bg-amber-900/8 rounded-full blur-3xl pointer-events-none"
           />
           <div className="reveal">
             <Benefits currentLang={currentLang} />
@@ -274,11 +258,11 @@ export default function Home() {
         <section className="relative overflow-hidden">
           <div
             className="parallax-slow absolute -left-24 top-1/3 w-72 h-72
-                        bg-amber-500/5 rounded-full blur-3xl pointer-events-none"
+                       bg-amber-500/5 rounded-full blur-3xl pointer-events-none"
           />
           <div
             className="parallax-slow absolute -right-24 bottom-1/4 w-72 h-72
-                        bg-amber-500/5 rounded-full blur-3xl pointer-events-none"
+                       bg-amber-500/5 rounded-full blur-3xl pointer-events-none"
           />
           <div className="reveal-left">
             <SeminarDetails currentLang={currentLang} onOpenCheckout={handleOpenCheckout} />
@@ -289,7 +273,7 @@ export default function Home() {
         <section className="relative overflow-hidden">
           <div
             className="parallax-medium absolute top-0 right-0 w-96 h-96
-                        bg-amber-900/6 rounded-full blur-3xl pointer-events-none"
+                       bg-amber-900/6 rounded-full blur-3xl pointer-events-none"
           />
           <div className="reveal-scale">
             <Testimonials currentLang={currentLang} />
@@ -300,7 +284,7 @@ export default function Home() {
         <section className="relative py-16 sm:py-20 bg-black overflow-hidden">
           <div
             className="parallax-bg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                        w-[900px] h-[300px] bg-amber-800/10 rounded-full blur-3xl pointer-events-none"
+                       w-[900px] h-[300px] bg-amber-800/10 rounded-full blur-3xl pointer-events-none"
           />
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
 

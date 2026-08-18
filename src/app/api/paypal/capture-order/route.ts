@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, isSupabaseConfigured, checkDuplicateRegistration } from '@/lib/supabase';
 import { currentCourse } from '@/data/currentCourse';
-import { sendRegistrationEmail } from '@/lib/web3forms';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 function normalizePaymentMethod(method?: string, isCardFlag?: boolean): 'paypal' | 'credit_card' | 'debit_card' {
   if (method) {
@@ -76,9 +78,7 @@ export async function POST(request: Request) {
     });
     if (getOrderRes.ok) {
       const orderInfo = await getOrderRes.json() as { status?: string; intent?: string; payment_source?: any };
-      console.log(`[capture-order] Pre-capture: status="${orderInfo.status}" intent="${orderInfo.intent}" payment_source_keys=${JSON.stringify(Object.keys(orderInfo.payment_source || {}))}`);
-    } else {
-      console.warn(`[capture-order] Could not GET order pre-capture: ${getOrderRes.status}`);
+      console.log(`[capture-order] Pre-capture: status="${orderInfo.status}" intent="${orderInfo.intent}"`);
     }
 
     let data: any = null;
@@ -100,43 +100,30 @@ export async function POST(request: Request) {
 
     if (captureResponse.ok) {
       data = await captureResponse.json();
-      console.log(
-        `[capture-order] Capture HTTP ${captureResponse.status} OK. ` +
-        `order.status="${data?.status}" ` +
-        `captures=${JSON.stringify(data?.purchase_units?.[0]?.payments?.captures?.map((c: any) => ({ id: c.id, status: c.status })))} ` +
-        `debug_id=${debugId}`
-      );
     } else {
       const errText = await captureResponse.text().catch(() => '');
       let errJson: any = {};
       try { errJson = JSON.parse(errText); } catch {}
 
-      // Full error logging
       console.error(
         `[capture-order] *** CAPTURE FAILED *** HTTP ${captureResponse.status} debug_id=${debugId}\n` +
-        `  name="${errJson?.name}" message="${errJson?.message}"\n` +
-        `  details=${JSON.stringify(errJson?.details)}\n` +
-        `  orderID=${orderID}`
+        `  name="${errJson?.name}" message="${errJson?.message}"`
       );
 
-      // Handle ORDER_ALREADY_CAPTURED (422)
       const alreadyCaptured =
         captureResponse.status === 422 &&
         (errJson?.details?.[0]?.issue === 'ORDER_ALREADY_CAPTURED' ||
           errText.includes('ORDER_ALREADY_CAPTURED'));
 
       if (alreadyCaptured) {
-        console.log(`[capture-order] ORDER_ALREADY_CAPTURED — fetching existing order.`);
         const existingRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderID}`, {
           headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
         });
         if (existingRes.ok) {
           data = await existingRes.json();
-          console.log(`[capture-order] Fetched existing order status="${data?.status}"`);
         }
       }
 
-      // Handle INSTRUMENT_DECLINED (card rejected by issuer)
       const instrumentDeclined =
         captureResponse.status === 422 &&
         (errJson?.details?.[0]?.issue === 'INSTRUMENT_DECLINED' ||
@@ -170,10 +157,7 @@ export async function POST(request: Request) {
     const firstCapture = firstPurchaseUnit?.payments?.captures?.[0];
     const isCompleted = data?.status === 'COMPLETED' || firstCapture?.status === 'COMPLETED';
 
-    console.log(`[capture-order] isCompleted=${isCompleted} order.status="${data?.status}" capture.status="${firstCapture?.status}"`);
-
     if (!isCompleted) {
-      console.error(`[capture-order] Order ${orderID} NOT completed. order.status="${data?.status}" capture.status="${firstCapture?.status}"`);
       return NextResponse.json(
         {
           success: false,
@@ -225,14 +209,11 @@ export async function POST(request: Request) {
     const payerID = data?.payer?.payer_id || '';
 
     if (!finalPhone || !finalCountry) {
-      console.error(`[capture-order] Missing required phone or country: phone="${finalPhone}", country="${finalCountry}"`);
       return NextResponse.json(
         { success: false, error: 'Se requieren teléfono y país válidos para registrar la inscripción.' },
         { status: 400 }
       );
     }
-
-    console.log(`[capture-order] Payment confirmed. captureID=${captureID} amount=${amountVal} currency=${currencyCode} method=${finalPaymentMethod}`);
 
     // ── STEP 5: Insert into Supabase ──
     let savedInDb = false;
@@ -261,27 +242,16 @@ export async function POST(request: Request) {
               paypal_capture_id: captureID !== 'N/A' ? captureID : null,
             })
             .eq('paypal_order_id', orderID);
-          if (updErr) {
-            console.error('[capture-order] Supabase UPDATE error:', updErr.message, '| code:', (updErr as any).code, '| details:', updErr.details, '| hint:', updErr.hint);
-          } else {
-            savedInDb = true;
-            console.log(`[capture-order] Supabase UPDATED for orderID=${orderID}`);
-          }
+          if (!updErr) savedInDb = true;
         } else {
-          // ── VALIDAR DUPLICADOS ANTES DE INSERTAR ──
-          const duplicateCheck = await checkDuplicateRegistration(
-            finalEmail,
-            finalPhone,
-            orderID
-          );
+          const duplicateCheck = await checkDuplicateRegistration(finalEmail, finalPhone, orderID);
 
           if (duplicateCheck.isDuplicate) {
-            console.warn(`[capture-order] Registro duplicado detectado para ${finalEmail} / ${finalPhone}. Omitiendo inserción.`);
             return NextResponse.json(
               {
                 success: false,
                 error: 'duplicate_registration',
-                message: duplicateCheck.message || 'Ya te encuentras registrado/a en este curso con este correo o número de teléfono.',
+                message: duplicateCheck.message || 'Ya te encuentras registrado/a.',
                 field: duplicateCheck.field,
               },
               { status: 409 }
@@ -300,36 +270,87 @@ export async function POST(request: Request) {
             paypal_order_id: orderID,
             paypal_capture_id: captureID !== 'N/A' ? captureID : null,
           });
-          if (insErr) {
-            console.error('[capture-order] Supabase INSERT error:', insErr.message, '| code:', (insErr as any).code, '| details:', insErr.details, '| hint:', insErr.hint);
-          } else {
-            savedInDb = true;
-            console.log(`[capture-order] Supabase INSERTED for orderID=${orderID}`);
-          }
+          if (!insErr) savedInDb = true;
         }
-      } else {
-        console.warn('[capture-order] Supabase not configured — skipping DB insert.');
       }
     } catch (dbErr) {
       console.error('[capture-order] Unexpected DB error:', dbErr);
     }
 
-    console.log(`[capture-order] *** DONE *** orderID=${data.id} captureID=${captureID} savedInDb=${savedInDb}`);
+    // ── Formatear la fecha de inicio del curso (startDate) para que se vea legible en el correo ──
+    let formattedCourseDate = 'Próximamente';
+    if (currentCourse.startDate) {
+      try {
+        const dateObj = new Date(currentCourse.startDate);
+        if (!isNaN(dateObj.getTime())) {
+          formattedCourseDate = dateObj.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+      } catch {
+        formattedCourseDate = currentCourse.startDate;
+      }
+    }
 
-    // ── STEP 6: Enviar correo de confirmación automático via Web3Forms ──
-    sendRegistrationEmail({
-      certificateName: finalCertName,
-      email: finalEmail,
-      phone: finalPhone,
-      country: finalCountry,
-      courseName: finalCourseName,
-      amount: amountVal,
-      currency: currencyCode,
-      paymentMethod: finalPaymentMethod,
-      orderId: data.id || orderID,
-    }).catch((emailErr) => {
-      console.error('[capture-order] Error no bloqueante al enviar correo Web3Forms:', emailErr);
-    });
+    const modalidadTexto = currentCourse.isPresencial 
+      ? 'Presencial (Coffee Break + Capacitación Presencial)' 
+      : 'Online';
+
+    // Obtener la URL del dominio base para el logo en producción/desarrollo
+    const baseUrlApp = process.env.NEXT_PUBLIC_SITE_URL || 'https://ferreira-academy.vercel.app';
+    const logoUrl = `${baseUrlApp}/Logo_Oficial_Negro.png`;
+
+    // ── STEP 6: Enviar correo de confirmación con Resend ──
+    try {
+      await resend.emails.send({
+        from: 'Ferreira Academy <onboarding@resend.dev>',
+        to: [finalEmail],
+        subject: `¡Inscripción exitosa a ${finalCourseName}! - Ferreira Academy`,
+        html: `
+          <div style="font-family: 'Montserrat', Arial, sans-serif; background-color: #000000; color: #ffffff; padding: 40px; border-radius: 8px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #111111; border: 1px solid #333333; border-radius: 8px; padding: 30px;">
+              
+              <!-- Logo Oficial en Negro de la Academy -->
+              <div style="text-align: center; margin-bottom: 30px;">
+                <img src="${logoUrl}" alt="Ferreira Academy" style="max-width: 180px; height: auto; display: block; margin: 0 auto;" />
+              </div>
+
+              <!-- Saludo y Mensaje Principal -->
+              <h2 style="color: #ffffff; font-size: 20px; margin-bottom: 20px;">¡Hola, ${finalCertName}!</h2>
+              <p style="color: #cccccc; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                Tu inscripción al curso <strong style="color: #D4AF37;">${finalCourseName}</strong> se ha completado con éxito. Nos alegra mucho contar contigo.
+              </p>
+
+              <!-- Detalles del Curso desde currentCourse -->
+              <div style="background-color: #1a1a1a; border-left: 4px solid #D4AF37; padding: 15px 20px; margin-bottom: 30px; border-radius: 4px;">
+                <p style="margin: 6px 0; color: #dddddd; font-size: 14px;">📅 <strong>Fecha de inicio:</strong> ${formattedCourseDate}</p>
+                <p style="margin: 6px 0; color: #dddddd; font-size: 14px;">📍 <strong>Modalidad:</strong> ${modalidadTexto}</p>
+                <p style="margin: 6px 0; color: #dddddd; font-size: 14px;">🌍 <strong>País registrado:</strong> ${finalCountry}</p>
+              </div>
+
+              <!-- Botón de WhatsApp -->
+              <div style="text-align: center; margin-bottom: 30px;">
+                <p style="color: #cccccc; font-size: 14px; margin-bottom: 15px;">Únete a nuestra comunidad exclusiva de WhatsApp para estar al tanto de todos los detalles:</p>
+                <a href="https://chat.whatsapp.com/DYZZgiY5rm4Imls1wGIZzy?s=cl&p=a&ilr=1" target="_blank" style="background-color: #25D366; color: #ffffff; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block; font-size: 14px;">Unirme a la Comunidad de WhatsApp</a>
+              </div>
+
+              <!-- Pie de página -->
+              <hr style="border: none; border-top: 1px solid #333333; margin: 30px 0;" />
+              <p style="text-align: center; color: #777777; font-size: 12px; margin: 0;">
+                © ${new Date().getFullYear()} Ferreira Academy. Todos los derechos reservados.
+              </p>
+            </div>
+          </div>
+        `,
+      });
+      console.log(`[capture-order] Email sent successfully via Resend to ${finalEmail}`);
+    } catch (emailErr) {
+      console.error('[capture-order] Error sending email via Resend:', emailErr);
+    }
 
     return NextResponse.json(
       {

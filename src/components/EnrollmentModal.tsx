@@ -6,7 +6,6 @@ import { Language, translations } from '@/lib/translations';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { ShieldCheck, X, ChevronRight, ChevronLeft, User, ChevronDown } from 'lucide-react';
 import 'flag-icons/css/flag-icons.min.css';
-import { sendRegistrationEmail } from '@/lib/web3forms';
 
 export interface RegistrationSuccessData {
   certificateName: string;
@@ -30,7 +29,6 @@ interface EnrollmentModalProps {
   onClose: () => void;
   currentLang?: Language;
   currentCourse?: CourseInfo;
-  /** Called when a PayPal payment is captured with status COMPLETED and registration saved in DB */
   onPaymentCompleted?: (data: RegistrationSuccessData) => void;
 }
 
@@ -70,7 +68,6 @@ const COUNTRIES: CountryOption[] = [
   { code: 'ni', name: 'Nicaragua', dial: '+505' },
 ];
 
-/** Determina el país inicial configurable según el idioma de la aplicación */
 const getDefaultCountryForLang = (lang: Language): CountryOption => {
   switch (lang) {
     case 'en':
@@ -105,7 +102,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const [step, setStep] = useState<'details' | 'checkout'>('details');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Participant Information form state
+  // Form state
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [country, setCountry] = useState(defaultCountryObj.name);
@@ -115,46 +112,52 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
 
-  // ── Real-time input handlers ──────────────────────────────────────────────
+  // Geolocalización automática por IP para ignorar el idioma al abrir el modal
+  useEffect(() => {
+    if (isOpen) {
+      async function detectUserCountry() {
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          const data = await res.json();
+          if (data && data.country_name) {
+            // Buscamos si el país detectado está en nuestra lista de COUNTRIES
+            const matchedCountry = COUNTRIES.find(
+              (c) => c.name.toLowerCase() === data.country_name.toLowerCase() || c.code.toLowerCase() === data.country_code?.toLowerCase()
+            );
+            if (matchedCountry) {
+              setCountry(matchedCountry.name);
+              setPhonePrefix(matchedCountry.dial);
+            }
+          }
+        } catch (err) {
+          console.error('No se pudo detectar el país por IP:', err);
+        }
+      }
+      detectUserCountry();
+    }
+  }, [isOpen]);
 
-  /** Nombre completo: solo letras (con tildes), espacios y guiones. Máx 100. Title-case. */
   const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-
-    // Bloquear caracteres no permitidos: quitar todo lo que no sea letra, espacio o guion
-    const filtered = raw.replace(
-      /[^a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜàèìòùÀÈÌÒÙñÑ\s-]/g,
-      ''
-    );
-
-    // Aplicar Title Case automático
+    const filtered = raw.replace(/[^a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜàèìòùÀÈÌÒÙñÑ\s-]/g, '');
     const titled = filtered.replace(
       /(^|[\s-])([a-záéíóúäëïöüàèìòùñ])/g,
-      (_match: string, sep: string, char: string) =>
-        sep + char.toUpperCase()
+      (_match: string, sep: string, char: string) => sep + char.toUpperCase()
     );
-
-    // Limitar a 100 caracteres
     setFullName(titled.slice(0, 100));
   };
 
-  /** Email: forzar minúsculas en tiempo real. Máx 254. */
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value.toLowerCase().slice(0, 254));
   };
 
-  /** Teléfono: solo dígitos. Máx 10. */
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
     setPhoneNumber(digits);
   };
 
-  // ─────────────────────────────────────────────────────────────────────────
+  const t = (translations[currentLang] || translations.es).enrollmentModal;
 
-  const t =
-    (translations[currentLang] || translations.es).enrollmentModal;
-
-  // Safe fallback if currentCourse is momentarily undefined
   const course = currentCourse || {
     id: 'faded-mastery-elite-2026',
     title: '',
@@ -164,66 +167,38 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     isPresencial: false,
   };
 
-  /*
-   * Precio real del curso.
-   *
-   * IMPORTANTE:
-   * Nunca utilizar un precio fijo como 95.00.
-   * El precio siempre debe provenir de currentCourse.priceAmount.
-   */
-  const courseAmount = course.priceAmount;
-
   const includes = [
     { icon: '📜', label: t.includes.certificate, show: true },
     { icon: '📚', label: t.includes.courseMaterial, show: true },
     { icon: '👑', label: t.includes.vipCommunity, show: true },
-    {
-      icon: '☕',
-      label: t.includes.coffeeBreak,
-      show: course.isPresencial,
-    },
+    { icon: '☕', label: t.includes.coffeeBreak, show: course.isPresencial },
     {
       icon: course.isPresencial ? '✂️' : '💻',
-      label: course.isPresencial
-        ? t.includes.inPersonTraining
-        : t.includes.zoomTraining || 'Capacitación en Vivo por Zoom',
+      label: course.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom'),
       show: true,
     },
   ].filter((item) => item.show);
 
-  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        countryDropdownRef.current &&
-        !countryDropdownRef.current.contains(e.target as Node)
-      ) {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(e.target as Node)) {
         setCountryDropdownOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-
-    return () =>
-      document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Keyboard handling and focus trap
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!isOpen) return;
-
       if (e.key === 'Tab') {
-        const focusableElements =
-          modalRef.current?.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          );
-
+        const focusableElements = modalRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
         if (!focusableElements || focusableElements.length === 0) return;
-
         const firstElement = focusableElements[0];
-        const lastElement =
-          focusableElements[focusableElements.length - 1];
+        const lastElement = focusableElements[focusableElements.length - 1];
 
         if (e.shiftKey) {
           if (document.activeElement === firstElement) {
@@ -243,15 +218,12 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
-
-    return () =>
-      document.removeEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
   useEffect(() => {
     if (isOpen) {
       const scrollY = window.scrollY;
-
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = '100%';
@@ -272,62 +244,37 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       });
     } else {
       const scrollY = document.body.style.top;
-
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
-
       if (scrollY) {
-        window.scrollTo(
-          0,
-          parseInt(scrollY || '0', 10) * -1
-        );
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
       }
     }
   }, [isOpen]);
 
-  const handleProceedToCheckout = async (
-    e?: React.FormEvent
-  ) => {
+  const handleProceedToCheckout = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
-    // Nombre: obligatorio, mín 3 chars
     if (!fullName.trim() || fullName.trim().length < 3) {
-      setValidationError(
-        'El nombre completo debe tener al menos 3 caracteres.'
-      );
+      setValidationError('El nombre completo debe tener al menos 3 caracteres.');
       return;
     }
 
-    // Email: obligatorio + formato válido
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-    if (
-      !email.trim() ||
-      !emailRegex.test(email.trim())
-    ) {
-      setValidationError(
-        'Ingresa un correo electrónico válido (ej: nombre@dominio.com).'
-      );
+    if (!email.trim() || !emailRegex.test(email.trim())) {
+      setValidationError('Ingresa un correo electrónico válido (ej: nombre@dominio.com).');
       return;
     }
 
-    // País: obligatorio
     if (!country) {
       setValidationError('Selecciona un país.');
       return;
     }
 
-    // Teléfono: obligatorio, mín 8 dígitos, máx 10
-    if (
-      !phoneNumber ||
-      phoneNumber.length < 8 ||
-      phoneNumber.length > 10
-    ) {
-      setValidationError(
-        'El número de teléfono debe tener entre 8 y 10 dígitos.'
-      );
+    if (!phoneNumber || phoneNumber.length < 8 || phoneNumber.length > 10) {
+      setValidationError('El número de teléfono debe tener entre 8 y 10 dígitos.');
       return;
     }
 
@@ -336,39 +283,27 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
     try {
       const formattedPhone = `${phonePrefix} ${phoneNumber.trim()}`;
-
-      const res = await fetch(
-        '/api/registrations/check-duplicate',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: email.trim(),
-            phone: formattedPhone,
-            courseId: course.id,
-            courseName: course.title,
-          }),
-        }
-      );
+      const res = await fetch('/api/registrations/check-duplicate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          phone: formattedPhone,
+          courseId: course.id,
+          courseName: course.title,
+        }),
+      });
 
       const data = await res.json();
-
       if (data.isDuplicate) {
         setValidationError(
-          data.error ||
-            'Los datos de contacto proporcionados ya se encuentran registrados para este curso.'
+          data.error || translations[currentLang]?.enrollmentModal?.duplicateError || 'Los datos de contacto proporcionados ya se encuentran registrados para este curso.'
         );
-
         setIsCheckingDuplicate(false);
         return;
       }
     } catch (err) {
-      console.error(
-        'Error al verificar duplicado:',
-        err
-      );
+      console.error('Error al verificar duplicado:', err);
     } finally {
       setIsCheckingDuplicate(false);
     }
@@ -376,9 +311,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     setStep('checkout');
   };
 
-  const selectedCountryObj =
-    COUNTRIES.find((c) => c.name === country) ||
-    COUNTRIES[0];
+  const selectedCountryObj = COUNTRIES.find((c) => c.name === country) || COUNTRIES[0];
 
   if (!isOpen) return null;
 
@@ -391,34 +324,12 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     >
       <style jsx global>{`
         @keyframes modalScaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.92) translateY(12px);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
+          from { opacity: 0; transform: scale(0.92) translateY(12px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        .animate-modal-scale {
-          animation: modalScaleIn 0.3s
-            cubic-bezier(0.16, 1, 0.3, 1)
-            forwards;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.25s ease-out forwards;
-        }
+        .animate-modal-scale { animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.25s ease-out forwards; }
       `}</style>
 
       <div
@@ -432,13 +343,12 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
             ref={closeBtnRef}
             onClick={onClose}
             aria-label={t.close}
-            className="absolute top-3 right-3 p-1.5 sm:p-2 rounded-full bg-white/5 border border-[#D4AF37]/20 text-gray-300 hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4AF37] z-20"
+            className="absolute top-3 right-3 p-1.5 sm:p-2 rounded-full bg-white/5 border border-[#D4AF37]/20 text-gray-300 hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 hover:border-[#D4AF37]/50 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4AF37] z-20"
           >
             <X className="w-4 h-4" />
           </button>
         )}
 
-        {/* ── VISTA 1: DETALLES Y FORMULARIO DE PARTICIPANTE ── */}
         {step === 'details' && (
           <>
             <div className="flex flex-col items-center text-center mt-1 mb-0">
@@ -459,32 +369,21 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 >
                   {course.title}
                 </h2>
-
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-gray-400 mt-0.5 bg-black px-2 py-0.5 inline-block">
-                  {course.isPresencial
-                    ? t.subtitlePresencial || t.subtitle
-                    : t.subtitleZoom || t.subtitle}
+                  {course.isPresencial ? (t.subtitlePresencial || t.subtitle) : (t.subtitleZoom || t.subtitle)}
                 </p>
               </div>
             </div>
 
-            <div className="mt-2.5"></div>
-
-            {/* Price Box */}
-            <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-2.5 sm:p-3 mb-2.5 shadow-inner flex items-center justify-between">
+            <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-2.5 sm:p-3 mb-2.5 shadow-inner flex items-center justify-between mt-2.5">
               <div>
                 <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
                   {t.officialPriceLabel}
                 </p>
-
                 <p className="text-white font-bold text-xs">
-                  {course.isPresencial
-                    ? t.includes.inPersonTraining
-                    : t.includes.zoomTraining ||
-                      'Capacitación en Vivo por Zoom'}
+                  {course.isPresencial ? t.includes.inPersonTraining : (t.includes.zoomTraining || 'Capacitación en Vivo por Zoom')}
                 </p>
               </div>
-
               <div className="text-right">
                 <span className="text-[#D4AF37] font-black text-sm sm:text-base tracking-tight">
                   {course.displayPrice}
@@ -492,27 +391,19 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               </div>
             </div>
 
-            {/* PARTICIPANT INFORMATION SECTION */}
-            <form
-              onSubmit={handleProceedToCheckout}
-              className="mb-1"
-            >
+            <form onSubmit={handleProceedToCheckout} className="mb-1">
               <div className="flex items-center space-x-2 border-b border-[#D4AF37]/20 pb-1.5 mb-2.5">
                 <User className="w-3.5 h-3.5 text-[#D4AF37]" />
-
                 <h3 className="text-xs font-extrabold text-[#D4AF37] uppercase tracking-wider">
                   {t.participantInfoTitle}
                 </h3>
               </div>
 
               <div className="space-y-2 mb-2.5">
-                {/* Full Name */}
                 <div>
                   <label className="text-[11px] sm:text-xs font-semibold text-gray-300 mb-0.5 block">
-                    {t.fullNameLabel}{' '}
-                    <span className="text-[#D4AF37]">*</span>
+                    {t.fullNameLabel} <span className="text-[#D4AF37]">*</span>
                   </label>
-
                   <input
                     type="text"
                     value={fullName}
@@ -526,13 +417,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   />
                 </div>
 
-                {/* Email Address */}
                 <div>
                   <label className="text-[11px] sm:text-xs font-semibold text-gray-300 mb-0.5 block">
-                    {t.emailLabel}{' '}
-                    <span className="text-[#D4AF37]">*</span>
+                    {t.emailLabel} <span className="text-[#D4AF37]">*</span>
                   </label>
-
                   <input
                     type="email"
                     value={email}
@@ -545,41 +433,23 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   />
                 </div>
 
-                {/* Country Dropdown */}
                 <div>
                   <label className="text-[11px] sm:text-xs font-semibold text-gray-300 mb-0.5 block">
-                    {t.countryLabel}{' '}
-                    <span className="text-[#D4AF37]">*</span>
+                    {t.countryLabel} <span className="text-[#D4AF37]">*</span>
                   </label>
-
-                  <div
-                    className="relative"
-                    ref={countryDropdownRef}
-                  >
+                  <div className="relative" ref={countryDropdownRef}>
                     <button
                       type="button"
-                      onClick={() =>
-                        setCountryDropdownOpen(
-                          !countryDropdownOpen
-                        )
-                      }
+                      onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
                       className="w-full flex items-center justify-between bg-[#121212] border border-white/10 hover:border-[#D4AF37]/50 focus:border-[#D4AF37] rounded-xl px-3 py-1.5 text-white text-xs sm:text-sm focus:outline-none transition-all cursor-pointer"
                     >
                       <div className="flex items-center space-x-2.5">
-                        <span
-                          className={`fi fi-${selectedCountryObj.code} rounded-sm shrink-0`}
-                        />
-
-                        <span className="font-medium text-white">
-                          {selectedCountryObj.name}
-                        </span>
+                        <span className={`fi fi-${selectedCountryObj.code} rounded-sm shrink-0`} />
+                        <span className="font-medium text-white">{selectedCountryObj.name}</span>
                       </div>
-
                       <ChevronDown
                         className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${
-                          countryDropdownOpen
-                            ? 'rotate-180 text-[#D4AF37]'
-                            : ''
+                          countryDropdownOpen ? 'rotate-180 text-[#D4AF37]' : ''
                         }`}
                       />
                     </button>
@@ -601,10 +471,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                                 : 'text-gray-300 hover:bg-white/5 hover:text-white font-medium'
                             }`}
                           >
-                            <span
-                              className={`fi fi-${c.code} rounded-sm shrink-0`}
-                            />
-
+                            <span className={`fi fi-${c.code} rounded-sm shrink-0`} />
                             <span>{c.name}</span>
                           </button>
                         ))}
@@ -613,32 +480,19 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   </div>
                 </div>
 
-                {/* Phone Number */}
                 <div>
                   <label className="text-[11px] sm:text-xs font-semibold text-gray-300 mb-0.5 block">
-                    {t.phoneLabel}{' '}
-                    <span className="text-[#D4AF37]">*</span>
+                    {t.phoneLabel} <span className="text-[#D4AF37]">*</span>
                   </label>
-
                   <div className="flex gap-2">
                     <div className="relative w-22 sm:w-24">
                       <select
                         value={phonePrefix}
-                        onChange={(e) =>
-                          setPhonePrefix(e.target.value)
-                        }
+                        onChange={(e) => setPhonePrefix(e.target.value)}
                         className="w-full bg-[#121212] border border-white/10 focus:border-[#D4AF37] rounded-xl px-2 py-1.5 text-white text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-all appearance-none cursor-pointer text-center"
                       >
-                        {Array.from(
-                          new Set(
-                            COUNTRIES.map((c) => c.dial)
-                          )
-                        ).map((dial) => (
-                          <option
-                            key={dial}
-                            value={dial}
-                            className="bg-[#121212] text-white"
-                          >
+                        {Array.from(new Set(COUNTRIES.map((c) => c.dial))).map((dial) => (
+                          <option key={dial} value={dial} className="bg-[#121212] text-white">
                             {dial}
                           </option>
                         ))}
@@ -662,22 +516,17 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 </div>
               </div>
 
-              {/* INCLUDES section */}
               <div className="mb-2.5 space-y-1">
                 <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#D4AF37]">
                   {t.includesTitle}
                 </p>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {includes.map((item, idx) => (
                     <div
                       key={idx}
                       className="flex items-center space-x-2 bg-white/[0.02] border border-white/5 rounded-lg px-2.5 py-1.5"
                     >
-                      <span className="text-xs">
-                        {item.icon}
-                      </span>
-
+                      <span className="text-xs">{item.icon}</span>
                       <span className="text-[10px] sm:text-[11px] font-medium text-gray-200">
                         {item.label}
                       </span>
@@ -698,11 +547,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 className="w-full group inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#D4AF37] via-[#f3e5ab] to-[#D4AF37] text-black font-black py-3 px-5 rounded-xl uppercase tracking-wider text-xs sm:text-sm shadow-md hover:opacity-95 transition-all cursor-pointer mt-1 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <span>
-                  {isCheckingDuplicate
-                    ? 'Verificando datos...'
-                    : `${t.proceedToPaymentBtn} — ${course.displayPrice}`}
+                  {isCheckingDuplicate ? 'Verificando datos...' : `${t.proceedToPaymentBtn} — ${course.displayPrice}`}
                 </span>
-
                 {!isCheckingDuplicate && (
                   <ChevronRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
                 )}
@@ -711,18 +557,15 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
           </>
         )}
 
-        {/* ── VISTA 2: SEGUNDO MODAL (PAGO SEGURO) ── */}
         {step === 'checkout' && (
           <div className="py-3">
             <div className="flex items-center justify-between border-b border-white/10 pb-3.5 mb-5">
               <div className="flex items-center space-x-2.5">
                 <ShieldCheck className="w-6 h-6 text-[#D4AF37]" />
-
                 <h3 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider">
                   {t.securePaymentTitle}
                 </h3>
               </div>
-
               <button
                 type="button"
                 onClick={() => setStep('details')}
@@ -735,15 +578,9 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
             <div className="bg-[#121212] border border-[#D4AF37]/20 rounded-xl p-4 mb-5 flex items-center justify-between">
               <div>
-                <p className="text-white font-bold text-sm sm:text-base">
-                  {course.title}
-                </p>
-
-                <p className="text-[11px] text-gray-400 mt-1 font-medium">
-                  {t.oneTimePayment}
-                </p>
+                <p className="text-white font-bold text-sm sm:text-base">{course.title}</p>
+                <p className="text-[11px] text-gray-400 mt-1 font-medium">{t.oneTimePayment}</p>
               </div>
-
               <div className="text-right">
                 <span className="text-[#D4AF37] font-black text-base sm:text-lg">
                   {course.displayPrice}
@@ -772,318 +609,94 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 createOrder={async () => {
                   try {
                     const currentCountryObj =
-                      COUNTRIES.find(
-                        (c) => c.name === country
-                      ) || selectedCountryObj;
+                      COUNTRIES.find((c) => c.name === country) || selectedCountryObj;
 
-                    const res = await fetch(
-                      '/api/paypal/create-order',
-                      {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type':
-                            'application/json',
-                        },
-                        body: JSON.stringify({
-                          courseId:
-                            course.id ||
-                            'faded-mastery-elite-2026',
-
-                          countryCode:
-                            currentCountryObj?.code?.toUpperCase() ||
-                            'VE',
-
-                          country:
-                            currentCountryObj?.name ||
-                            country ||
-                            'Venezuela',
-
-                          fullName: fullName.trim(),
-                          email: email.trim(),
-
-                          phone: phoneNumber.trim()
-                            ? `${phonePrefix} ${phoneNumber.trim()}`
-                            : undefined,
-
-                          /*
-                           * IMPORTANTE:
-                           * Enviar el precio real del curso.
-                           * No utilizar ningún precio fijo.
-                           */
-                          priceAmount: course.priceAmount,
-                          currency: course.currency,
-                        }),
-                      }
-                    );
+                    const res = await fetch('/api/paypal/create-order', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        courseId: course.id || 'faded-mastery-elite-2026',
+                        countryCode: currentCountryObj?.code?.toUpperCase() || 'VE',
+                        country: currentCountryObj?.name || country || 'Venezuela',
+                        fullName: fullName.trim(),
+                        email: email.trim(),
+                        phone: phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : undefined,
+                        priceAmount: course.priceAmount,
+                        currency: course.currency,
+                      }),
+                    });
 
                     const data = await res.json();
-
                     if (!res.ok || !data.id) {
-                      const msg =
-                        data.error ||
-                        'No se pudo generar la orden de PayPal';
-
+                      const msg = data.error || 'No se pudo generar la orden de PayPal';
                       setErrorMessage(msg);
-
                       throw new Error(msg);
                     }
-
                     return data.id;
                   } catch (err: any) {
-                    console.error(
-                      'Error al crear orden:',
-                      err
-                    );
-
-                    setErrorMessage(
-                      err?.message ||
-                        'Ocurrió un error al conectar con PayPal.'
-                    );
-
+                    console.error('Error al crear orden:', err);
+                    setErrorMessage(err?.message || 'Ocurrió un error al conectar con PayPal.');
                     throw err;
                   }
                 }}
                 onApprove={async (data) => {
                   try {
-                    const paymentSourceObj = (
-                      data as unknown as Record<
-                        string,
-                        unknown
-                      >
-                    ).paymentSource as any;
-
+                    const paymentSourceObj = (data as unknown as Record<string, unknown>).paymentSource as any;
                     const isCard =
                       paymentSourceObj === 'card' ||
                       !!paymentSourceObj?.card ||
-                      (data as any).fundingSource ===
-                        'card' ||
-                      (data as any).fundingSource ===
-                        'credit_card';
+                      (data as any).fundingSource === 'card' ||
+                      (data as any).fundingSource === 'credit_card';
 
-                    const formattedPhone =
-                      phoneNumber.trim()
-                        ? `${phonePrefix} ${phoneNumber.trim()}`
-                        : null;
-
-                    const certName =
-                      fullName.trim() || 'Participante';
-
+                    const formattedPhone = phoneNumber.trim() ? `${phonePrefix} ${phoneNumber.trim()}` : null;
+                    const certName = fullName.trim() || 'Participante';
                     const userEmail = email.trim();
 
-                    const res = await fetch(
-                      '/api/paypal/capture-order',
-                      {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type':
-                            'application/json',
-                        },
-                        body: JSON.stringify({
-                          orderID: data.orderID,
-                          certificateName: certName,
-                          email: userEmail,
-                          phone: formattedPhone,
-                          country:
-                            country || 'Venezuela',
-                          courseName: course.title,
+                    const res = await fetch('/api/paypal/capture-order', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        orderID: data.orderID,
+                        certificateName: certName,
+                        email: userEmail,
+                        phone: formattedPhone,
+                        country: country || 'Venezuela',
+                        courseName: course.title,
+                        amount: course.priceAmount,
+                        currency: course.currency,
+                        paymentMethod: isCard ? 'credit_card' : 'paypal',
+                      }),
+                    });
 
-                          /*
-                           * El precio real pertenece al curso
-                           * seleccionado y no a un valor fijo.
-                           */
-                          amount: course.priceAmount,
-                          currency: course.currency,
-
-                          paymentMethod: isCard
-                            ? 'credit_card'
-                            : 'paypal',
-                        }),
-                      }
-                    );
-
-                    const details =
-                      (await res.json()) as {
-                        success?: boolean;
-                        status?: string;
-                        orderID?: string;
-                        captureID?: string;
-                        payerEmail?: string;
-                        payerName?: string;
-                        payerPhone?: string | null;
-                        payerCountry?: string;
-                        amount?: string | number;
-                        currency?: string;
-                        payerID?: string;
-                        paymentMethod?: string;
-                        savedInDb?: boolean;
-                        error?: string;
-                        paypal?: {
-                          name?: string;
-                          message?: string;
-                          debug_id?: string;
-                          details?: unknown[];
-                        };
-                      };
+                    const details = (await res.json()) as {
+                      success?: boolean;
+                      status?: string;
+                      orderID?: string;
+                      captureID?: string;
+                      payerEmail?: string;
+                      payerName?: string;
+                      payerPhone?: string | null;
+                      payerCountry?: string;
+                      amount?: string | number;
+                      currency?: string;
+                      error?: string;
+                    };
 
                     if (!res.ok) {
-                      const errMsg =
-                        details.error ||
-                        'Error al capturar el pago';
-
-                      throw new Error(errMsg);
+                      throw new Error(details.error || 'Error al capturar el pago');
                     }
 
                     if (details.status === 'COMPLETED') {
-                      const finalCertName =
-                        certName ||
-                        details.payerName ||
-                        'Participante';
-
-                      /*
-                       * Garantizar persistencia en Supabase.
-                       *
-                       * Si capture-order no pudo guardar en DB,
-                       * usamos /api/registrations/save como respaldo.
-                       */
-                      if (!details.savedInDb) {
-                        console.warn(
-                          '[onApprove] savedInDb=false — ejecutando respaldo via /api/registrations/save'
-                        );
-
-                        try {
-                          const saveRes = await fetch(
-                            '/api/registrations/save',
-                            {
-                              method: 'POST',
-                              headers: {
-                                'Content-Type':
-                                  'application/json',
-                              },
-                              body: JSON.stringify({
-                                certificate_name:
-                                  finalCertName,
-
-                                email:
-                                  userEmail ||
-                                  details.payerEmail ||
-                                  'cliente@ferreiraacademy.com',
-
-                                phone: formattedPhone,
-
-                                country:
-                                  country ||
-                                  details.payerCountry ||
-                                  'Venezuela',
-
-                                course_name:
-                                  course.title,
-
-                                /*
-                                 * CORRECCIÓN:
-                                 * Usar el precio real de course.priceAmount.
-                                 */
-                                amount:
-                                  details.amount ??
-                                  course.priceAmount,
-
-                                currency:
-                                  details.currency ??
-                                  course.currency,
-
-                                payment_method:
-                                  isCard
-                                    ? 'credit_card'
-                                    : 'paypal',
-
-                                paypal_order_id:
-                                  details.orderID ??
-                                  data.orderID,
-
-                                paypal_capture_id:
-                                  details.captureID ??
-                                  null,
-                              }),
-                            }
-                          );
-
-                          const saveData =
-                            await saveRes.json();
-
-                          if (!saveRes.ok) {
-                            console.error(
-                              '[onApprove] Error en respaldo /api/registrations/save:',
-                              saveData
-                            );
-                          } else {
-                            console.log(
-                              '[onApprove] Registro guardado via respaldo:',
-                              saveData
-                            );
-                          }
-                        } catch (saveErr) {
-                          console.error(
-                            '[onApprove] Excepción en respaldo /api/registrations/save:',
-                            saveErr
-                          );
-                        }
-                      }
-
-                      // ── Envío automático de correo de confirmación ──
-                      const targetEmail =
-                        userEmail ||
-                        details.payerEmail ||
-                        'cliente@ferreiraacademy.com';
-
-                      const targetPhone =
-                        formattedPhone ||
-                        details.payerPhone ||
-                        null;
-
-                      const targetCountry =
-                        country ||
-                        details.payerCountry ||
-                        'Venezuela';
-
-                      /*
-                       * CORRECCIÓN:
-                       * El correo recibe el importe real del curso.
-                       * Nunca se utiliza 95.00 como precio predeterminado.
-                       */
-                      sendRegistrationEmail({
-                        certificateName: finalCertName,
-                        email: targetEmail,
-                        phone: targetPhone,
-                        country: targetCountry,
-                        courseName: course.title,
-
-                        amount:
-                          details.amount ??
-                          course.priceAmount,
-
-                        currency:
-                          details.currency ??
-                          course.currency,
-
-                        paymentMethod: isCard
-                          ? 'credit_card'
-                          : 'paypal',
-
-                        orderId:
-                          details.orderID ??
-                          data.orderID,
-                      }).catch((emailErr) => {
-                        console.error(
-                          '[EnrollmentModal] Error al enviar confirmación Web3Forms:',
-                          emailErr
-                        );
-                      });
+                      const finalCertName = certName || details.payerName || 'Participante';
+                      const targetEmail = userEmail || details.payerEmail || 'cliente@ferreiraacademy.com';
+                      const targetPhone = formattedPhone || details.payerPhone || null;
+                      const targetCountry = country || details.payerCountry || 'Venezuela';
 
                       onClose();
 
                       if (onPaymentCompleted) {
                         onPaymentCompleted({
-                          certificateName:
-                            finalCertName,
+                          certificateName: finalCertName,
                           courseName: course.title,
                           email: targetEmail,
                           phone: targetPhone,
@@ -1091,39 +704,24 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                         });
                       }
                     } else {
-                      throw new Error(
-                        'El pago no fue completado correctamente.'
-                      );
+                      throw new Error('El pago no fue completado correctamente.');
                     }
                   } catch (err) {
-                    console.error(
-                      'Error al capturar pago:',
-                      err
-                    );
-
+                    console.error('Error al capturar pago:', err);
                     setErrorMessage(
-                      err instanceof Error
-                        ? err.message
-                        : 'Error al procesar la aprobación del pago.'
+                      err instanceof Error ? err.message : 'Error al procesar la aprobación del pago.'
                     );
                   }
                 }}
                 onError={(err) => {
-                  console.error(
-                    'PayPal Buttons Error:',
-                    err
-                  );
-
-                  setErrorMessage(
-                    'Ocurrió un error con la pasarela de PayPal.'
-                  );
+                  console.error('PayPal Buttons Error:', err);
+                  setErrorMessage('Ocurrió un error con la pasarela de PayPal.');
                 }}
               />
             </div>
 
             <p className="text-[10px] text-gray-500 text-center mt-3">
-              Pago seguro encriptado de nivel 256-bit
-              procesado por PayPal
+              Pago seguro encriptado de nivel 256-bit procesado por PayPal
             </p>
           </div>
         )}
