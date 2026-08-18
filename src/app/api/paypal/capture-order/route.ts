@@ -61,222 +61,82 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing orderID' }, { status: 400 });
     }
 
-    console.log(`[capture-order] *** START *** orderID=${orderID} paymentMethod=${paymentMethod || 'unknown'}`);
+    console.log(`[capture-order] *** START *** orderID=${orderID}`);
 
     const accessToken = await getPayPalAccessToken();
     const mode = process.env.PAYPAL_MODE || 'sandbox';
     const baseUrl = mode === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
 
-    // ── STEP 1: GET order status before capture (for debug) ──
-    const getOrderRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderID}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    if (getOrderRes.ok) {
-      const orderInfo = await getOrderRes.json() as { status?: string; intent?: string; payment_source?: any };
-      console.log(`[capture-order] Pre-capture: status="${orderInfo.status}" intent="${orderInfo.intent}"`);
-    }
-
-    let data: any = null;
-
-    // ── STEP 2: Execute capture ──
-    console.log(`[capture-order] POST /v2/checkout/orders/${orderID}/capture`);
+    // ── Execute capture ──
     const captureResponse = await fetch(`${baseUrl}/v2/checkout/orders/${orderID}/capture`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
         'Prefer': 'return=representation',
-        'PayPal-Request-Id': `capture-${orderID}`,
       },
-      body: null,
     });
 
-    const debugId = captureResponse.headers.get('paypal-debug-id') || 'n/a';
-
+    let data = null;
     if (captureResponse.ok) {
       data = await captureResponse.json();
     } else {
       const errText = await captureResponse.text().catch(() => '');
-      let errJson: any = {};
-      try { errJson = JSON.parse(errText); } catch {}
-
-      console.error(
-        `[capture-order] *** CAPTURE FAILED *** HTTP ${captureResponse.status} debug_id=${debugId}\n` +
-        `  name="${errJson?.name}" message="${errJson?.message}"`
-      );
-
-      const alreadyCaptured =
-        captureResponse.status === 422 &&
-        (errJson?.details?.[0]?.issue === 'ORDER_ALREADY_CAPTURED' ||
-          errText.includes('ORDER_ALREADY_CAPTURED'));
-
-      if (alreadyCaptured) {
-        const existingRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderID}`, {
-          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        });
-        if (existingRes.ok) {
-          data = await existingRes.json();
-        }
-      }
-
-      const instrumentDeclined =
-        captureResponse.status === 422 &&
-        (errJson?.details?.[0]?.issue === 'INSTRUMENT_DECLINED' ||
-          errText.includes('INSTRUMENT_DECLINED'));
-
-      if (instrumentDeclined) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'La tarjeta fue rechazada. Verifica los datos o usa otra tarjeta.',
-            paypal: { name: errJson?.name, message: errJson?.message, debug_id: debugId, details: errJson?.details },
-          },
-          { status: 422 }
-        );
-      }
-
-      if (!data) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'No se pudo procesar el cobro con PayPal. Intente de nuevo.',
-            paypal: { name: errJson?.name, message: errJson?.message, debug_id: debugId, details: errJson?.details },
-          },
-          { status: 400 }
-        );
-      }
+      console.error(`[capture-order] *** CAPTURE FAILED *** HTTP ${captureResponse.status}: ${errText}`);
+      return NextResponse.json({ success: false, error: 'Capture failed' }, { status: 400 });
     }
 
-    // ── STEP 3: Verify COMPLETED status ──
+    // ── Verify status ──
     const firstPurchaseUnit = data?.purchase_units?.[0];
     const firstCapture = firstPurchaseUnit?.payments?.captures?.[0];
     const isCompleted = data?.status === 'COMPLETED' || firstCapture?.status === 'COMPLETED';
 
     if (!isCompleted) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'El pago no fue completado por PayPal. Estado: ' + (data?.status || 'Desconocido'),
-          paypal: { order_status: data?.status, capture_status: firstCapture?.status },
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Payment not completed' }, { status: 400 });
     }
 
-    // ── STEP 4: Extract payment info ──
+    // ── Extract info ──
     const captureID = firstCapture?.id || 'N/A';
-    const amountVal = parseFloat(firstCapture?.amount?.value || firstPurchaseUnit?.amount?.value || String(currentCourse.priceAmount));
-    const currencyCode = firstCapture?.amount?.currency_code || firstPurchaseUnit?.amount?.currency_code || currentCourse.currency || 'USD';
+    const amountVal = parseFloat(firstCapture?.amount?.value || String(currentCourse.priceAmount));
+    const currencyCode = firstCapture?.amount?.currency_code || currentCourse.currency || 'USD';
 
     let customMeta: any = {};
-    if (firstPurchaseUnit?.custom_id) {
-      try {
-        if (firstPurchaseUnit.custom_id.startsWith('{')) {
-          customMeta = JSON.parse(firstPurchaseUnit.custom_id);
-        }
-      } catch {}
-    }
+    try {
+      if (firstPurchaseUnit?.custom_id?.startsWith('{')) {
+        customMeta = JSON.parse(firstPurchaseUnit.custom_id);
+      }
+    } catch {}
 
-    const cardInfo = data?.payment_source?.card;
-    const paypalInfo = data?.payment_source?.paypal;
-    const cardName = cardInfo?.name || '';
-    const cardEmail = cardInfo?.email_address || '';
-    const givenName = data?.payer?.name?.given_name || paypalInfo?.name?.given_name || '';
-    const surname = data?.payer?.name?.surname || paypalInfo?.name?.surname || '';
-    const paypalName = `${givenName} ${surname}`.trim();
-
-    const finalCertName =
-      certificateName || customMeta.full_name || paypalName || cardName ||
-      firstPurchaseUnit?.shipping?.name?.full_name || 'Participante';
-
-    const rawPayerEmail =
-      email || customMeta.email || data?.payer?.email_address ||
-      cardEmail || paypalInfo?.email_address || '';
-    const finalEmail = rawPayerEmail.trim() || 'cliente@ferreiraacademy.com';
-
-    const finalPhone = (phone || customMeta.phone || data?.payer?.phone?.phone_number?.national_number || '').trim();
-    const finalCountry = (country || customMeta.country || data?.payer?.address?.country_code ||
-      firstPurchaseUnit?.shipping?.address?.country_code || '').trim();
+    const finalCertName = certificateName || customMeta.full_name || data?.payer?.name?.given_name + ' ' + data?.payer?.name?.surname || 'Participante';
+    const finalEmail = (email || customMeta.email || data?.payer?.email_address || '').trim() || 'cliente@ferreiraacademy.com';
+    const finalPhone = (phone || customMeta.phone || '').trim();
+    const finalCountry = (country || customMeta.country || '').trim();
     const finalCourseName = (courseName || '').trim() || currentCourse.title;
 
-    const isCard = !!cardInfo || paymentMethod === 'card' || paymentMethod === 'credit_card' || paymentMethod === 'debit_card';
-    const finalPaymentMethod = normalizePaymentMethod(paymentMethod, isCard);
-    const payerID = data?.payer?.payer_id || '';
-
-    if (!finalPhone || !finalCountry) {
-      return NextResponse.json(
-        { success: false, error: 'Se requieren teléfono y país válidos para registrar la inscripción.' },
-        { status: 400 }
-      );
-    }
-
-    // ── STEP 5: Insert into Supabase ──
+    // ── Supabase ──
     let savedInDb = false;
-    try {
-      if (isSupabaseConfigured() || process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        const admin = getSupabaseAdmin();
-
-        const { data: existing } = await admin
-          .from('registrations')
-          .select('id')
-          .eq('paypal_order_id', orderID)
-          .maybeSingle();
-
-        if (existing) {
-          const { error: updErr } = await admin
-            .from('registrations')
-            .update({
-              certificate_name: finalCertName,
-              email: finalEmail,
-              phone: finalPhone,
-              country: finalCountry,
-              course_name: finalCourseName,
-              amount: amountVal,
-              currency: currencyCode,
-              payment_method: finalPaymentMethod,
-              paypal_capture_id: captureID !== 'N/A' ? captureID : null,
-            })
-            .eq('paypal_order_id', orderID);
-          if (!updErr) savedInDb = true;
-        } else {
-          const duplicateCheck = await checkDuplicateRegistration(finalEmail, finalPhone, orderID);
-
-          if (duplicateCheck.isDuplicate) {
-            return NextResponse.json(
-              {
-                success: false,
-                error: 'duplicate_registration',
-                message: duplicateCheck.message || 'Ya te encuentras registrado/a.',
-                field: duplicateCheck.field,
-              },
-              { status: 409 }
-            );
-          }
-
-          const { error: insErr } = await admin.from('registrations').insert({
-            certificate_name: finalCertName,
-            email: finalEmail,
-            phone: finalPhone,
-            country: finalCountry,
-            course_name: finalCourseName,
-            amount: amountVal,
-            currency: currencyCode,
-            payment_method: finalPaymentMethod,
-            paypal_order_id: orderID,
-            paypal_capture_id: captureID !== 'N/A' ? captureID : null,
-          });
-          if (!insErr) savedInDb = true;
-        }
+    if (isSupabaseConfigured() || process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const admin = getSupabaseAdmin();
+      const { data: existing } = await admin.from('registrations').select('id').eq('paypal_order_id', orderID).maybeSingle();
+      
+      if (!existing) {
+        const { error: insErr } = await admin.from('registrations').insert({
+          certificate_name: finalCertName,
+          email: finalEmail,
+          phone: finalPhone,
+          country: finalCountry,
+          course_name: finalCourseName,
+          amount: amountVal,
+          currency: currencyCode,
+          payment_method: normalizePaymentMethod(paymentMethod),
+          paypal_order_id: orderID,
+          paypal_capture_id: captureID !== 'N/A' ? captureID : null,
+        });
+        if (!insErr) savedInDb = true;
       }
-    } catch (dbErr) {
-      console.error('[capture-order] Unexpected DB error:', dbErr);
     }
 
-    // ── STEP 6: Enviar correo de confirmación con Resend (de forma segura) ──
+    // ── Resend (Seguro) ──
     try {
       if (process.env.RESEND_API_KEY) {
         const { sendCourseRegistrationEmail } = await import('@/lib/resend');
@@ -287,41 +147,21 @@ export async function POST(request: Request) {
           country: finalCountry,
           lang: lang || 'es',
         });
-        console.log(`[capture-order] Email sent successfully via Resend to ${finalEmail} (lang: ${lang || 'es'})`);
+        console.log(`[capture-order] ✅ Email enviado exitosamente a ${finalEmail}`);
       } else {
-        console.warn('[capture-order] RESEND_API_KEY no configurado — se omite el envío de correo.');
+        console.error('[capture-order] ❌ ERROR: RESEND_API_KEY no definida en Vercel.');
       }
-    } catch (emailErr) {
-      console.error('[capture-order] Error sending email via Resend:', emailErr);
+    } catch (emailErr: any) {
+      console.error('[capture-order] ❌ ERROR enviando correo:', emailErr?.message);
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        status: 'COMPLETED',
-        orderID: data.id,
-        captureID,
-        amount: amountVal,
-        currency: currencyCode,
-        payerEmail: finalEmail,
-        payerName: finalCertName,
-        payerID,
-        payerPhone: finalPhone,
-        payerCountry: finalCountry,
-        paymentMethod: finalPaymentMethod,
-        savedInDb,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true, status: 'COMPLETED', savedInDb }, { status: 200 });
   } catch (error: any) {
-    console.error('[capture-order] Unexpected error:', error?.message || error);
-    return NextResponse.json(
-      { success: false, error: error?.message || 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('[capture-order] Error fatal:', error?.message);
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ status: 'ok', endpoint: '/api/paypal/capture-order' });
+  return NextResponse.json({ status: 'ok' });
 }
