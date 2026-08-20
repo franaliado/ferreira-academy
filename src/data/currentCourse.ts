@@ -34,9 +34,9 @@ export const currentCourse: CourseConfig = {
   id: 'faded-mastery-elite-2026',
   title: 'Faded Mastery Elite 2026',
   name: 'Faded Mastery Elite 2026',
-  priceAmount: 1,
+  priceAmount: 0.25,
   currency: 'USD',
-  displayPrice: '$1.00 USD',
+  displayPrice: '$0.25 USD',
   // ⚠️ Reemplaza con los IDs reales de tu dashboard de PayPal
   paypalPlanId: 'P-XXXXXXXXXXXXXXXXXXXXXXXXXX',
   startDate: '2026-10-15T18:00:00Z',
