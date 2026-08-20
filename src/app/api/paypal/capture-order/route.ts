@@ -137,7 +137,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // ── Email de Confirmación con Diseño Oscuro y Traducción Multilingüe ──
+    // ── Email de Confirmación con Diseño Oscuro Compacto ──
     try {
       const selectedLang: Language = (lang && translations[lang]) ? lang : 'es';
       const t = translations[selectedLang].confirmationEmail || translations[selectedLang].emailTemplates;
@@ -148,8 +148,8 @@ export async function POST(request: Request) {
       const emailGreeting = t.greeting.replace('{name}', finalCertName);
       const emailMainText = t.mainText.replace('{courseName}', finalCourseName);
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ferreiraacademy.com';
-      const logoUrl = 'https://ferreira-academy.vercel.app/Logo_Oficial_Negro.png';
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ferreira-academy.vercel.app';
+      const logoUrl = `${appUrl}/Logo_Oficial_Negro.png`;
 
       const emailHtml = `
 <!DOCTYPE html>
@@ -160,76 +160,76 @@ export async function POST(request: Request) {
   <title>${emailSubject}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #0B0B0B; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0B0B0B; padding: 40px 10px;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0B0B0B; padding: 20px 10px;">
     <tr>
       <td align="center">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #16161A; border: 1px solid #2A2A30; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-          <!-- Header Logo -->
+          <!-- Header Logo Compacto -->
           <tr>
-            <td align="center" style="padding: 36px 20px 20px 20px; background-color: #0F0F12; border-bottom: 1px solid #222226;">
-              <img src="${logoUrl}" alt="Ferreira Academy" width="180" style="display: block; max-width: 180px; height: auto;" />
+            <td align="center" style="padding: 16px 20px 12px 20px; background-color: #0F0F12; border-bottom: 1px solid #222226;">
+              <img src="${logoUrl}" alt="Ferreira Academy" width="150" style="display: block; max-width: 150px; height: auto;" />
             </td>
           </tr>
           
           <!-- Content Body -->
           <tr>
-            <td style="padding: 32px 28px;">
+            <td style="padding: 20px 24px;">
               <!-- Title Badge -->
-              <h1 style="color: #D4AF37; font-size: 20px; font-weight: 700; margin: 0 0 20px 0; text-align: center; text-transform: uppercase; letter-spacing: 1.5px;">
+              <h1 style="color: #D4AF37; font-size: 18px; font-weight: 700; margin: 0 0 12px 0; text-align: center; text-transform: uppercase; letter-spacing: 1.5px;">
                 ${t.title || 'Confirmación de Inscripción'}
               </h1>
               
               <!-- Greeting & Main Message -->
-              <p style="color: #FFFFFF; font-size: 17px; font-weight: 600; margin: 0 0 12px 0;">
+              <p style="color: #FFFFFF; font-size: 15px; font-weight: 600; margin: 0 0 8px 0;">
                 ${emailGreeting}
               </p>
-              <p style="color: #CCCCCC; font-size: 15px; line-height: 1.6; margin: 0 0 28px 0;">
+              <p style="color: #CCCCCC; font-size: 14px; line-height: 1.5; margin: 0 0 20px 0;">
                 ${emailMainText}
               </p>
               
               <!-- Registration Details Box -->
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #1E1E24; border-left: 4px solid #D4AF37; border-radius: 8px; margin-bottom: 28px;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #1E1E24; border-left: 4px solid #D4AF37; border-radius: 8px; margin-bottom: 20px;">
                 <tr>
-                  <td style="padding: 20px;">
+                  <td style="padding: 16px;">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td style="padding-bottom: 10px; color: #888888; font-size: 13px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                        <td style="padding-bottom: 8px; color: #888888; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
                           ${t.courseLabel || 'Curso:'}
                         </td>
-                        <td style="padding-bottom: 10px; color: #D4AF37; font-size: 14px; font-weight: 700; text-align: right;">
+                        <td style="padding-bottom: 8px; color: #D4AF37; font-size: 13px; font-weight: 700; text-align: right;">
                           ${finalCourseName}
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding-bottom: 10px; color: #888888; font-size: 13px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                        <td style="padding-bottom: 8px; color: #888888; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
                           ${t.participantLabel || 'Participante:'}
                         </td>
-                        <td style="padding-bottom: 10px; color: #FFFFFF; font-size: 14px; font-weight: 600; text-align: right;">
+                        <td style="padding-bottom: 8px; color: #FFFFFF; font-size: 13px; font-weight: 600; text-align: right;">
                           ${finalCertName}
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding-bottom: 10px; color: #888888; font-size: 13px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                        <td style="padding-bottom: 8px; color: #888888; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
                           ${t.startDateLabel}
                         </td>
-                        <td style="padding-bottom: 10px; color: #FFFFFF; font-size: 14px; font-weight: 600; text-align: right;">
+                        <td style="padding-bottom: 8px; color: #FFFFFF; font-size: 13px; font-weight: 600; text-align: right;">
                           ${formattedDate}
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding-bottom: ${finalCountry ? '10px' : '0px'}; color: #888888; font-size: 13px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                        <td style="padding-bottom: ${finalCountry ? '8px' : '0px'}; color: #888888; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
                           ${t.modalityLabel}
                         </td>
-                        <td style="padding-bottom: ${finalCountry ? '10px' : '0px'}; color: #FFFFFF; font-size: 14px; font-weight: 600; text-align: right;">
+                        <td style="padding-bottom: ${finalCountry ? '8px' : '0px'}; color: #FFFFFF; font-size: 13px; font-weight: 600; text-align: right;">
                           ${modalityText}
                         </td>
                       </tr>
                       ${finalCountry ? `
                       <tr>
-                        <td style="color: #888888; font-size: 13px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                        <td style="color: #888888; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
                           ${t.registeredCountryLabel}
                         </td>
-                        <td style="color: #FFFFFF; font-size: 14px; font-weight: 600; text-align: right;">
+                        <td style="color: #FFFFFF; font-size: 13px; font-weight: 600; text-align: right;">
                           ${finalCountry}
                         </td>
                       </tr>
@@ -240,13 +240,13 @@ export async function POST(request: Request) {
               </table>
 
               <!-- WhatsApp Group Callout -->
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #121E17; border: 1px solid #1F4D2B; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 28px;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #121E17; border: 1px solid #1F4D2B; border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 16px;">
                 <tr>
                   <td align="center">
-                    <p style="color: #E2F5EA; font-size: 14px; line-height: 1.5; margin: 0 0 16px 0;">
+                    <p style="color: #E2F5EA; font-size: 13px; line-height: 1.4; margin: 0 0 12px 0;">
                       ${t.whatsappNotice}
                     </p>
-                    <a href="https://chat.whatsapp.com/G342Zk9K61L30zVbVd5dJj" target="_blank" style="display: inline-block; background-color: #25D366; color: #000000; font-weight: 700; font-size: 14px; text-decoration: none; padding: 12px 26px; border-radius: 25px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+                    <a href="https://chat.whatsapp.com/G342Zk9K61L30zVbVd5dJj" target="_blank" style="display: inline-block; background-color: #25D366; color: #000000; font-weight: 700; font-size: 13px; text-decoration: none; padding: 10px 22px; border-radius: 20px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);">
                       ${t.whatsappButton}
                     </a>
                   </td>
@@ -258,8 +258,8 @@ export async function POST(request: Request) {
 
           <!-- Footer -->
           <tr>
-            <td align="center" style="padding: 24px; background-color: #0F0F12; border-top: 1px solid #222226;">
-              <p style="color: #666666; font-size: 12px; margin: 0; line-height: 1.5;">
+            <td align="center" style="padding: 16px; background-color: #0F0F12; border-top: 1px solid #222226;">
+              <p style="color: #666666; font-size: 11px; margin: 0; line-height: 1.4;">
                 ${t.footerRights}
               </p>
             </td>
