@@ -149,7 +149,7 @@ export async function POST(request: Request) {
       const emailMainText = t.mainText.replace('{courseName}', finalCourseName);
 
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ferreiraacademy.com';
-      const logoUrl = `${appUrl}/Logo_Oficial_Negro.png`;
+      const logoUrl = 'https://ferreira-academy.vercel.app/Logo_Oficial_Negro.png';
 
       const emailHtml = `
 <!DOCTYPE html>
