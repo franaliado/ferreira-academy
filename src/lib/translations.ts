@@ -302,6 +302,22 @@ export interface TranslationSchema {
     whatsappButton: string;
     footerRights: string;
   };
+  confirmationEmail: {
+    subject: string;
+    greeting: string;
+    mainText: string;
+    startDateLabel: string;
+    modalityLabel: string;
+    registeredCountryLabel: string;
+    inPersonModality: string;
+    zoomModality: string;
+    whatsappNotice: string;
+    whatsappButton: string;
+    footerRights: string;
+    title: string;
+    courseLabel: string;
+    participantLabel: string;
+  };
 };
 
 export const translations: Record<Language, TranslationSchema> = {
@@ -715,6 +731,22 @@ export const translations: Record<Language, TranslationSchema> = {
       whatsappButton: 'Unirme a la Comunidad de WhatsApp',
       footerRights: 'Ferreira Academy. Todos los derechos reservados.',
     },
+    confirmationEmail: {
+      subject: '¡Inscripción exitosa a {courseName}! - Ferreira Academy',
+      greeting: '¡Hola, {name}!',
+      mainText: 'Tu inscripción al curso {courseName} se ha completado con éxito. Nos alegra mucho contar contigo en esta experiencia de formación profesional.',
+      startDateLabel: 'Fecha de inicio:',
+      modalityLabel: 'Modalidad:',
+      registeredCountryLabel: 'País registrado:',
+      inPersonModality: 'Presencial (Coffee Break + Capacitación Presencial)',
+      zoomModality: 'Capacitación en Vivo por Zoom',
+      whatsappNotice: 'Únete a nuestra comunidad exclusiva de WhatsApp para estar al tanto de todos los detalles:',
+      whatsappButton: 'Unirme a la Comunidad de WhatsApp',
+      footerRights: 'Ferreira Academy. Todos los derechos reservados.',
+      title: 'Confirmación de Inscripción',
+      courseLabel: 'Curso:',
+      participantLabel: 'Participante:',
+    },
   },
 
   // ─────────────────────────── ENGLISH ───────────────────────────
@@ -1124,6 +1156,22 @@ export const translations: Record<Language, TranslationSchema> = {
       whatsappNotice: 'Join our exclusive WhatsApp community to stay updated with all details:',
       whatsappButton: 'Join WhatsApp Community',
       footerRights: 'Ferreira Academy. All rights reserved.',
+    },
+    confirmationEmail: {
+      subject: 'Successful registration for {courseName}! - Ferreira Academy',
+      greeting: 'Hello, {name}!',
+      mainText: 'Your registration for the course {courseName} has been successfully completed. We are delighted to have you with us in this professional training experience.',
+      startDateLabel: 'Start date:',
+      modalityLabel: 'Modality:',
+      registeredCountryLabel: 'Registered country:',
+      inPersonModality: 'In-person (Coffee Break + In-Person Training)',
+      zoomModality: 'Live Training via Zoom',
+      whatsappNotice: 'Join our exclusive WhatsApp community to stay updated with all details:',
+      whatsappButton: 'Join WhatsApp Community',
+      footerRights: 'Ferreira Academy. All rights reserved.',
+      title: 'Enrollment Confirmation',
+      courseLabel: 'Course:',
+      participantLabel: 'Participant:',
     },
   },
 
@@ -1536,6 +1584,22 @@ export const translations: Record<Language, TranslationSchema> = {
       whatsappNotice: 'Entre na nossa comunidade exclusiva do WhatsApp para ficar por dentro de todos os detalhes:',
       whatsappButton: 'Entrar na Comunidade do WhatsApp',
       footerRights: 'Ferreira Academy. Todos os direitos reservados.',
+    },
+    confirmationEmail: {
+      subject: 'Inscrição realizada com sucesso no curso {courseName}! - Ferreira Academy',
+      greeting: 'Olá, {name}!',
+      mainText: 'Sua inscrição no curso {courseName} foi concluída com sucesso. Estamos muito felizes em contar com você nesta experiência de formação profissional.',
+      startDateLabel: 'Data de início:',
+      modalityLabel: 'Modalidade:',
+      registeredCountryLabel: 'País cadastrado:',
+      inPersonModality: 'Presencial (Coffee Break + Capacitação Presencial)',
+      zoomModality: 'Treinamento ao Vivo pelo Zoom',
+      whatsappNotice: 'Entre na nossa comunidade exclusiva do WhatsApp para ficar por dentro de todos os detalhes:',
+      whatsappButton: 'Entrar na Comunidade do WhatsApp',
+      footerRights: 'Ferreira Academy. Todos os direitos reservados.',
+      title: 'Confirmação de Inscrição',
+      courseLabel: 'Curso:',
+      participantLabel: 'Participante:',
     },
   },
 
@@ -1951,6 +2015,22 @@ export const translations: Record<Language, TranslationSchema> = {
       whatsappButton: 'Unisciti alla Community WhatsApp',
       footerRights: 'Ferreira Academy. Tutti i diritti riservati.',
     },
+    confirmationEmail: {
+      subject: 'Iscrizione completata con successo a {courseName}! - Ferreira Academy',
+      greeting: 'Ciao, {name}!',
+      mainText: 'La tua iscrizione al corso {courseName} è stata completata con successo. Siamo entusiasti di averti con noi in questa esperienza di formazione professionale.',
+      startDateLabel: 'Data di inizio:',
+      modalityLabel: 'Modalità:',
+      registeredCountryLabel: 'Paese registrato:',
+      inPersonModality: 'In presenza (Coffee Break + Formazione in Presenza)',
+      zoomModality: 'Formazione in Diretta su Zoom',
+      whatsappNotice: 'Unisciti alla nostra community esclusiva di WhatsApp per rimanere aggiornato su tutti i dettagli:',
+      whatsappButton: 'Unisciti alla Community WhatsApp',
+      footerRights: 'Ferreira Academy. Tutti i diritti riservati.',
+      title: 'Conferma di Iscrizione',
+      courseLabel: 'Corso:',
+      participantLabel: 'Partecipante:',
+    },
   },
 
   // ─────────────────────────── FRANÇAIS ───────────────────────────
@@ -2365,6 +2445,22 @@ export const translations: Record<Language, TranslationSchema> = {
       whatsappButton: 'Rejoindre la Communauté WhatsApp',
       footerRights: 'Ferreira Academy. Tous droits réservés.',
     },
+    confirmationEmail: {
+      subject: 'Inscription réussie à {courseName} ! - Ferreira Academy',
+      greeting: 'Bonjour, {name} !',
+      mainText: 'Votre inscription au cours {courseName} a été effectuée avec succès. Nous sommes ravis de vous compter parmi nous pour cette expérience de formation professionnelle.',
+      startDateLabel: 'Date de début :',
+      modalityLabel: 'Modalité :',
+      registeredCountryLabel: 'Pays enregistré :',
+      inPersonModality: 'En présentiel (Pause café + Formation en présentiel)',
+      zoomModality: 'Formation en direct via Zoom',
+      whatsappNotice: 'Rejoignez notre communauté WhatsApp exclusive pour suivre tous les détails :',
+      whatsappButton: 'Rejoindre la Communauté WhatsApp',
+      footerRights: 'Ferreira Academy. Tous droits réservés.',
+      title: 'Confirmation d\'inscription',
+      courseLabel: 'Cours :',
+      participantLabel: 'Participant :',
+    },
   },
 
 // ─────────────────────────── DEUTSCH ───────────────────────────
@@ -2775,6 +2871,22 @@ export const translations: Record<Language, TranslationSchema> = {
         whatsappNotice: 'Tritt unserer exklusiven WhatsApp-Community bei, um über alle Details informiert zu bleiben:',
         whatsappButton: 'Der WhatsApp-Community beitreten',
         footerRights: 'Ferreira Academy. Alle Rechte vorbehalten.',
+      },
+      confirmationEmail: {
+        subject: 'Erfolgreiche Anmeldung zu {courseName}! - Ferreira Academy',
+        greeting: 'Hallo, {name}!',
+        mainText: 'Deine Anmeldung zum Kurs {courseName} wurde erfolgreich abgeschlossen. Wir freuen uns sehr, dich bei dieser professionellen Schulung dabei zu haben.',
+        startDateLabel: 'Startdatum:',
+        modalityLabel: 'Format:',
+        registeredCountryLabel: 'Registriertes Land:',
+        inPersonModality: 'Präsenzunterricht (Kaffeepause + Präsenz-Schulung)',
+        zoomModality: 'Live-Schulung über Zoom',
+        whatsappNotice: 'Tritt unserer exklusiven WhatsApp-Community bei, um über alle Details informiert zu bleiben:',
+        whatsappButton: 'Der WhatsApp-Community beitreten',
+        footerRights: 'Ferreira Academy. Alle Rechte vorbehalten.',
+        title: 'Anmeldebestätigung',
+        courseLabel: 'Kurs:',
+        participantLabel: 'Teilnehmer:',
       },
     },
   };
