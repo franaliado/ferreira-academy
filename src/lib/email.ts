@@ -1,31 +1,22 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendEmail({ to, subject, html }: { to: string, subject: string, html: string }) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "send.smtp.mailtrap.io",
-    port: Number(process.env.SMTP_PORT) || 587,
-    auth: {
-      user: process.env.SMTP_USER || "",
-      pass: process.env.SMTP_PASS || ""
-    }
-  });
-
   try {
-    const info = await transporter.sendMail({
-      from: '"Ferreira Academy" <ferreiraacademy.oficial@gmail.com>',
-      to,
-      subject,
-      html,
+    const data = await resend.emails.send({
+      from: 'Ferreira Academy <onboarding@resend.dev>',
+      to: [to],
+      subject: subject,
+      html: html,
     });
-    
-    console.log("Correo enviado con éxito. MessageId: %s", info.messageId);
-    return info;
+
+    console.log("Correo enviado con éxito por Resend. ID:", data.id);
+    return data;
   } catch (error: any) {
-    console.error("ERROR DETALLADO DE NODEMAILER:", {
+    console.error("ERROR DETALLADO DE RESEND:", {
       message: error.message,
-      code: error.code,
-      command: error.command,
-      stack: error.stack
+      name: error.name,
     });
     throw error;
   }

@@ -17,9 +17,9 @@
     "flag-icons": "^7.5.0",
     "lucide-react": "^0.417.0",
     "next": "^14.2.35",
-    "nodemailer": "^9.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "resend": "^6.20.0",
     "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
